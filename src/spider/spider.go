@@ -224,6 +224,15 @@ func (spider *Spider) DownloadFile(url string, title string) error {
 	if !data.NeedDownloadFile(spider.cfg.Title, url) {
 		return nil
 	}
+	downloadflag := false
+
+	defer func() {
+		if !downloadflag {
+			downData := data.ChangeDownloadStatus(spider.cfg.Title, url, define.DEF_DOWNLOAD_STATUS_ERROR, title)
+			db.UpdateDownloadToDb(downData)
+		}
+	}()
+
 	sglog.Info("start download pdf,title:", spider.cfg.Title, ",url:", url)
 
 	downData := data.ChangeDownloadStatus(spider.cfg.Title, url, define.DEF_DOWNLOAD_STATUS_DOWNING, title)
@@ -241,8 +250,18 @@ func (spider *Spider) DownloadFile(url string, title string) error {
 	txtFileName := strings.Replace(rawFileName, "pdf", "txt", -1)
 	txtFileName = TXT_FILE_DIR + spider.cfg.Title + "/" + txtFileName
 
-	spider.ReadTxtFileAndInsertToDb(txtFileName)
+	timestr, memberType, cardType, updateNum, err := spider.ReadTxtFileAndInsertToDb(txtFileName)
+	if err != nil {
+		sglog.Error("read txt file error,", txtFileName, err)
+		return err
+	}
 
+	sglog.Info("download file ok,", title, url, timestr, memberType, cardType, ",update num:", updateNum)
+
+	downData = data.ChangeDownloadStatus(spider.cfg.Title, url, define.DEF_DOWNLOAD_STATUS_COMPLETE, title)
+	db.UpdateDownloadToDb(downData)
+
+	downloadflag = true
 	return nil
 }
 

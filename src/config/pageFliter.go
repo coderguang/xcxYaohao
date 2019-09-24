@@ -255,5 +255,5 @@ func shenzhenTxtFliter(title string, contents []string) (map[string]*define.Card
 	if !ignoreNumMath && len(datas) != totalNum {
 		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
 	}
-	return datas, timestr, len(datas), cardType, memberType, errors.New("no match title")
+	return datas, timestr, len(datas), cardType, memberType, nil
 }

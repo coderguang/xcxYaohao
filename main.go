@@ -14,7 +14,7 @@ import (
 func main() {
 
 	sgcfg.SetServerCfgDir("./../globalConfig/xcxYaohao/")
-	sgserver.StartServer(sgserver.ServerTypeLog, "debug", "./../log/", log.LstdFlags, true)
+	sgserver.StartServer(sgserver.ServerTypeLog, "debug", "./log/", log.LstdFlags, true)
 	sgserver.StartServer(sgserver.ServerTypeMail)
 
 	config.InitCfg()

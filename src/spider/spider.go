@@ -290,7 +290,7 @@ func (spider *Spider) TransportPDFToTxt(rawFileName string, pdfFileName string) 
 		sglog.Error("exec parse pdf to txt by python error,file=", pdfFileName, ",err=", err)
 		return err
 	}
-	sglog.Info("output is :\n%s", string(out))
+	sglog.Info("output is :\n", string(out))
 	return nil
 }
 
@@ -301,7 +301,7 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 		return "", 0, 0, 0, err
 	}
 	//datas, timestr, totalnum, cardType, memberType, err
-	_, timestr, totalnum, cardType, memberType, err := config.TxtFileFliter(spider.cfg.Title, contents)
+	datas, timestr, totalnum, cardType, memberType, err := config.TxtFileFliter(spider.cfg.Title, contents)
 
 	if err != nil {
 		sglog.Error("parse txt filter error,title:", spider.cfg.Title, ",file:", fileDir, err)
@@ -309,6 +309,34 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 	}
 
 	sglog.Info("parse txt file detail complete,title:", spider.cfg.Title, ",timestr:", timestr, ",num:", totalnum, ",cardType:", cardType, ",memberType:", memberType)
+	updateNum := 0
+	updateMap := make(map[string]*define.CardData)
+	for _, v := range datas {
+		if !data.IsDataExist(v.Title, v.Code) {
+			updateNum++
+			updateMap[v.Code] = v
+		}
+	}
 
-	return "", 0, 0, 0, nil
+	now := sgtime.New()
+	data.AddCardData(updateMap)
+	end := sgtime.New()
+	sglog.Info("update card data in member size:", updateNum, ",use time:", (sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)))
+
+	go func(updates map[string]*define.CardData) {
+		nowEx := sgtime.New()
+		updateDbNum := 0
+		for _, v := range updates {
+			if err = db.UpdateCardData(v); err != nil {
+				sglog.Error("update data to db error,title", v.Title, "code", v.Code, err)
+			} else {
+				updateDbNum++
+			}
+		}
+		endEx := sgtime.New()
+		sglog.Info("update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
+
+	}(updateMap)
+
+	return timestr, memberType, cardType, updateNum, nil
 }

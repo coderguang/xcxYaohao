@@ -39,7 +39,7 @@ func shenzhenFliter(pageTitle string) bool {
 }
 
 //return data,timestr,totalnum,cardtype,membertype,error
-func TxtFileFliter(title string, contents []string) ([]*define.CardData, string, int, int, int, error) {
+func TxtFileFliter(title string, contents []string) (map[string]*define.CardData, string, int, int, int, error) {
 
 	switch title {
 	case "guangzhou":
@@ -50,9 +50,9 @@ func TxtFileFliter(title string, contents []string) ([]*define.CardData, string,
 	return nil, "", 0, 0, 0, errors.New("no match title fliter")
 }
 
-func guangzhouTxtFliter(title string, contents []string) ([]*define.CardData, string, int, int, int, error) {
+func guangzhouTxtFliter(title string, contents []string) (map[string]*define.CardData, string, int, int, int, error) {
 
-	datas := []*define.CardData{}
+	datas := make(map[string]*define.CardData)
 	timestr := ""
 	totalNum := 0
 	cardType := 0
@@ -101,7 +101,7 @@ func guangzhouTxtFliter(title string, contents []string) ([]*define.CardData, st
 				data.Desc += "name cut "
 				sglog.Error("new name=%s", data.Name)
 			}
-			datas = append(datas, data)
+			datas[data.Code] = data
 		} else {
 			if strings.Contains(v, "序号") {
 				if "" == timestr || 0 == totalNum || 0 == memberType || 0 == cardType {
@@ -151,12 +151,12 @@ func guangzhouTxtFliter(title string, contents []string) ([]*define.CardData, st
 	if !ignoreNumMath && len(datas) != totalNum {
 		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
 	}
-	return datas, timestr, totalNum, cardType, memberType, nil
+	return datas, timestr, len(datas), cardType, memberType, nil
 }
 
-func shenzhenTxtFliter(title string, contents []string) ([]*define.CardData, string, int, int, int, error) {
+func shenzhenTxtFliter(title string, contents []string) (map[string]*define.CardData, string, int, int, int, error) {
 
-	datas := []*define.CardData{}
+	datas := make(map[string]*define.CardData)
 	timestr := ""
 	totalNum := 0
 	cardType := 0
@@ -205,7 +205,7 @@ func shenzhenTxtFliter(title string, contents []string) ([]*define.CardData, str
 				data.Desc += "name cut "
 				sglog.Error("new name=%s", data.Name)
 			}
-			datas = append(datas, data)
+			datas[data.Code] = data
 		} else {
 			if strings.Contains(v, "序号") {
 				if "" == timestr || 0 == totalNum || 0 == memberType || 0 == cardType {
@@ -255,5 +255,5 @@ func shenzhenTxtFliter(title string, contents []string) ([]*define.CardData, str
 	if !ignoreNumMath && len(datas) != totalNum {
 		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
 	}
-	return datas, timestr, totalNum, cardType, memberType, errors.New("no match title")
+	return datas, timestr, len(datas), cardType, memberType, errors.New("no match title")
 }

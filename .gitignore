@@ -5,6 +5,8 @@
 *.so
 *.dylib
 *.log
+*.txt
+*.pdf
 debug
 debug.test
 /log/*

@@ -8,10 +8,14 @@ import (
 
 func init() {
 	globalHistoryData = new(define.SecureDownloadHistoryUrl)
+	globalIgnonreData = new(define.SecureIgnoreUrl)
+	globalHadVisitData = new(define.SecureHadVisitUrl)
 }
 
 var (
-	globalHistoryData *define.SecureDownloadHistoryUrl
+	globalHistoryData  *define.SecureDownloadHistoryUrl
+	globalIgnonreData  *define.SecureIgnoreUrl
+	globalHadVisitData *define.SecureHadVisitUrl
 )
 
 func InitDataFromDb(datas []define.DownloadHistoryUrl) {
@@ -24,4 +28,16 @@ func InitDataFromDb(datas []define.DownloadHistoryUrl) {
 		}
 	}
 	sglog.Info("load history from db complete,size=", len(datas))
+}
+
+func AddIgnoreURL(title, url string) {
+	globalIgnonreData.Lock.Lock()
+	defer globalIgnonreData.Lock.Unlock()
+
+	if cityMap, ok := globalIgnonreData.Data[title]; ok {
+		cityMap[url] = ""
+	} else {
+		globalIgnonreData.Data[title] = make(map[string]string)
+		globalIgnonreData.Data[title][url] = ""
+	}
 }

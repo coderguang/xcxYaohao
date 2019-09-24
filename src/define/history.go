@@ -17,3 +17,13 @@ type SecureDownloadHistoryUrl struct {
 	Data map[string](map[string]*DownloadHistoryUrl)
 	Lock sync.RWMutex
 }
+
+type SecureIgnoreUrl struct {
+	Data map[string](map[string]string)
+	Lock sync.RWMutex
+}
+
+type SecureHadVisitUrl struct {
+	Data map[string](map[string]string)
+	Lock sync.RWMutex
+}

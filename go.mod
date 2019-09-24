@@ -6,3 +6,5 @@ require (
 	github.com/coderguang/GameEngine_go v1.0.6
 	github.com/jinzhu/gorm v1.9.10
 )
+
+replace github.com/coderguang/GameEngine_go => ./../GameEngine_go

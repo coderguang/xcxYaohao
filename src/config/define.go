@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/coderguang/GameEngine_go/sgthread"
@@ -24,6 +25,7 @@ type SpiderCfg struct {
 	IndexURL   string   `json:"indexUrl"`
 	AllowUrls  []string `json:"allowUrls"`
 	IgnoreUrls []string `json:"ignoreUrls"`
+	HTTP       string   `json:"http"`
 	ResultDate int      `json:"resultDate"`
 }
 
@@ -48,4 +50,23 @@ func InitCfg() {
 		globalCfgs.Data[v.Title] = v
 	}
 
+	sglog.Info("load spider config ok,size=", len(globalCfgs.Data))
+}
+
+func GetSpiderCfg(title string) (SpiderCfg, error) {
+	globalCfgs.Lock.Lock()
+	defer globalCfgs.Lock.Unlock()
+
+	if v, ok := globalCfgs.Data[title]; ok {
+		return v, nil
+	}
+	return SpiderCfg{}, errors.New("no this title spider config,title:" + title)
+}
+
+func GetTitleList() []string {
+	titlelist := []string{}
+	for k := range globalCfgs.Data {
+		titlelist = append(titlelist, k)
+	}
+	return titlelist
 }

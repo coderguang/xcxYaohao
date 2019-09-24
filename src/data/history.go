@@ -1,6 +1,7 @@
 package data
 
 import (
+	"time"
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sglog"
@@ -8,14 +9,11 @@ import (
 
 func init() {
 	globalHistoryData = new(define.SecureDownloadHistoryUrl)
-	globalIgnonreData = new(define.SecureIgnoreUrl)
-	globalHadVisitData = new(define.SecureHadVisitUrl)
+	globalHistoryData.Data = make(map[string](map[string]*define.DownloadHistoryUrl))
 }
 
 var (
-	globalHistoryData  *define.SecureDownloadHistoryUrl
-	globalIgnonreData  *define.SecureIgnoreUrl
-	globalHadVisitData *define.SecureHadVisitUrl
+	globalHistoryData *define.SecureDownloadHistoryUrl
 )
 
 func InitDataFromDb(datas []define.DownloadHistoryUrl) {
@@ -30,14 +28,65 @@ func InitDataFromDb(datas []define.DownloadHistoryUrl) {
 	sglog.Info("load history from db complete,size=", len(datas))
 }
 
-func AddIgnoreURL(title, url string) {
-	globalIgnonreData.Lock.Lock()
-	defer globalIgnonreData.Lock.Unlock()
+func GetReDownloadList(title string) []*define.DownloadHistoryUrl {
+	globalHistoryData.Lock.Lock()
+	defer globalHistoryData.Lock.Unlock()
+	relist := []*define.DownloadHistoryUrl{}
+	if cityMap, ok := globalHistoryData.Data[title]; ok {
+		for _, v := range cityMap {
+			if v.Status != define.DEF_DOWNLOAD_STATUS_COMPLETE {
+				relist = append(relist, v)
+			}
+		}
+		return relist
+	}
+	return relist
+}
 
-	if cityMap, ok := globalIgnonreData.Data[title]; ok {
-		cityMap[url] = ""
+func NeedDownloadFile(title string, url string) bool {
+	globalHistoryData.Lock.Lock()
+	defer globalHistoryData.Lock.Unlock()
+	if cityMap, ok := globalHistoryData.Data[title]; ok {
+		if v, ok := cityMap[url]; ok {
+			if v.Status != define.DEF_DOWNLOAD_STATUS_COMPLETE {
+				return true
+			} else {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func ChangeDownloadStatus(title string, url string, status int, tips string) *define.DownloadHistoryUrl {
+	globalHistoryData.Lock.Lock()
+	defer globalHistoryData.Lock.Unlock()
+	if cityMap, ok := globalHistoryData.Data[title]; ok {
+		if v, ok := cityMap[url]; ok {
+			v.Status = status
+			v.Tips = tips
+			return v
+		} else {
+			tmp := new(define.DownloadHistoryUrl)
+			tmp.Title = title
+			tmp.URL = url
+			tmp.Status = status
+			now := time.Now()
+			tmp.DownloadDt = now
+			tmp.Tips = tips
+			globalHistoryData.Data[title][tmp.URL] = tmp
+			return tmp
+		}
 	} else {
-		globalIgnonreData.Data[title] = make(map[string]string)
-		globalIgnonreData.Data[title][url] = ""
+		globalHistoryData.Data[title] = make(map[string]*define.DownloadHistoryUrl)
+		tmp := new(define.DownloadHistoryUrl)
+		tmp.Title = title
+		tmp.URL = url
+		tmp.Status = status
+		now := time.Now()
+		tmp.DownloadDt = now
+		tmp.Tips = tips
+		globalHistoryData.Data[title][tmp.URL] = tmp
+		return tmp
 	}
 }

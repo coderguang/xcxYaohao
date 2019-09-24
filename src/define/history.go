@@ -5,25 +5,21 @@ import (
 	"time"
 )
 
+const (
+	DEF_DOWNLOAD_STATUS_DOWNING  int = 0
+	DEF_DOWNLOAD_STATUS_COMPLETE int = 1
+	DEF_DOWNLOAD_STATUS_ERROR    int = 2
+)
+
 type DownloadHistoryUrl struct {
 	Title      string `gorm:"primary_key;type:varchar(64)"`
 	URL        string `gorm:"primary_key;type:varchar(900)"`
-	Status     int    `gorm:"default:1;not null"`
-	DownloadDt *time.Time
+	Status     int    `gorm:"default:0;not null"`
+	DownloadDt time.Time
 	Tips       string `gorm:"type:varchar(255)"`
 }
 
 type SecureDownloadHistoryUrl struct {
 	Data map[string](map[string]*DownloadHistoryUrl)
-	Lock sync.RWMutex
-}
-
-type SecureIgnoreUrl struct {
-	Data map[string](map[string]string)
-	Lock sync.RWMutex
-}
-
-type SecureHadVisitUrl struct {
-	Data map[string](map[string]string)
 	Lock sync.RWMutex
 }

@@ -1,0 +1,262 @@
+package spider
+
+import (
+	"crypto/tls"
+	"io"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+	"xcxYaohao/src/config"
+	"xcxYaohao/src/data"
+	"xcxYaohao/src/db"
+	"xcxYaohao/src/define"
+
+	"github.com/coderguang/GameEngine_go/sgfile"
+
+	"github.com/coderguang/GameEngine_go/sgtime"
+
+	"github.com/gocolly/colly/extensions"
+
+	"github.com/gocolly/colly"
+
+	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/coderguang/GameEngine_go/sgregex"
+	"github.com/coderguang/GameEngine_go/sgstring"
+	"github.com/coderguang/GameEngine_go/sgthread"
+)
+
+const (
+	VISTIS_TIME_DISTANCE      int = 200
+	DOWNLOAD_TIME_DISTANCE    int = 500
+	RE_VISTIS_TIME_DISTANCE   int = 200
+	RE_DOWNLOAD_TIME_DISTANCE int = 500
+)
+
+const (
+	PDF_FILE_DIR          string = "./data/pdf/"
+	TXT_FILE_DIR          string = "./data/txt/"
+	PDF_FILE_COMPLETE_DIR string = "./data/pdf_complete/"
+	TXT_FILE_COMPLETE_DIR string = "./data/txt_complete/"
+)
+
+func AutoCreateFileDir() {
+	titlelist := config.GetTitleList()
+	for _, v := range titlelist {
+		sgfile.AutoMkDir(PDF_FILE_DIR + v)
+		sgfile.AutoMkDir(TXT_FILE_DIR + v)
+		sgfile.AutoMkDir(PDF_FILE_COMPLETE_DIR + v)
+		sgfile.AutoMkDir(TXT_FILE_COMPLETE_DIR + v)
+	}
+}
+
+func (spider *Spider) StartAutoVisitUrl(title string) {
+	cfg, err := config.GetSpiderCfg(title)
+	if err != nil {
+		sglog.Error("can't find ", title, " spider config")
+		sgthread.DelayExit(2)
+	}
+	spider.cfg = cfg
+	spider.hadVisitUrls = make(map[string]bool)
+	spider.ignoreUrls = []string{}
+	spider.ignoreUrls = append(spider.ignoreUrls, spider.cfg.IgnoreUrls...)
+	spider.collector = colly.NewCollector()
+	spider.collector.IgnoreRobotsTxt = true
+	spider.collector.CheckHead = true
+	spider.collector.AllowedDomains = spider.cfg.AllowUrls
+	spider.collector.AllowURLRevisit = true
+	spider.collector.WithTransport(&http.Transport{
+		DisableKeepAlives: true,
+	})
+
+	extensions.RandomUserAgent(spider.collector)
+	extensions.Referer(spider.collector)
+
+	spider.collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		title := e.Text
+		if !strings.Contains(link, spider.cfg.HTTP) {
+			link = spider.cfg.HTTP + ":" + link
+		}
+
+		//sglog.Debug("find tilte:", title, ",link:", link)
+
+		if !sgregex.URL(link) {
+			//sglog.Debug(link, " not a valid url,title is", title)
+			return
+		}
+
+		if spider.isIgnoreUrl(link) {
+			return
+		}
+		if spider.isHadVisitUrl(link) {
+			return
+		}
+
+		if sgstring.EqualWithOr(link, spider.ignoreUrls) {
+			return
+		}
+
+		if !config.PageFliter(spider.cfg.Title, title) {
+			if _, err = strconv.Atoi(title); err != nil {
+				spider.hadVisitUrls[link] = true
+				return
+			}
+		}
+
+		if strings.Contains(title, "下一页") {
+			spider.AddIgnoreUrl(link)
+		}
+
+		if strings.HasSuffix(link, "pdf") {
+			sgthread.SleepByMillSecond(DOWNLOAD_TIME_DISTANCE)
+			spider.DownloadFile(link, title)
+		} else {
+			sgthread.SleepByMillSecond(VISTIS_TIME_DISTANCE)
+			er := e.Request.Visit(e.Request.AbsoluteURL(link))
+			if er != nil {
+				sglog.Error("start spider error by onHtml,url:=", e.Request.AbsoluteURL(link), ",err:=", er)
+			}
+		}
+	})
+
+	spider.collector.OnError(func(r *colly.Response, err error) {
+		sglog.Error("visit ", r.Request.URL.String(), " occurt error, went wrong")
+		sgthread.SleepByMillSecond(RE_VISTIS_TIME_DISTANCE)
+		er := r.Request.Visit(r.Request.URL.String())
+		if er != nil {
+			sglog.Error("start spider error by onError,url:=", r.Request.URL.String(), ",err:=", er)
+		}
+		spider.hadVisitUrls[r.Request.URL.String()] = false
+	})
+
+	spider.collector.OnRequest(func(r *colly.Request) {
+		//sglog.Info("Visiting ", r.URL.String(), " start...")
+		spider.hadVisitUrls[r.URL.String()] = false
+	})
+
+	spider.collector.OnResponse(func(r *colly.Response) {
+		sglog.Info("Visiting ", r.Request.URL.String(), " complete")
+		spider.hadVisitUrls[r.Request.URL.String()] = true
+	})
+
+	sleepTime := 60
+	for {
+		//redownload
+		downlist := data.GetReDownloadList(spider.cfg.Title)
+		for _, v := range downlist {
+			sglog.Info("re download url:", v.URL)
+			if !strings.Contains(v.Tips, "by reload") {
+				v.Tips = "by reload" + v.Tips
+			}
+			spider.DownloadFile(v.URL, v.Tips)
+			sgthread.SleepByMillSecond(RE_DOWNLOAD_TIME_DISTANCE)
+		}
+
+		//revisit
+		revisitlist := spider.GetRevisitList()
+		for _, v := range revisitlist {
+			sglog.Info("re visist url:", v)
+			spider.collector.Visit(v)
+			sgthread.SleepByMillSecond(RE_VISTIS_TIME_DISTANCE)
+
+		}
+
+		er := spider.collector.Visit(spider.cfg.IndexURL)
+		if er != nil {
+			sglog.Error("start spider error,url:=", spider.cfg.IndexURL, ",err:=", er)
+		}
+
+		nowTime := time.Now()
+		timeInt := time.Duration(300) * time.Second
+		if 0 == len(downlist) && 0 == len(revisitlist) {
+
+			normalTime := time.Date(nowTime.Year(), nowTime.Month(), 26, 9, 0, 0, 0, nowTime.Location())
+
+			if nowTime.Before(normalTime) {
+				timeInt = normalTime.Sub(nowTime)
+			} else {
+
+				// check is current month day all get
+				curLastestInfo := data.GetLastestCardInfo(spider.cfg.Title)
+				curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
+
+				curMonthAllUpdate := false
+				if curTimeStr == curLastestInfo.TimeStr {
+					if data.IsAllCardUpdate(spider.cfg.Title, curLastestInfo.TimeStr) {
+						curMonthAllUpdate = true
+					}
+				}
+
+				if curMonthAllUpdate {
+					//
+					sglog.Info("current month data all updates!!!!!")
+					nextMonthDt := normalTime.AddDate(0, 1, 0)
+					timeInt = nextMonthDt.Sub(nowTime)
+				} else {
+
+					hour := time.Now().Hour()
+					if hour < 9 {
+						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
+						timeInt = nextRun.Sub(nowTime)
+					} else if hour > 19 {
+						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
+						timeInt = nextRun.Sub(nowTime)
+					}
+				}
+			}
+			sleepTime = int(timeInt/time.Second) + 1
+		}
+		sglog.Info(spider.cfg.Title, " data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt))
+		sgthread.SleepBySecond(sleepTime)
+	}
+
+}
+
+func (spider *Spider) DownloadFile(url string, title string) {
+	if !data.NeedDownloadFile(spider.cfg.Title, url) {
+		return
+	}
+	sglog.Info("start download pdf,title:", spider.cfg.Title, ",url:", url)
+
+	downData := data.ChangeDownloadStatus(spider.cfg.Title, url, define.DEF_DOWNLOAD_STATUS_DOWNING, title)
+	db.UpdateDownloadToDb(downData)
+
+	spider.DownloadFileFromWeb(url, title)
+
+}
+
+func (spider *Spider) DownloadFileFromWeb(url string, title string) (string, string, error) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	res, err := client.Get(url)
+	if err != nil {
+		sglog.Error("download file error,all try failed,title:", spider.cfg.Title, "src:", url, " ,error", err)
+		if res != nil {
+			res.Body.Close()
+		}
+		return "", "", err
+	}
+	defer res.Body.Close()
+	str := strings.Split(url, "/")
+
+	if len(str) <= 0 {
+		return "", "", err
+	}
+
+	rawFileName := str[len(str)-1]
+	pdfFileName := PDF_FILE_DIR + spider.cfg.Title + "/" + rawFileName
+
+	f, err := os.Create(pdfFileName)
+	if err != err {
+		sglog.Error("create file error,title:", spider.cfg.Title, ",src:", url, ",error:", err)
+		return "", "", err
+	}
+	io.Copy(f, res.Body)
+	sglog.Info("download file ", url, " ,complete,file in ", pdfFileName)
+
+	return rawFileName, pdfFileName, nil
+}

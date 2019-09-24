@@ -8,6 +8,8 @@
 debug
 debug.test
 /log/*
+/txt/*
+/pdf/*
 
 # Test binary, build with `go test -c`
 *.test

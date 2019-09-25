@@ -353,7 +353,7 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 			}
 		}
 		endEx := sgtime.New()
-		sglog.Info("update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
+		sglog.Info(spider.cfg.Title, " update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
 
 	}(updateMap)
 

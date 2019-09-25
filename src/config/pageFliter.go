@@ -74,10 +74,23 @@ func guangzhouTxtFliter(title string, contents []string) (map[string]*define.Car
 			if len(strlistex) < 3 {
 				continue
 			}
-			if len(strlistex) > 3 {
-				sglog.Error("not suport current format data,please check")
-				return datas, timestr, totalNum, cardType, memberType, errors.New("parse code name time data error,data:" + v)
+
+			_, err := strconv.Atoi(strlistex[0])
+			if err != nil {
+				continue
 			}
+
+			//深圳有公司名称内有空格的，例如 美国COPPEL CORPORATION深圳代表处
+
+			targetName := strlistex[2]
+			for i := 3; i < len(strlistex); i++ {
+				targetName += " " + strlistex[i]
+			}
+
+			// if len(strlistex) > 3 {
+			// 	sglog.Error("not suport current format data,please check")
+			// 	return datas, timestr, totalNum, cardType, memberType, errors.New("parse code name time data error,data:" + v)
+			// }
 
 			data := new(define.CardData)
 			data.Title = title
@@ -178,10 +191,23 @@ func shenzhenTxtFliter(title string, contents []string) (map[string]*define.Card
 			if len(strlistex) < 3 {
 				continue
 			}
-			if len(strlistex) > 3 {
-				sglog.Error("not suport current format data,please check")
-				return datas, timestr, totalNum, cardType, memberType, errors.New("parse code name time data error,data:" + v)
+
+			_, err := strconv.Atoi(strlistex[0])
+			if err != nil {
+				continue
 			}
+
+			//深圳有公司名称内有空格的，例如 美国COPPEL CORPORATION深圳代表处
+
+			targetName := strlistex[2]
+			for i := 3; i < len(strlistex); i++ {
+				targetName += " " + strlistex[i]
+			}
+
+			// if len(strlistex) > 3 {
+			// 	sglog.Error("not suport current format data,please check")
+			// 	return datas, timestr, totalNum, cardType, memberType, errors.New("parse code name time data error,data:" + v)
+			// }
 
 			data := new(define.CardData)
 			data.Title = title
@@ -191,7 +217,8 @@ func shenzhenTxtFliter(title string, contents []string) (map[string]*define.Card
 			codemaxlen := 50
 			namemaxlen := 300
 			data.Code = strlistex[1]
-			data.Name = strlistex[2]
+			//data.Name = strlistex[2]
+			data.Name = targetName
 			data.UpdateDt = time.Now()
 			if len(data.Code) > codemaxlen {
 				sglog.Error("code len more than ", codemaxlen, ",it is ", len(data.Code), ",old code=", data.Code)

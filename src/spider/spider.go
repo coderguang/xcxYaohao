@@ -58,8 +58,8 @@ func NewSpider(title string) {
 		return
 	}
 	spider := new(Spider)
-	spider.StartAutoVisitUrl(title)
 	globalSpiderMap[title] = spider
+	spider.StartAutoVisitUrl(title)
 }
 
 func GetSpider(title string) (*Spider, error) {
@@ -171,7 +171,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 
 	sglog.Info("start loop spider ,title:", spider.cfg.Title)
 
-	spider.StartLoopSpider()
+	//spider.StartLoopSpider()
 }
 
 func (spider *Spider) StartLoopSpider() {

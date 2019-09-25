@@ -4,7 +4,7 @@ import (
 	"log"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
-	"xcxYaohao/src/db"
+	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/spider"
 
 	"github.com/coderguang/GameEngine_go/sgcfg"
@@ -13,7 +13,7 @@ import (
 )
 
 func RegistCmd() {
-	sgcmd.RegistCmd("ShowRequireTimes", "[\"ShowRequireTimes\",\"guangzhou\"] :show ignores", spider.ShowIgnors)
+	sgcmd.RegistCmd("ShowIgnors", "[\"ShowIgnors\",\"guangzhou\"] :show ignores", spider.ShowIgnors)
 	sgcmd.RegistCmd("PDF", "[\"PDF\",\"guangzhou\",\"1459152795388.pdf\"]:transform a pdf file to txt file", spider.TransportPDFToTxt)
 	sgcmd.RegistCmd("TXT", "[\"TXT\",\"guangzhou\",\"1459152795388.txt\"]:get txt file and insert it to db", spider.ReadTxtFileToDb)
 	sgcmd.RegistCmd("DownloadStatus", "[\"DownloadStatus\",\"shenzhen\",\"http://xqctk.jtys.sz.gov.cn/attachment/20160328/1459152795388.pdf\",\"1\",]:change download status", spider.ChangeDownloadStatus)
@@ -28,15 +28,19 @@ func main() {
 
 	config.InitCfg()
 
-	db.InitDb()
+	data.InitWxOpenIdCfg()
 
-	spider.AutoCreateFileDir()
+	// db.InitDb()
 
-	titlelist := config.GetTitleList()
-	for _, v := range titlelist {
-		title := v
-		go spider.NewSpider(title)
-	}
+	// spider.AutoCreateFileDir()
+
+	// titlelist := config.GetTitleList()
+	// for _, v := range titlelist {
+	// 	title := v
+	// 	go spider.NewSpider(title)
+	// }
+
+	go httpHandle.NewWebServer("1255")
 
 	RegistCmd()
 	sgcmd.StartCmdWaitInputLoop()

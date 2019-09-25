@@ -82,7 +82,7 @@ func InitCardDataFromDb(datas []define.CardData) {
 				namelist = append(namelist, &tmpV)
 			} else {
 				tmp := []*define.CardData{&tmpV}
-				cityMap[v.Code] = tmp
+				cityMap[v.Name] = tmp
 			}
 		} else {
 			globalCardDataByName.Data[v.Title] = make(map[string][]*define.CardData)
@@ -159,7 +159,7 @@ func AddCardData(datas map[string]*define.CardData) {
 				namelist = append(namelist, v)
 			} else {
 				tmp := []*define.CardData{v}
-				cityMap[v.Code] = tmp
+				cityMap[v.Name] = tmp
 			}
 		} else {
 			globalCardDataByName.Data[v.Title] = make(map[string][]*define.CardData)
@@ -172,4 +172,34 @@ func AddCardData(datas map[string]*define.CardData) {
 
 func ShowLastestInfo(cmd []string) {
 	sglog.Debug(globalLastestData)
+}
+
+func GetLastestInfo(title string) string {
+	globalLastestData.Lock.Lock()
+	defer globalLastestData.Lock.Unlock()
+	if v, ok := globalLastestData.Data[title]; ok {
+		return v.TimeStr
+	}
+	return "201101"
+}
+
+func GetMatchData(title string, key string) (bool, []*define.CardData) {
+	globalCardData.Lock.Lock()
+	defer globalCardData.Lock.Unlock()
+
+	if cityMap, ok := globalCardData.Data[title]; ok {
+		if namelist, ok := cityMap[key]; ok {
+			return true, namelist
+		}
+	}
+
+	globalCardDataByName.Lock.Lock()
+	defer globalCardDataByName.Lock.Unlock()
+
+	if cityMap, ok := globalCardDataByName.Data[title]; ok {
+		if namelist, ok := cityMap[key]; ok {
+			return true, namelist
+		}
+	}
+	return false, nil
 }

@@ -70,3 +70,10 @@ func GetTitleList() []string {
 	}
 	return titlelist
 }
+
+func IsSupportCity(title string) bool {
+	if _, err := GetSpiderCfg(title); err != nil {
+		return false
+	}
+	return true
+}

@@ -3,12 +3,29 @@ package httpHandle
 import (
 	"encoding/json"
 	"net/http"
+	"xcxYaohao/src/config"
+	"xcxYaohao/src/data"
 
 	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/coderguang/GameEngine_go/sgtime"
+	"github.com/coderguang/GameEngine_go/sgwx/sgwxopenid"
 )
 
 func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
+
+	returnData := make(map[string]interface{})
+	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_DO_NOT_THING
+
 	defer func() {
+
+		str, err := json.Marshal(returnData)
+		if err != nil {
+			sglog.Error("parse returnData to string error", err)
+			return
+		}
+		sglog.Info("return str is", string(str))
+		w.Write([]byte(string(str)))
+
 		flag <- true
 	}()
 
@@ -16,19 +33,37 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
 	sglog.Debug("require data is ", r.Form)
 
-	op := r.FormValue(HTTP_OP_KEY)
-	returnData := make(map[string]interface{})
-	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_NOTICE_ERR_DO_NOT_THING
-	switch op {
-	case HTTP_OP_TIME:
-		requireLastestTime(r, returnData)
+	op := r.FormValue(HTTP_ARGS_KEY)
+	city := r.FormValue(HTTP_ARGS_CITY)
+	loginCode := r.FormValue(HTTP_ARGS_CODE)
+
+	//init wx openid
+	openId, err := data.GetWxOpenId(loginCode)
+	if err != nil {
+		//new require
+		openId = new(sgwxopenid.SWxOpenid)
+		openId.Code = loginCode
+		openId.Time = sgtime.New()
+		appid, secret := data.GetAppidCfg()
+		openId.Openid, err = sgwxopenid.GetOpenIdFromWx(appid, secret, openId.Code)
+		// if err != nil {
+		// 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+		// 	return
+		// }
+		// data.AddWxOpenId(openId)
 	}
 
-	str, err := json.Marshal(returnData)
-	if err != nil {
-		sglog.Error("parse returnData to string error", err)
-		return
+	if !config.IsSupportCity(city) {
+		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_TITLE
+	} else {
+		switch op {
+		case HTTP_ARGS_TIME:
+			// ?op=time&city=guangzhou&code=0
+			requireLastestTime(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_SEARCH:
+			// ?op=search&city=guangzhou&key=0000100748077&code=0
+			matchData(r, city, openId.Openid, returnData)
+
+		}
 	}
-	sglog.Info("return str is", string(str))
-	w.Write([]byte(string(str)))
 }

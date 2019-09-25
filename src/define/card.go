@@ -65,6 +65,20 @@ type CardData struct {
 	UpdateDt time.Time
 }
 
+type CardDataForClient struct {
+	Code string
+	Name string
+	Time string
+}
+
+func (data *CardData) CardDataToClient() *CardDataForClient {
+	tmp := new(CardDataForClient)
+	tmp.Code = data.Code
+	tmp.Name = data.Name
+	tmp.Time = data.Time
+	return tmp
+}
+
 type SecureCardData struct {
 	Data map[string](map[string][]*CardData)
 	Lock sync.RWMutex

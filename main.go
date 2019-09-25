@@ -4,6 +4,7 @@ import (
 	"log"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
+	"xcxYaohao/src/db"
 	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/spider"
 
@@ -30,7 +31,7 @@ func main() {
 
 	data.InitWxOpenIdCfg()
 
-	// db.InitDb()
+	db.InitDb()
 
 	// spider.AutoCreateFileDir()
 

@@ -10,7 +10,6 @@
 debug
 debug.test
 /log/*
-/data/*
 
 # Test binary, build with `go test -c`
 *.test

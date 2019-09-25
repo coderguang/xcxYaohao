@@ -402,7 +402,7 @@ func (spider *Spider) RemoveAndRenameFile(pdfFileName string, txtFileName string
 	rename := timestr + "_" + memberTypeStr + "_" + cardTypeStr
 	completePDFDir := PDF_FILE_COMPLETE_DIR + spider.cfg.Title + "/" + timestr + "/"
 	sgfile.AutoMkDir(completePDFDir)
-	newPDFFile := completePDFDir + rename
+	newPDFFile := completePDFDir + rename + ".pdf"
 	err := sgfile.Rename(pdfFileName, newPDFFile)
 	if err != nil {
 		sglog.Error("remove file error,", pdfFileName, "=========>", newPDFFile, err)
@@ -410,7 +410,7 @@ func (spider *Spider) RemoveAndRenameFile(pdfFileName string, txtFileName string
 
 	completeTxtDir := TXT_FILE_COMPLETE_DIR + spider.cfg.Title + "/" + timestr + "/"
 	sgfile.AutoMkDir(completeTxtDir)
-	newTxtFile := completeTxtDir + rename
+	newTxtFile := completeTxtDir + rename + ".txt"
 	err = sgfile.Rename(txtFileName, newTxtFile)
 	if err != nil {
 		sglog.Error("remove file error,", txtFileName, "=========>", newTxtFile, err)

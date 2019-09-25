@@ -2,6 +2,7 @@ package spider
 
 import (
 	"crypto/tls"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -41,6 +42,32 @@ const (
 	PDF_FILE_COMPLETE_DIR string = "./data/pdf_complete/"
 	TXT_FILE_COMPLETE_DIR string = "./data/txt_complete/"
 )
+
+var (
+	globalSpiderMap map[string]*Spider
+)
+
+func init() {
+	globalSpiderMap = make(map[string]*Spider)
+}
+
+func NewSpider(title string) {
+
+	if _, ok := globalSpiderMap[title]; ok {
+		sglog.Error("spider already exist,title:", title)
+		return
+	}
+	spider := new(Spider)
+	spider.StartAutoVisitUrl(title)
+	globalSpiderMap[title] = spider
+}
+
+func GetSpider(title string) (*Spider, error) {
+	if v, ok := globalSpiderMap[title]; ok {
+		return v, nil
+	}
+	return nil, errors.New("not this spider,title:" + title)
+}
 
 func AutoCreateFileDir() {
 	titlelist := config.GetTitleList()
@@ -144,7 +171,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 
 	sglog.Info("start loop spider ,title:", spider.cfg.Title)
 
-	go spider.StartLoopSpider()
+	spider.StartLoopSpider()
 }
 
 func (spider *Spider) StartLoopSpider() {
@@ -191,7 +218,7 @@ func (spider *Spider) StartLoopSpider() {
 
 				curMonthAllUpdate := false
 				if curTimeStr == curLastestInfo.TimeStr {
-					if data.IsAllCardUpdate(spider.cfg.Title, curLastestInfo.TimeStr) {
+					if curLastestInfo.IsAllCardInfoUpdate() {
 						curMonthAllUpdate = true
 					}
 				}
@@ -260,6 +287,8 @@ func (spider *Spider) DownloadFile(url string, title string) error {
 
 	downData = data.ChangeDownloadStatus(spider.cfg.Title, url, define.DEF_DOWNLOAD_STATUS_COMPLETE, title)
 	db.UpdateDownloadToDb(downData)
+
+	spider.RemoveAndRenameFile(pdfFileName, txtFileName, timestr, memberType, cardType)
 
 	downloadflag = true
 	return nil
@@ -358,4 +387,33 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 	}(updateMap)
 
 	return timestr, memberType, cardType, updateNum, nil
+}
+
+func (spider *Spider) RemoveAndRenameFile(pdfFileName string, txtFileName string, timestr string, memberType int, cardType int) {
+
+	memberTypeStr := "persional"
+	if memberType == define.MEMBER_TYPE_COMPANY {
+		memberTypeStr = "company"
+	}
+	cardTypeStr := "normal"
+	if cardType == define.CARD_TYPE_COMPANY {
+		cardTypeStr = "conservation"
+	}
+	rename := timestr + "_" + memberTypeStr + "_" + cardTypeStr
+	completePDFDir := PDF_FILE_COMPLETE_DIR + spider.cfg.Title + "/" + timestr + "/"
+	sgfile.AutoMkDir(completePDFDir)
+	newPDFFile := completePDFDir + rename
+	err := sgfile.Rename(pdfFileName, newPDFFile)
+	if err != nil {
+		sglog.Error("remove file error,", pdfFileName, "=========>", newPDFFile, err)
+	}
+
+	completeTxtDir := TXT_FILE_COMPLETE_DIR + spider.cfg.Title + "/" + timestr + "/"
+	sgfile.AutoMkDir(completeTxtDir)
+	newTxtFile := completeTxtDir + rename
+	err = sgfile.Rename(txtFileName, newTxtFile)
+	if err != nil {
+		sglog.Error("remove file error,", txtFileName, "=========>", newTxtFile, err)
+	}
+
 }

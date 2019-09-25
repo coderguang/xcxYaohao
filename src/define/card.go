@@ -42,6 +42,13 @@ func (data *SLastestCardData) UpdateLastestInfo(cardType int, memberType int) {
 	}
 }
 
+func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
+	if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
+		return true
+	}
+	return false
+}
+
 type SecureLastestCardData struct {
 	Data map[string]*SLastestCardData
 	Lock sync.RWMutex
@@ -61,4 +68,14 @@ type CardData struct {
 type SecureCardData struct {
 	Data map[string](map[string][]*CardData)
 	Lock sync.RWMutex
+}
+
+func (data *SecureLastestCardData) String() string {
+	data.Lock.Lock()
+	defer data.Lock.Unlock()
+	str := "\n\n==============lastest data========="
+	for k, v := range data.Data {
+		str += k + ":" + v.TimeStr + "\n"
+	}
+	return str
 }

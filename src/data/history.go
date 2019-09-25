@@ -32,7 +32,7 @@ func InitHistoryDataFromDb(datas []define.DownloadHistoryUrl) {
 			globalHistoryData.Data[v.Title][v.URL] = &tmpV
 		}
 	}
-	sglog.Info("load history from db complete,size=", len(datas), globalHistoryData)
+	sglog.Info("load history from db complete,size=", len(datas))
 }
 
 func GetReDownloadList(title string) []*define.DownloadHistoryUrl {

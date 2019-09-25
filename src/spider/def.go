@@ -17,7 +17,7 @@ type Spider struct {
 
 func (data *Spider) ShowIgnoreUrls() {
 	sglog.Info("------ignore---", data.cfg.Title, "---------")
-	for _, v := range data.hadVisitUrls {
+	for _, v := range data.ignoreUrls {
 		sglog.Debug(v)
 	}
 	sglog.Info("------ignore---", data.cfg.Title, "--complete-------")

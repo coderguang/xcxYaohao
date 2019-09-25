@@ -38,6 +38,7 @@ func InitCardDataFromDb(datas []define.CardData) {
 	globalCardData.Lock.Lock()
 	defer globalCardData.Lock.Unlock()
 	for _, v := range datas {
+		UpdateLastestInfo(v.Title, v.CardType, v.Type, v.Time)
 		tmp := deepcopy.Copy(v)
 		tmpV, ok := tmp.(define.CardData)
 		if !ok {
@@ -167,4 +168,8 @@ func AddCardData(datas map[string]*define.CardData) {
 		}
 	}
 
+}
+
+func ShowLastestInfo(cmd []string) {
+	sglog.Debug(globalLastestData)
 }

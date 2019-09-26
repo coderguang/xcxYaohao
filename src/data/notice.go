@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"time"
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sgtime"
@@ -58,6 +59,27 @@ func GetNoticeData(openid string) (*define.NoticeData, error) {
 		return v, nil
 	}
 	return nil, errors.New("no bind data")
+}
+
+func AddOpenXcxTimes(openid string) *define.NoticeData {
+	data, err := GetNoticeData(openid)
+	if err != nil {
+		data = new(define.NoticeData)
+		data.Token = openid 
+		data.CreateDt = time.Now()
+		data.RequireTimes = 1
+		data.Status = define.YAOHAO_NOTICE_STATUS_NOT_BIND
+
+		globalNoticeData.Lock.Lock()
+		defer globalNoticeData.Lock.Unlock()
+
+		globalNoticeData.MapData[openid] = data
+
+	} else {
+		data.RequireTimes++
+	}
+	data.FinalLogin = time.Now()
+	return data
 }
 
 func CanBindPhone(phone string) bool {

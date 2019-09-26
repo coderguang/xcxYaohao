@@ -79,7 +79,7 @@ func initAndLoadCardData() {
 	end = sgtime.New()
 	useTime = sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)
 
-	sglog.Info("init initAndLoadCardData data use ", useTime, " seconds,size:", len(cardDatas))
+	sglog.Info("init initAndLoadCardData data to memory use ", useTime, " seconds,size:", len(cardDatas))
 }
 
 func initAndLoadNoticeData() {

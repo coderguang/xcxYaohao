@@ -21,3 +21,29 @@ func UpdateCardData(data *define.CardData) error {
 	}
 	return nil
 }
+
+func UpdateNoticeData(data *define.NoticeData) error {
+	go func(d *define.NoticeData) {
+		err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(define.NoticeData{
+			Token:        data.Token,
+			Status:       data.Status,
+			Name:         data.Name,
+			Title:        data.Title,
+			CardType:     data.CardType,
+			Code:         data.Code,
+			Phone:        data.Phone,
+			EndDt:        data.EndDt,
+			Desc:         data.Desc,
+			RenewTimes:   data.RenewTimes,
+			NoticeTimes:  data.NoticeTimes,
+			RequireTimes: data.RequireTimes,
+			FinalLogin:   data.FinalLogin,
+			CreateDt:     data.CreateDt,
+			ShareTimes:   data.ShareTimes}).FirstOrCreate(data).Error
+		if err != nil {
+			sglog.Error("update notice data error,token:", data.Token, err)
+		}
+
+	}(data)
+	return nil
+}

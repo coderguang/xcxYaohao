@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 	"xcxYaohao/src/data"
+	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sgstring"
@@ -262,6 +263,8 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 	existData.Status = define.YAOHAO_NOTICE_STATUS_NORMAL
 
 	data.RemoveRequireData(token)
+
+	db.UpdateNoticeData(existData)
 
 	return YAOHAO_OK
 }

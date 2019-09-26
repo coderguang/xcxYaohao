@@ -46,16 +46,16 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		openId.Time = sgtime.New()
 		appid, secret := data.GetAppidCfg()
 		openId.Openid, err = sgwxopenid.GetOpenIdFromWx(appid, secret, openId.Code)
-		// if err != nil {
-		// 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
-		// 	return
-		// }
-		// data.AddWxOpenId(openId)
+		if err != nil {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+		data.AddWxOpenId(openId)
 	}
 
-	openId.Openid = loginCode
+	//openId.Openid = loginCode
 
-	if !config.IsSupportCity(city) {
+	if !config.IsSupportCity(city) && !isIgnoreCityArgs(op) {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_TITLE
 	} else {
 		switch op {
@@ -82,4 +82,11 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			share(r, city, openId.Openid, returnData)
 		}
 	}
+}
+
+func isIgnoreCityArgs(op string) bool {
+	if op == HTTP_ARGS_BIND_CONFIRM || op == HTTP_ARGS_BIND_CANCEL || op == HTTP_ARGS_SHARE {
+		return true
+	}
+	return false
 }

@@ -53,6 +53,7 @@ func AddWxOpenId(data *sgwxopenid.SWxOpenid) error {
 	if _, ok := globalOpenIds.Data[data.Code]; ok {
 		return errors.New("code already exist")
 	}
+	globalOpenIds.Data[data.Code] = data
 	return nil
 }
 

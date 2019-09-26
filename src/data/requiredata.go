@@ -12,11 +12,14 @@ import (
 	"github.com/coderguang/GameEngine_go/sgwx/sgwxdef"
 
 	"github.com/coderguang/GameEngine_go/sgwx/sgwxopenid"
+
+	"github.com/coderguang/GameEngine_go/sgali/alisms"
 )
 
 var (
 	globalOpenIds     *define.SecureWxOpenid
 	globalWxOpenIdCfg *sgwxdef.WxAppidCfg
+	globalAliAppidCfg *alisms.AliAppidCfg
 )
 
 func init() {
@@ -32,6 +35,15 @@ func InitWxOpenIdCfg() {
 		sglog.Error("InitWxOpenIdCfg error,", err)
 		sgthread.DelayExit(2)
 	}
+
+	globalAliAppidCfg = new(alisms.AliAppidCfg)
+	cfgFile = sgcfg.GetServerCfgDir() + "ali_sms.json"
+	err = sgcfg.ReadCfg(cfgFile, globalAliAppidCfg)
+	if err != nil {
+		sglog.Error("InitAliAppidIdCfg error,", err)
+		sgthread.DelayExit(2)
+	}
+
 }
 
 func AddWxOpenId(data *sgwxopenid.SWxOpenid) error {

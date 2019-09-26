@@ -53,6 +53,8 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		// data.AddWxOpenId(openId)
 	}
 
+	openId.Openid = loginCode
+
 	if !config.IsSupportCity(city) {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_TITLE
 	} else {
@@ -63,6 +65,12 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		case HTTP_ARGS_SEARCH:
 			// ?op=search&city=guangzhou&key=0000100748077&code=0
 			matchData(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_BIND_GET_DATA:
+			// ?op=getData&city=guangzhou&code=0
+			getBindData(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_BIND_REQUIRE:
+			// ?op=require&city=guangzhou&code=0&card=1&phone=
+			requireRandomCode(r, city, openId.Openid, returnData)
 
 		}
 	}

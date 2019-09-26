@@ -35,7 +35,9 @@ func InitDb() {
 
 	initAndLoadDownloadHistory()
 
-	initAndLoadData()
+	initAndLoadCardData()
+
+	initAndLoadNoticeData()
 }
 
 func initAndLoadDownloadHistory() {
@@ -54,28 +56,55 @@ func initAndLoadDownloadHistory() {
 	data.InitHistoryDataFromDb(historyDatas)
 }
 
-func initAndLoadData() {
+func initAndLoadCardData() {
 	err := globalDb.AutoMigrate(define.CardData{}).Error
 	if err != nil {
 		sglog.Error("initAndLoadData", err)
 	}
 
-	sglog.Info("init and load hitory data ok")
+	sglog.Info("init and load initAndLoadCardData data ok")
 
 	now := sgtime.New()
 	cardDatas := []define.CardData{}
 	err = globalDb.Find(&cardDatas).Error
 	if err != nil {
-		sglog.Error("initAndLoadData find error", err)
+		sglog.Error("initAndLoadCardData find error", err)
 	}
 	end := sgtime.New()
 	useTime := sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)
-	sglog.Info("load card data from db use ", useTime, " seconds,size:", len(cardDatas))
+	sglog.Info("load initAndLoadCardData data from db use ", useTime, " seconds,size:", len(cardDatas))
 
 	now = sgtime.New()
 	data.InitCardDataFromDb(cardDatas)
 	end = sgtime.New()
 	useTime = sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)
 
-	sglog.Info("init card data use ", useTime, " seconds,size:", len(cardDatas))
+	sglog.Info("init initAndLoadCardData data use ", useTime, " seconds,size:", len(cardDatas))
+}
+
+func initAndLoadNoticeData() {
+	err := globalDb.AutoMigrate(define.NoticeData{}).Error
+	if err != nil {
+		sglog.Error("initAndLoadNoticeData", err)
+	}
+
+	sglog.Info("init and load initAndLoadNoticeData data ok")
+
+	now := sgtime.New()
+	noticeDatas := []define.NoticeData{}
+	err = globalDb.Find(&noticeDatas).Error
+	if err != nil {
+		sglog.Error("NoticeData find error", err)
+	}
+	end := sgtime.New()
+	useTime := sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)
+	sglog.Info("load NoticeData data from db use ", useTime, " seconds,size:", len(noticeDatas))
+
+	now = sgtime.New()
+	data.InitNoticeDataFromDb(noticeDatas)
+	end = sgtime.New()
+	useTime = sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)
+
+	sglog.Info("init NoticeData data use ", useTime, " seconds,size:", len(noticeDatas))
+
 }

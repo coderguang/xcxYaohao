@@ -33,13 +33,13 @@ func main() {
 
 	db.InitDb()
 
-	// spider.AutoCreateFileDir()
+	spider.AutoCreateFileDir()
 
-	// titlelist := config.GetTitleList()
-	// for _, v := range titlelist {
-	// 	title := v
-	// 	go spider.NewSpider(title)
-	// }
+	titlelist := config.GetTitleList()
+	for _, v := range titlelist {
+		title := v
+		go spider.NewSpider(title)
+	}
 
 	go httpHandle.NewWebServer("1255")
 

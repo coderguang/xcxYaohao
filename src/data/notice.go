@@ -105,6 +105,14 @@ func AddOrUpdateRequireData(data *define.SRequireData) {
 	data.ShowMsg()
 }
 
+func RemoveRequireData(openid string) {
+	globalRequireData.Lock.Lock()
+	defer globalRequireData.Lock.Unlock()
+	if _, ok := globalCardData.Data[openid]; ok {
+		delete(globalCardData.Data, openid)
+	}
+}
+
 func AddRequireTimeLimits(openid string) {
 	globalRequireLimit.Lock.Lock()
 	defer globalRequireLimit.Lock.Unlock()
@@ -125,5 +133,28 @@ func AddRequireTimeLimits(openid string) {
 		newData.RequireDt = now
 		newData.LastRequireDt = now
 		globalRequireLimit.MapData[openid] = newData
+	}
+}
+
+func AddPhoneBind(phone string) {
+	globalPhoneLimit.Lock.Lock()
+	defer globalPhoneLimit.Lock.Unlock()
+	if v, ok := globalPhoneLimit.MapData[phone]; ok {
+		v++
+	} else {
+		globalPhoneLimit.MapData[phone] = 1
+	}
+}
+
+func DelPhoneBind(phone string) {
+	globalPhoneLimit.Lock.Lock()
+	defer globalPhoneLimit.Lock.Unlock()
+	if v, ok := globalPhoneLimit.MapData[phone]; ok {
+		v--
+		if 0 == v {
+			delete(globalPhoneLimit.MapData, phone)
+		}
+	} else {
+		sglog.Error("try to delete unbind phone,phon:", phone)
 	}
 }

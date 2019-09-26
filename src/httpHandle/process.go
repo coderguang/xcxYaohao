@@ -71,6 +71,15 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		case HTTP_ARGS_BIND_REQUIRE:
 			// ?op=require&city=guangzhou&code=0&card=1&phone=
 			requireRandomCode(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_BIND_CONFIRM:
+			// ?op=confirm&&code=0&data=
+			confirmRandomCode(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_BIND_CANCEL:
+			// ?op=cancel&&code=0
+			cancelBind(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_SHARE:
+			// ?op=share&&code=
+			share(r, city, openId.Openid, returnData)
 
 		}
 	}

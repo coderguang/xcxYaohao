@@ -20,6 +20,7 @@ const (
 	HTTP_ARGS_BIND_PHONE     string = "phone"
 	HTTP_ARGS_BIND_CARD_TYPE string = "card"
 	HTTP_ARGS_BIND_CODE      string = "bindCode"
+	HTTP_ARGS_DATA           string = "data"
 )
 
 const (

@@ -153,7 +153,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		randomCode = newRequireData.RandomNum
 		data.AddOrUpdateRequireData(newRequireData)
 	}
-	
+
 	return randomCode, YAOHAO_OK
 }
 
@@ -207,4 +207,61 @@ func checkCodeValid(title string, code string) bool {
 		return true
 	}
 	return false
+}
+
+func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeError {
+	oldData := data.GetRequireData(token)
+
+	if oldData == nil {
+		sglog.Debug("no require ,title:,token:,randomCode:", token, randomCode)
+		return YAOHAO_ERR_CONFIRM_NOT_REQUIRE
+	}
+
+	now := sgtime.New()
+	distance := sgtime.GetTotalSecond(now) - sgtime.GetTotalSecond(sgtime.TransfromTimeToDateTime(oldData.RequireDt))
+	if distance <= int64(define.YAOHAO_NOTICE_REQUIRE_VALID_TIME) {
+		if oldData.Status == int(define.YaoHaoNoticeRequireStatus_Answer_Complete) {
+			sglog.Debug("had answer already ,title:,token:,randomCode:", token, randomCode)
+			return YAOHAO_ERR_REQUIRE_HAD_CONFIRM
+		}
+	} else {
+		return YAOHAO_ERR_HTTP_RANDOM_CODE_TIME_OUT
+	}
+	if oldData.AnswerTimes >= define.YAOHAO_NOTICE_CONFIRM_TIMES {
+		return YAOHAO_ERR_CONFIRM_MORE_TIMES
+	}
+	oldData.AnswerTimes++
+	if oldData.RandomNum != randomCode {
+		sglog.Debug("error randomcode ,title:,token:,randomCode:", token, randomCode)
+		return YAOHAO_ERR_CONFIRM_RANDOMCODE
+	}
+	//验证通过
+
+	existData, err := data.GetNoticeData(token)
+	if err != nil {
+		return YAOHAO_ERR_OPEN_ID_PARAM_NUM
+	}
+	if existData.Status == define.YAOHAO_NOTICE_STATUS_GM_LIMIT {
+		return YAOHAO_ERR_GM_LIMIT
+	}
+
+	if existData.IsStillValid() {
+		//仍在有效期
+		data.DelPhoneBind(existData.Phone)
+		data.AddPhoneBind(oldData.Phone)
+	}
+	//更改数据
+	existData.Code = oldData.Code
+	existData.Phone = oldData.Phone
+	firstOfMonth := time.Date(now.Year(), now.Month(), 0, 0, 0, 0, 0, now.Location())
+	firstOfMonth.AddDate(0, oldData.LeftTime, 0)
+	existData.EndDt = firstOfMonth
+	existData.CardType = oldData.CardType
+	existData.Desc = ""
+	existData.RenewTimes++
+	existData.Status = define.YAOHAO_NOTICE_STATUS_NORMAL
+
+	data.RemoveRequireData(token)
+
+	return YAOHAO_OK
 }

@@ -44,10 +44,27 @@ func requireRandomCode(r *http.Request, city string, openId string, returnData m
 }
 
 func confirmRandomCode(r *http.Request, city string, openId string, returnData map[string]interface{}) {
-
+	randomCode := r.FormValue(HTTP_ARGS_DATA)
+	errcode := confirmRandomCodeFromClient(openId, randomCode)
+	returnData[HTTP_RETURN_ERR_CODE] = errcode
 }
 
 func cancelBind(r *http.Request, city string, openId string, returnData map[string]interface{}) {
+	existData, err := data.GetNoticeData(openId)
+	if err != nil {
+		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NOT_BIND_DATA
+		return
+	}
+	if existData.Status == define.YAOHAO_NOTICE_STATUS_NOT_BIND {
+		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NOT_BIND_DATA
+		return
+	}
+	if existData.Status != define.YAOHAO_NOTICE_STATUS_NORMAL {
+		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_STATUS_NOT_NORMAL
+		return
+	}
+	data.DelPhoneBind(existData.Phone)
+	existData.Status = define.YAOHAO_NOTICE_STATUS_CANCEL
 
 }
 

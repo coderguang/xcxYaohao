@@ -80,7 +80,6 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		case HTTP_ARGS_SHARE:
 			// ?op=share&&code=
 			share(r, city, openId.Openid, returnData)
-
 		}
 	}
 }

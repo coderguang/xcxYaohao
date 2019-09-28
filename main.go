@@ -4,6 +4,7 @@ import (
 	"log"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
+	"xcxYaohao/src/db"
 	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/spider"
 
@@ -29,23 +30,19 @@ func main() {
 	config.InitCfg()
 	data.InitWxOpenIdCfg()
 
-	httpHandle.TestLuck()
+	db.InitDb()
 
-	//ttpHandle.TestSms()
+	spider.AutoCreateFileDir()
 
-	// db.InitDb()
+	titlelist := config.GetTitleList()
+	for _, v := range titlelist {
+		title := v
+		go spider.NewSpider(title)
+	}
 
-	// spider.AutoCreateFileDir()
+	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
 
-	// titlelist := config.GetTitleList()
-	// for _, v := range titlelist {
-	// 	title := v
-	// 	go spider.NewSpider(title)
-	// }
-
-	//go httpHandle.NewWebServer(config.GetUtilCfg().Port)
-
-	// go spider.InitClear()
+	go spider.InitClear()
 
 	RegistCmd()
 	sgcmd.StartCmdWaitInputLoop()

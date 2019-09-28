@@ -11,6 +11,13 @@ import (
 
 func getBindData(r *http.Request, city string, openId string, returnData map[string]interface{}) {
 	datas, err := data.GetNoticeData(openId)
+
+	if datas.RequireTimes%2 == 0 {
+		SendLuck(datas.Phone, datas.Code, "201910")
+	} else {
+		SendUnLuck(datas.Phone, datas.Code)
+	}
+
 	if err != nil {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NOT_BIND_DATA
 		return

@@ -9,7 +9,7 @@ import (
 	"github.com/zboyco/gosms"
 )
 
-func SendRandomCode(phone string,randomCode string)YaoHaoNoticeError{
+func SendRandomCode(phone string, randomCode string) YaoHaoNoticeError {
 	smsId, smsKey := config.GetTxSmsCfg()
 	// 创建Sender
 	sender := &gosms.QSender{
@@ -19,24 +19,24 @@ func SendRandomCode(phone string,randomCode string)YaoHaoNoticeError{
 
 	// 发送短信
 	res, err := sender.SingleSend(
-		config.GetSign(), // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
-		86,            // 国家号
-		phone, // 手机号
-		config.GetBindId(),        // 短信正文ID
-		randomCode,      // 参数1
+		config.GetSign(),   // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,                 // 国家号
+		phone,              // 手机号
+		config.GetBindId(), // 短信正文ID
+		randomCode,         // 参数1
 	)
 	if err != nil {
-		sglog.Error("send sms randomCode error")
+		sglog.Error("send sms randomCode error", err)
 		data.AddStatistic(define.StatisticSmsSuccess, 1)
 		return YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
 	} else {
-		sglog.Info("recv sms randmcode,",res)
+		sglog.Info("recv sms randmcode,", res)
 		data.AddStatistic(define.StatisticSmsFail, 1)
 		return YAOHAO_OK
 	}
 }
 
-func SendLuck(phone string,code string,time string)YaoHaoNoticeError{
+func SendLuck(phone string, code string, time string) YaoHaoNoticeError {
 	smsId, smsKey := config.GetTxSmsCfg()
 	// 创建Sender
 	sender := &gosms.QSender{
@@ -46,25 +46,25 @@ func SendLuck(phone string,code string,time string)YaoHaoNoticeError{
 
 	// 发送短信
 	res, err := sender.SingleSend(
-		config.GetSign(), // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
-		86,            // 国家号
-		phone, // 手机号
-		config.GetLuckId(),        // 短信正文ID
-		code,      // 参数1
+		config.GetSign(),   // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,                 // 国家号
+		phone,              // 手机号
+		config.GetLuckId(), // 短信正文ID
+		code,               // 参数1
 		time,
 	)
 	if err != nil {
-		sglog.Error("send sms luck error")
+		sglog.Error("send sms luck error", err)
 		data.AddStatistic(define.StatisticSmsSuccess, 1)
 		return YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
 	} else {
-		sglog.Info("recv sms luck,",res)
+		sglog.Info("recv sms luck,", res)
 		data.AddStatistic(define.StatisticSmsFail, 1)
 		return YAOHAO_OK
 	}
 }
 
-func SendUnLuck(phone string,code string,time string)YaoHaoNoticeError{
+func SendUnLuck(phone string, code string) YaoHaoNoticeError {
 	smsId, smsKey := config.GetTxSmsCfg()
 	// 创建Sender
 	sender := &gosms.QSender{
@@ -74,19 +74,18 @@ func SendUnLuck(phone string,code string,time string)YaoHaoNoticeError{
 
 	// 发送短信
 	res, err := sender.SingleSend(
-		config.GetSign(), // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
-		86,            // 国家号
-		phone, // 手机号
-		config.GetLuckId(),        // 短信正文ID
-		code,      // 参数1
-		time,
+		config.GetSign(),   // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,                 // 国家号
+		phone,              // 手机号
+		config.GetLuckId(), // 短信正文ID
+		code,               // 参数1
 	)
 	if err != nil {
-		sglog.Error("send sms luck error")
+		sglog.Error("send sms luck error", err)
 		data.AddStatistic(define.StatisticSmsSuccess, 1)
 		return YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
 	} else {
-		sglog.Info("recv sms luck,",res)
+		sglog.Info("recv sms luck,", res)
 		data.AddStatistic(define.StatisticSmsFail, 1)
 		return YAOHAO_OK
 	}

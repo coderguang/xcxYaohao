@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
+	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgtime"
@@ -54,7 +55,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
 		_, err := data.GetNoticeData(openId.Openid)
 		if err != nil {
-			data.AddStatistic(data.StatisticNewOpenTimes, 1)
+			data.AddStatistic(define.StatisticNewOpenTimes, 1)
 		}
 	}
 

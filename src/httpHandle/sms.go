@@ -1,12 +1,15 @@
 package httpHandle
 
-import "xcxYaohao/src/data"
+import (
+	"xcxYaohao/src/data"
+	"xcxYaohao/src/define"
+)
 
 func sendConfirmMsg(phone string, randomCode string) YaoHaoNoticeError {
 	return YAOHAO_OK
 }
 
 func sendCommonSms() {
-	data.AddStatistic(data.StatisticSmsSuccess, 1)
-	data.AddStatistic(data.StatisticSmsFail, 1)
+	data.AddStatistic(define.StatisticSmsSuccess, 1)
+	data.AddStatistic(define.StatisticSmsFail, 1)
 }

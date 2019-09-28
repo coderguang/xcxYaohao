@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
+	"xcxYaohao/src/define"
 )
 
 func requireLastestTime(r *http.Request, city string, openId string, returnData map[string]interface{}) {
@@ -14,5 +15,5 @@ func requireLastestTime(r *http.Request, city string, openId string, returnData 
 	existData := data.AddOpenXcxTimes(openId)
 	db.UpdateNoticeData(existData)
 
-	data.AddStatistic(data.StatisticOpenTimes, 1)
+	data.AddStatistic(define.StatisticOpenTimes, 1)
 }

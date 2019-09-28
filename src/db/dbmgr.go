@@ -38,6 +38,12 @@ func InitDb() {
 	initAndLoadCardData()
 
 	initAndLoadNoticeData()
+
+	err = globalDb.AutoMigrate(define.StatisticsData{}).Error
+	if err != nil {
+		sglog.Error("init statis data error")
+	}
+
 }
 
 func initAndLoadDownloadHistory() {

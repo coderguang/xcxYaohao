@@ -154,8 +154,8 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		randomCode = newRequireData.RandomNum
 		data.AddOrUpdateRequireData(newRequireData)
 	}
-
-	data.AddStatistic(data.StatisticRandomCodeSend, 1)
+	data.AddRequireTimeLimits(openid)
+	data.AddStatistic(define.StatisticRandomCodeSend, 1)
 	return randomCode, YAOHAO_OK
 }
 
@@ -257,8 +257,7 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 	existData.Code = oldData.Code
 	existData.Phone = oldData.Phone
 	firstOfMonth := time.Date(now.Year(), now.Month(), 0, 0, 0, 0, 0, now.Location())
-	firstOfMonth.AddDate(0, oldData.LeftTime, 0)
-	existData.EndDt = firstOfMonth
+	existData.EndDt = firstOfMonth.AddDate(0, oldData.LeftTime, 0)
 	existData.CardType = oldData.CardType
 	existData.Desc = ""
 	existData.RenewTimes++
@@ -268,7 +267,7 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 
 	db.UpdateNoticeData(existData)
 
-	data.AddStatistic(data.StatisticBindTimes, 1)
+	data.AddStatistic(define.StatisticBindTimes, 1)
 
 	return YAOHAO_OK
 }

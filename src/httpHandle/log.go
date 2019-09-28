@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
+	"xcxYaohao/src/define"
 )
 
 func share(r *http.Request, city string, openId string, returnData map[string]interface{}) {
@@ -15,5 +16,5 @@ func share(r *http.Request, city string, openId string, returnData map[string]in
 	existData.ShareTimes++
 	db.UpdateNoticeData(existData)
 
-	data.AddStatistic(data.StatisticShareTime, 1)
+	data.AddStatistic(define.StatisticShareTime, 1)
 }

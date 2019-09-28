@@ -70,3 +70,11 @@ func UpdateNoticeData(data *define.NoticeData) error {
 	}(data)
 	return nil
 }
+
+func UpdateStatisData(data *define.StatisticsData) error {
+	err := globalDb.Create(data).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

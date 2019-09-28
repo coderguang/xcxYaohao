@@ -29,6 +29,7 @@ func main() {
 
 	config.InitCfg()
 	data.InitWxOpenIdCfg()
+
 	db.InitDb()
 
 	spider.AutoCreateFileDir()
@@ -41,7 +42,7 @@ func main() {
 
 	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
 
-	go data.InitClear()
+	go spider.InitClear()
 
 	RegistCmd()
 	sgcmd.StartCmdWaitInputLoop()

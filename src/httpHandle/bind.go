@@ -68,7 +68,7 @@ func cancelBind(r *http.Request, city string, openId string, returnData map[stri
 	existData.Status = define.YAOHAO_NOTICE_STATUS_CANCEL
 	db.UpdateNoticeData(existData)
 
-	data.AddStatistic(data.StatisticBindCancel, 1)
+	data.AddStatistic(define.StatisticBindCancel, 1)
 
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
 }

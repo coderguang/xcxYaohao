@@ -48,7 +48,7 @@ func InitCardDataFromDb(datas []define.CardData) {
 
 		if cityMap, ok := globalCardData.Data[v.Title]; ok {
 			if codeList, ok := cityMap[v.Code]; ok {
-				codeList = append(codeList, &tmpV)
+				cityMap[v.Code] = append(codeList, &tmpV)
 			} else {
 				tmp := []*define.CardData{&tmpV}
 				cityMap[v.Code] = tmp
@@ -79,7 +79,7 @@ func InitCardDataFromDb(datas []define.CardData) {
 		}
 		if cityMap, ok := globalCardDataByName.Data[v.Title]; ok {
 			if namelist, ok := cityMap[v.Name]; ok {
-				namelist = append(namelist, &tmpV)
+				cityMap[v.Name] = append(namelist, &tmpV)
 			} else {
 				tmp := []*define.CardData{&tmpV}
 				cityMap[v.Name] = tmp

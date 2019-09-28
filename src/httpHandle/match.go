@@ -1,7 +1,6 @@
 package httpHandle
 
 import (
-	"encoding/json"
 	"net/http"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/define"
@@ -14,9 +13,10 @@ func matchData(r *http.Request, city string, openId string, returnData map[strin
 		for _, vv := range v {
 			tmplist = append(tmplist, vv.CardDataToClient())
 		}
-		jsonBytes, _ := json.Marshal(tmplist)
+		//jsonBytes, _ := json.Marshal(tmplist)
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
-		returnData[HTTP_RETURN_Data] = string(jsonBytes)
+		//returnData[HTTP_RETURN_Data] = string(jsonBytes)
+		returnData[HTTP_RETURN_Data] = tmplist
 	} else {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NO_MATCH_DATA
 	}

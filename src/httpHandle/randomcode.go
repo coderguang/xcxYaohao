@@ -250,8 +250,9 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 	if existData.IsStillValid() {
 		//仍在有效期
 		data.DelPhoneBind(existData.Phone)
-		data.AddPhoneBind(oldData.Phone)
 	}
+	data.AddPhoneBind(oldData.Phone)
+
 	//更改数据
 	existData.Code = oldData.Code
 	existData.Phone = oldData.Phone

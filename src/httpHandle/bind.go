@@ -69,6 +69,8 @@ func cancelBind(r *http.Request, city string, openId string, returnData map[stri
 	db.UpdateNoticeData(existData)
 
 	data.AddStatistic(data.StatisticBindCancel, 1)
+
+	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
 }
 
 func reBindOneKey(r *http.Request, city string, openId string, returnData map[string]interface{}) {

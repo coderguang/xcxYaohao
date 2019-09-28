@@ -58,7 +58,7 @@ func GetNoticeData(openid string) (*define.NoticeData, error) {
 	if v, ok := globalNoticeData.MapData[openid]; ok {
 		return v, nil
 	}
-	return nil, errors.New("no bind data")
+	return nil, errors.New("no this data")
 }
 
 func AddOpenXcxTimes(openid string) *define.NoticeData {
@@ -131,8 +131,8 @@ func AddOrUpdateRequireData(data *define.SRequireData) {
 func RemoveRequireData(openid string) {
 	globalRequireData.Lock.Lock()
 	defer globalRequireData.Lock.Unlock()
-	if _, ok := globalCardData.Data[openid]; ok {
-		delete(globalCardData.Data, openid)
+	if _, ok := globalRequireData.Data[openid]; ok {
+		delete(globalRequireData.Data, openid)
 	}
 }
 

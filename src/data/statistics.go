@@ -28,7 +28,7 @@ var (
 func init() {
 	globalStatics = new(StatisticsData)
 	globalStatics.Reset()
-	staticStr = []string{"default", "打开次数", "新用户", "请求次数", "验证码请求次数", "短信成功", "短信失败", "绑定人数", "取消绑定", "分享", "unknow", "", "", "", "", ""}
+	staticStr = []string{"打开次数", "新用户", "请求次数", "验证码请求次数", "短信成功", "短信失败", "绑定人数", "取消绑定", "分享", "unknow", "", "", "", "", ""}
 }
 
 type StatisticsData struct {
@@ -61,7 +61,7 @@ func AddStatistic(logType int, addTimes int) {
 	globalStatics.Lock.Lock()
 	defer globalStatics.Lock.Unlock()
 	if v, ok := globalStatics.TimesData[logType]; ok {
-		v += addTimes
+		globalStatics.TimesData[logType] = v + addTimes
 	} else {
 		globalStatics.TimesData[logType] = addTimes
 	}

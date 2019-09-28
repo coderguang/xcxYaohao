@@ -33,9 +33,12 @@ func InitClear() {
 				delete(globalOpenIds.Data, k)
 			}
 		}
+		globalOpenIds.Lock.Unlock()
 		sglog.Info("clear openid data complete,user size:", len(idset), globalStatics)
 
 		//sgmail.SendMail("xcxYaohao statistic", []string{config.GetUtilCfg().Receiver}, globalStatics.String())
+
+		globalStatics.Reset()
 
 	}
 }

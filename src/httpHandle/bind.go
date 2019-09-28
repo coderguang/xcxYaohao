@@ -10,21 +10,21 @@ import (
 )
 
 func getBindData(r *http.Request, city string, openId string, returnData map[string]interface{}) {
-	data, err := data.GetNoticeData(openId)
+	datas, err := data.GetNoticeData(openId)
 	if err != nil {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NOT_BIND_DATA
 		return
 	}
-	if data.Status == define.YAOHAO_NOTICE_STATUS_NOT_BIND {
+	if datas.Status == define.YAOHAO_NOTICE_STATUS_NOT_BIND {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NOT_BIND_DATA
 		return
 	}
 
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
-	returnData[HTTP_RETURN_STATUS] = data.Status
-	returnData[HTTP_ARGS_CODE] = data.Code
-	returnData[HTTP_ARGS_BIND_PHONE] = data.Phone
-	returnData[HTTP_RETURN_TIME] = sgtime.YearString(sgtime.TransfromTimeToDateTime(data.EndDt)) + sgtime.MonthString(sgtime.TransfromTimeToDateTime(data.EndDt))
+	returnData[HTTP_RETURN_STATUS] = datas.Status
+	returnData[HTTP_ARGS_CODE] = datas.Code
+	returnData[HTTP_ARGS_BIND_PHONE] = datas.Phone
+	returnData[HTTP_RETURN_TIME] = sgtime.YearString(sgtime.TransfromTimeToDateTime(datas.EndDt)) + sgtime.MonthString(sgtime.TransfromTimeToDateTime(datas.EndDt))
 }
 
 func requireRandomCode(r *http.Request, city string, openId string, returnData map[string]interface{}) {

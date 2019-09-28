@@ -155,6 +155,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		data.AddOrUpdateRequireData(newRequireData)
 	}
 
+	data.AddStatistic(data.StatisticRandomCodeSend, 1)
 	return randomCode, YAOHAO_OK
 }
 
@@ -265,6 +266,8 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 	data.RemoveRequireData(token)
 
 	db.UpdateNoticeData(existData)
+
+	data.AddStatistic(data.StatisticBindTimes, 1)
 
 	return YAOHAO_OK
 }

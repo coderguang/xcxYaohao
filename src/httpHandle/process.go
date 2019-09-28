@@ -51,6 +51,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			return
 		}
 		data.AddWxOpenId(openId)
+		data.AddStatistic(data.StatisticNewOpenTimes, 1)
 	}
 
 	//openId.Openid = loginCode

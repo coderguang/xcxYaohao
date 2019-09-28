@@ -36,21 +36,22 @@ const (
 )
 
 type NoticeData struct {
-	Token        string `gorm:"primary_key;type:varchar(512)"`
-	Status       int
-	Name         string
-	Title        string
-	CardType     int
-	Code         string
-	Phone        string
-	EndDt        time.Time
-	Desc         string
-	RenewTimes   int
-	NoticeTimes  int
-	RequireTimes int
-	FinalLogin   time.Time
-	CreateDt     time.Time
-	ShareTimes   int
+	Token         string `gorm:"primary_key;type:varchar(512)"`
+	Status        int
+	Name          string
+	Title         string
+	CardType      int
+	Code          string
+	Phone         string
+	EndDt         time.Time
+	Desc          string
+	RenewTimes    int
+	NoticeTimes   int
+	RequireTimes  int
+	FinalLoginDt  time.Time
+	CreateDt      time.Time
+	FinalNoticeDt time.Time
+	ShareTimes    int
 }
 
 type SecureNoticeData struct {

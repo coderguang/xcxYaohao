@@ -67,6 +67,8 @@ func cancelBind(r *http.Request, city string, openId string, returnData map[stri
 	data.DelPhoneBind(existData.Phone)
 	existData.Status = define.YAOHAO_NOTICE_STATUS_CANCEL
 	db.UpdateNoticeData(existData)
+
+	data.AddStatistic(data.StatisticBindCancel, 1)
 }
 
 func reBindOneKey(r *http.Request, city string, openId string, returnData map[string]interface{}) {

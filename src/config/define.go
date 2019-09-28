@@ -51,6 +51,8 @@ func InitCfg() {
 	}
 
 	sglog.Info("load spider config ok,size=", len(globalCfgs.Data))
+
+	initUtilCfg()
 }
 
 func GetSpiderCfg(title string) (SpiderCfg, error) {

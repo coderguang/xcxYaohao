@@ -65,10 +65,11 @@ func AddOpenXcxTimes(openid string) *define.NoticeData {
 	data, err := GetNoticeData(openid)
 	if err != nil {
 		data = new(define.NoticeData)
-		data.Token = openid 
+		data.Token = openid
 		data.CreateDt = time.Now()
 		data.RequireTimes = 1
 		data.Status = define.YAOHAO_NOTICE_STATUS_NOT_BIND
+		data.FinalNoticeDt = time.Now()
 
 		globalNoticeData.Lock.Lock()
 		defer globalNoticeData.Lock.Unlock()
@@ -78,7 +79,7 @@ func AddOpenXcxTimes(openid string) *define.NoticeData {
 	} else {
 		data.RequireTimes++
 	}
-	data.FinalLogin = time.Now()
+	data.FinalLoginDt = time.Now()
 	return data
 }
 

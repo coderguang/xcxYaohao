@@ -28,9 +28,7 @@ func main() {
 	sgserver.StartServer(sgserver.ServerTypeMail)
 
 	config.InitCfg()
-
 	data.InitWxOpenIdCfg()
-
 	db.InitDb()
 
 	spider.AutoCreateFileDir()
@@ -41,7 +39,9 @@ func main() {
 		go spider.NewSpider(title)
 	}
 
-	go httpHandle.NewWebServer("1255")
+	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
+
+	go data.InitClear()
 
 	RegistCmd()
 	sgcmd.StartCmdWaitInputLoop()

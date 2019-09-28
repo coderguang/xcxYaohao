@@ -20,4 +20,6 @@ func matchData(r *http.Request, city string, openId string, returnData map[strin
 	} else {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NO_MATCH_DATA
 	}
+
+	data.AddStatistic(data.StatisticRequireTimes, 1)
 }

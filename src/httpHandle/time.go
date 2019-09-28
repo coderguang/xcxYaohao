@@ -13,4 +13,6 @@ func requireLastestTime(r *http.Request, city string, openId string, returnData 
 
 	existData := data.AddOpenXcxTimes(openId)
 	db.UpdateNoticeData(existData)
+
+	data.AddStatistic(data.StatisticOpenTimes, 1)
 }

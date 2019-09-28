@@ -1,15 +1,93 @@
 package httpHandle
 
 import (
+	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/define"
+
+	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/zboyco/gosms"
 )
 
-func sendConfirmMsg(phone string, randomCode string) YaoHaoNoticeError {
-	return YAOHAO_OK
+func SendRandomCode(phone string,randomCode string)YaoHaoNoticeError{
+	smsId, smsKey := config.GetTxSmsCfg()
+	// 创建Sender
+	sender := &gosms.QSender{
+		AppID:  smsId,  // appid
+		AppKey: smsKey, // appkey
+	}
+
+	// 发送短信
+	res, err := sender.SingleSend(
+		config.GetSign(), // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,            // 国家号
+		phone, // 手机号
+		config.GetBindId(),        // 短信正文ID
+		randomCode,      // 参数1
+	)
+	if err != nil {
+		sglog.Error("send sms randomCode error")
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		return YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
+	} else {
+		sglog.Info("recv sms randmcode,",res)
+		data.AddStatistic(define.StatisticSmsFail, 1)
+		return YAOHAO_OK
+	}
 }
 
-func sendCommonSms() {
-	data.AddStatistic(define.StatisticSmsSuccess, 1)
-	data.AddStatistic(define.StatisticSmsFail, 1)
+func SendLuck(phone string,code string,time string)YaoHaoNoticeError{
+	smsId, smsKey := config.GetTxSmsCfg()
+	// 创建Sender
+	sender := &gosms.QSender{
+		AppID:  smsId,  // appid
+		AppKey: smsKey, // appkey
+	}
+
+	// 发送短信
+	res, err := sender.SingleSend(
+		config.GetSign(), // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,            // 国家号
+		phone, // 手机号
+		config.GetLuckId(),        // 短信正文ID
+		code,      // 参数1
+		time,
+	)
+	if err != nil {
+		sglog.Error("send sms luck error")
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		return YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
+	} else {
+		sglog.Info("recv sms luck,",res)
+		data.AddStatistic(define.StatisticSmsFail, 1)
+		return YAOHAO_OK
+	}
+}
+
+func SendUnLuck(phone string,code string,time string)YaoHaoNoticeError{
+	smsId, smsKey := config.GetTxSmsCfg()
+	// 创建Sender
+	sender := &gosms.QSender{
+		AppID:  smsId,  // appid
+		AppKey: smsKey, // appkey
+	}
+
+	// 发送短信
+	res, err := sender.SingleSend(
+		config.GetSign(), // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,            // 国家号
+		phone, // 手机号
+		config.GetLuckId(),        // 短信正文ID
+		code,      // 参数1
+		time,
+	)
+	if err != nil {
+		sglog.Error("send sms luck error")
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		return YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
+	} else {
+		sglog.Info("recv sms luck,",res)
+		data.AddStatistic(define.StatisticSmsFail, 1)
+		return YAOHAO_OK
+	}
 }

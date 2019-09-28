@@ -11,8 +11,14 @@ var (
 )
 
 type UtilCfg struct {
+	BindID   int    `json:"bindId"`
+	LuckID   int    `json:"luckId"`
 	Port     string `json:"port"`
 	Receiver string `json:"receiver"`
+	Sign     string `json:"sign"`
+	Tcid     string `json:"tcid"`
+	Tckey    string `json:"tckey"`
+	UnluckID int    `json:"unluckId"`
 }
 
 func initUtilCfg() {
@@ -27,4 +33,24 @@ func initUtilCfg() {
 
 func GetUtilCfg() *UtilCfg {
 	return globalUtilCfg
+}
+
+func GetTxSmsCfg() (string, string) {
+	return globalUtilCfg.Tcid, globalUtilCfg.Tckey
+}
+
+func GetSign()string{
+	return globalUtilCfg.Sign
+}
+
+func GetBindId()int{
+	return globalUtilCfg.BindID
+}
+
+func GetLuckId()int{
+	return globalUtilCfg.LuckID   
+}
+
+func GetUnLuckId()int{
+	return globalUtilCfg.UnluckID 
 }

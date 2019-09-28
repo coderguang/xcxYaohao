@@ -132,7 +132,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 		tmpRandomCode := sgstring.RandNumStringRunes(define.YAOHAO_NOTICE_RANDOM_NUM_LENGTH)
 
-		smsCode := sendConfirmMsg(phone, tmpRandomCode)
+		smsCode := SendRandomCode(phone, tmpRandomCode)
 
 		if YAOHAO_OK != smsCode {
 			return randomCode, smsCode

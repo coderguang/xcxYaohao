@@ -74,11 +74,11 @@ func SendUnLuck(phone string, code string) YaoHaoNoticeError {
 
 	// 发送短信
 	res, err := sender.SingleSend(
-		config.GetSign(),   // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
-		86,                 // 国家号
-		phone,              // 手机号
-		config.GetLuckId(), // 短信正文ID
-		code,               // 参数1
+		config.GetSign(),     // 短信签名，此处应填写审核通过的签名内容，非签名 ID，如果使用默认签名，该字段填 ""
+		86,                   // 国家号
+		phone,                // 手机号
+		config.GetUnLuckId(), // 短信正文ID
+		code,                 // 参数1
 	)
 	if err != nil {
 		sglog.Error("send sms luck error", err)

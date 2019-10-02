@@ -11,6 +11,20 @@ import (
 	"github.com/coderguang/GameEngine_go/sgstring"
 )
 
+func GetCityName(title string) string {
+	switch title {
+	case "guangzhou":
+		return "广州市"
+	case "shenzhen":
+		return "深圳市"
+	case "hangzhou":
+		return "杭州市"
+	case "tianjin":
+		return "天津市"
+	}
+	return "未知"
+}
+
 //筛选一个页面是否应该被访问
 func PageFliter(title, pageTitle string) bool {
 	switch title {

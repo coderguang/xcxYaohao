@@ -49,6 +49,10 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		return randomCode, YAOHAO_ERR_PHONE_BIND_TOO_MANY
 	}
 
+	if ok, _ := data.GetMatchData(title, code); ok {
+		return randomCode, YAOHAO_ERR_CODE_HAD_LUCK
+	}
+
 	existData, err := data.GetNoticeData(openid)
 	if err != nil {
 		return randomCode, YAOHAO_ERR_OPEN_ID_PARAM_NUM
@@ -103,7 +107,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 		tmpRandomCode := sgstring.RandNumStringRunes(define.YAOHAO_NOTICE_RANDOM_NUM_LENGTH)
 
-		smsCode := SendRandomCode(phone, tmpRandomCode)
+		smsCode := SendRandomCode(phone, title, code, tmpRandomCode)
 
 		if smsCode != YAOHAO_OK {
 			return randomCode, smsCode
@@ -132,7 +136,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 		tmpRandomCode := sgstring.RandNumStringRunes(define.YAOHAO_NOTICE_RANDOM_NUM_LENGTH)
 
-		smsCode := SendRandomCode(phone, tmpRandomCode)
+		smsCode := SendRandomCode(phone, title, code, tmpRandomCode)
 
 		if YAOHAO_OK != smsCode {
 			return randomCode, smsCode

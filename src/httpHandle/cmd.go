@@ -3,13 +3,14 @@ package httpHandle
 var testPhone string = "15711839048"
 
 func SendTestRandom(cmd []string) {
-	SendRandomCode(testPhone, "1311")
+	//SendRandomCode(testPhone, "guanzhou", "1234567890123", "1311")
+	SendRandomCode(testPhone, "guangzhou", "1234", "1311")
 }
 
 func SendTestLuck(cmd []string) {
-	SendLuck(testPhone, "123141414", "201909")
+	SendLuck(testPhone, "shenzhen", "201909")
 }
 
 func SendTestUnLuck(cmd []string) {
-	SendUnLuck(testPhone, "123141414")
+	SendUnLuck(testPhone, "hangzhou", "201912")
 }

@@ -71,6 +71,7 @@ const (
 	YAOHAO_ERR_WX_ERROR_CODE                                              //35 wx.login code error
 	YAOHAO_ERR_DO_NOT_THING                                               //36 default
 	YAOHAO_ERR_NO_MATCH_DATA                                              //37 not match code or name data
+	YAOHAO_ERR_CODE_HAD_LUCK                                              //38 已中签
 )
 
 func errorToStr(index YaoHaoNoticeError) string {

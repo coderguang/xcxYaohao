@@ -39,11 +39,31 @@ func InitDb() {
 
 	initAndLoadNoticeData()
 
+	initAndLoadFinalNoticeTime()
+
 	err = globalDb.AutoMigrate(define.StatisticsData{}).Error
 	if err != nil {
 		sglog.Error("init statis data error")
 	}
 
+}
+
+func initAndLoadFinalNoticeTime() {
+	err := globalDb.AutoMigrate(define.NoticeFinalTime{}).Error
+	if err != nil {
+		sglog.Error("initAndLoadFinalNoticeTime", err)
+	}
+
+	sglog.Info("init and load initAndLoadFinalNoticeTime data ok")
+
+	datas := []define.NoticeFinalTime{}
+	err = globalDb.Find(&datas).Error
+	if err != nil {
+		sglog.Error("initAndLoadFinalNoticeTime find error", err)
+	}
+	for _, v := range datas {
+		data.UpdateNoticeFinalTime(v.Title, v.Time)
+	}
 }
 
 func initAndLoadDownloadHistory() {

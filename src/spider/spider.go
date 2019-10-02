@@ -14,6 +14,7 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
+	"xcxYaohao/src/httpHandle"
 
 	"github.com/coderguang/GameEngine_go/sgfile"
 
@@ -226,6 +227,7 @@ func (spider *Spider) StartLoopSpider() {
 				if curMonthAllUpdate {
 					//
 					sglog.Info("current month data all updates!!!!!")
+					httpHandle.NoticeCurrentMonthDataUpdate(spider.cfg.Title, curTimeStr)
 					nextMonthDt := normalTime.AddDate(0, 1, 0)
 					timeInt = nextMonthDt.Sub(nowTime)
 				} else {
@@ -368,6 +370,7 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 
 	now := sgtime.New()
 	data.AddCardData(updateMap)
+	data.UpdateLastestInfo(spider.cfg.Title, cardType, memberType, timestr)
 	end := sgtime.New()
 	sglog.Info("update card data in member size:", updateNum, ",use time:", (sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)))
 

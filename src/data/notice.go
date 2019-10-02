@@ -12,10 +12,11 @@ import (
 )
 
 var (
-	globalNoticeData   *define.SecureNoticeData
-	globalRequireData  *define.SecureSRequireData
-	globalRequireLimit *define.SecureRequireLimit
-	globalPhoneLimit   *define.SecurePhoneLimit
+	globalNoticeData      *define.SecureNoticeData
+	globalRequireData     *define.SecureSRequireData
+	globalRequireLimit    *define.SecureRequireLimit
+	globalPhoneLimit      *define.SecurePhoneLimit
+	globalFinalNoticeData *define.SecureNoticeFinalTime
 )
 
 func init() {
@@ -23,11 +24,13 @@ func init() {
 	globalRequireData = new(define.SecureSRequireData)
 	globalRequireLimit = new(define.SecureRequireLimit)
 	globalPhoneLimit = new(define.SecurePhoneLimit)
+	globalFinalNoticeData = new(define.SecureNoticeFinalTime)
 
 	globalNoticeData.MapData = make(map[string]*define.NoticeData)
 	globalRequireData.Data = make(map[string]*define.SRequireData)
 	globalRequireLimit.MapData = make(map[string]*define.SRequireLimit)
 	globalPhoneLimit.MapData = make(map[string]int)
+	globalFinalNoticeData.Data = make(map[string]*define.NoticeFinalTime)
 }
 
 func InitNoticeDataFromDb(datas []define.NoticeData) {
@@ -180,4 +183,26 @@ func DelPhoneBind(phone string) {
 	} else {
 		sglog.Error("try to delete unbind phone,phon:", phone)
 	}
+}
+
+func UpdateNoticeFinalTime(title string, time string) {
+	globalFinalNoticeData.Lock.Lock()
+	globalFinalNoticeData.Lock.Unlock()
+	if v, ok := globalFinalNoticeData.Data[title]; ok {
+		v.Time = time
+	} else {
+		tmp := new(define.NoticeFinalTime)
+		tmp.Title = title
+		tmp.Time = time
+		globalFinalNoticeData.Data[title] = tmp
+	}
+}
+
+func GetNoticeFinalTime(title string) string {
+	globalFinalNoticeData.Lock.Lock()
+	globalFinalNoticeData.Lock.Unlock()
+	if v, ok := globalFinalNoticeData.Data[title]; ok {
+		return v.Time
+	}
+	return "201909"
 }

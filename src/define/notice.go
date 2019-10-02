@@ -130,3 +130,13 @@ type SecurePhoneLimit struct {
 	MapData map[string]int
 	Lock    sync.RWMutex
 }
+
+type NoticeFinalTime struct {
+	Title string `gorm:"primary_key"`
+	Time  string
+}
+
+type SecureNoticeFinalTime struct {
+	Data map[string]*NoticeFinalTime
+	Lock sync.RWMutex
+}

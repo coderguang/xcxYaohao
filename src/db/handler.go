@@ -78,3 +78,11 @@ func UpdateStatisData(data *define.StatisticsData) error {
 	}
 	return nil
 }
+
+func UpdateNoticeFinalData(data *define.NoticeFinalTime) error {
+	err := globalDb.Where(define.NoticeFinalTime{Title: data.Title}).Assign(define.NoticeFinalTime{Time: data.Time}).FirstOrCreate(data).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

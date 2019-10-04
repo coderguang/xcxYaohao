@@ -58,7 +58,7 @@ const (
 	YAOHAO_ERR_SMS_CLIENT                                                 //22 SMS错误
 	YAOHAO_ERR_SMS_PROCESS                                                //23 SMS错误
 	YAOHAO_ERR_SMS_OTHER                                                  //24 SMS错误
-	YAOHAO_ERR_SMS_RESULT_PARSE_ERROR                                     //25
+	YAOHAO_ERR_SMS_RESULT_PARSE_ERROR                                     //25 SMS发送失败
 	YAOHAO_ERR_YAOHAO_SERVER_INT_FORMAT                                   //26
 	YAOHAO_ERR_YAOHAO_SERVER_DATA_SIZE_NOT_MATCH                          //27
 	YAOHAO_ERR_YAOHAO_SERVER_TIME_NOT_MATCH                               //28

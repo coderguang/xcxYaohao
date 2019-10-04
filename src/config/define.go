@@ -4,6 +4,8 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/coderguang/GameEngine_go/sgtc/tcsms"
+
 	"github.com/coderguang/GameEngine_go/sgthread"
 
 	"github.com/coderguang/GameEngine_go/sglog"
@@ -53,6 +55,14 @@ func InitCfg() {
 	sglog.Info("load spider config ok,size=", len(globalCfgs.Data))
 
 	initUtilCfg()
+
+	tcCfg := sgcfg.GetServerCfgDir() + "tc_sms.json"
+	err = tcsms.InitTcSms(tcCfg)
+	if err != nil {
+		sglog.Error("tc sms config error,err:", err)
+		sgthread.DelayExit(2)
+	}
+	sglog.Info("tc sms init ok")
 }
 
 func GetSpiderCfg(title string) (SpiderCfg, error) {

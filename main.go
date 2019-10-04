@@ -6,6 +6,7 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/httpHandle"
+	"xcxYaohao/src/sms"
 	"xcxYaohao/src/spider"
 
 	"github.com/coderguang/GameEngine_go/sgcfg"
@@ -19,9 +20,9 @@ func RegistCmd() {
 	sgcmd.RegistCmd("TXT", "[\"TXT\",\"guangzhou\",\"1459152795388.txt\"]:get txt file and insert it to db", spider.ReadTxtFileToDb)
 	sgcmd.RegistCmd("DownloadStatus", "[\"DownloadStatus\",\"shenzhen\",\"http://xqctk.jtys.sz.gov.cn/attachment/20160328/1459152795388.pdf\",\"1\",]:change download status", spider.ChangeDownloadStatus)
 	sgcmd.RegistCmd("ShowLasteTime", "[\"ShowLasteTime\"] :show current", data.ShowLastestInfo)
-	sgcmd.RegistCmd("SendTestRandom", "[\"SendTestRandom\"] :send  random", httpHandle.SendTestRandom)
-	sgcmd.RegistCmd("SendTestLuck", "[\"SendTestLuck\"] :send  luck", httpHandle.SendTestLuck)
-	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", httpHandle.SendTestUnLuck)
+	sgcmd.RegistCmd("SendTestRandom", "[\"SendTestRandom\"] :send  random", sms.SendTestRandom)
+	sgcmd.RegistCmd("SendTestLuck", "[\"SendTestLuck\"] :send  luck", sms.SendTestLuck)
+	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
 }
 
 func main() {
@@ -31,6 +32,7 @@ func main() {
 	sgserver.StartServer(sgserver.ServerTypeMail)
 
 	config.InitCfg()
+	
 	data.InitWxOpenIdCfg()
 
 	db.InitDb()

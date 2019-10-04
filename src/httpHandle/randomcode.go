@@ -6,6 +6,7 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
+	"xcxYaohao/src/sms"
 
 	"github.com/coderguang/GameEngine_go/sgstring"
 	"github.com/coderguang/GameEngine_go/sgtime"
@@ -107,10 +108,10 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 		tmpRandomCode := sgstring.RandNumStringRunes(define.YAOHAO_NOTICE_RANDOM_NUM_LENGTH)
 
-		smsCode := SendRandomCode(phone, title, code, tmpRandomCode)
+		err = sms.SendRandomCode(phone, title, code, tmpRandomCode)
 
-		if smsCode != YAOHAO_OK {
-			return randomCode, smsCode
+		if err != nil {
+			return randomCode, YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
 		}
 
 		oldData.RequireDt = time.Now()
@@ -136,10 +137,10 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 		tmpRandomCode := sgstring.RandNumStringRunes(define.YAOHAO_NOTICE_RANDOM_NUM_LENGTH)
 
-		smsCode := SendRandomCode(phone, title, code, tmpRandomCode)
+		err = sms.SendRandomCode(phone, title, code, tmpRandomCode)
 
-		if YAOHAO_OK != smsCode {
-			return randomCode, smsCode
+		if err != nil {
+			return randomCode, YAOHAO_ERR_SMS_RESULT_PARSE_ERROR
 		}
 
 		newRequireData := new(define.SRequireData)

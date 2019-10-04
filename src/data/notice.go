@@ -185,16 +185,18 @@ func DelPhoneBind(phone string) {
 	}
 }
 
-func UpdateNoticeFinalTime(title string, time string) {
+func UpdateNoticeFinalTime(title string, time string) *define.NoticeFinalTime {
 	globalFinalNoticeData.Lock.Lock()
 	globalFinalNoticeData.Lock.Unlock()
 	if v, ok := globalFinalNoticeData.Data[title]; ok {
 		v.Time = time
+		return v
 	} else {
 		tmp := new(define.NoticeFinalTime)
 		tmp.Title = title
 		tmp.Time = time
 		globalFinalNoticeData.Data[title] = tmp
+		return tmp
 	}
 }
 
@@ -205,4 +207,28 @@ func GetNoticeFinalTime(title string) string {
 		return v.Time
 	}
 	return "201909"
+}
+
+func GetSmsNoticeData(title string) ([]string, []string) {
+	globalNoticeData.Lock.Lock()
+	defer globalNoticeData.Lock.Unlock()
+	globalCardData.Lock.Lock()
+	defer globalCardData.Lock.Unlock()
+	luckList := []string{}
+	unluckList := []string{}
+
+	if cityCards, ok := globalCardData.Data[title]; ok {
+		for k, v := range globalNoticeData.MapData {
+			if v.Title != title {
+				continue
+			}
+			if _, luckFlag := cityCards[v.Code]; luckFlag {
+				luckList = append(luckList, k)
+			} else {
+				unluckList = append(unluckList, k)
+			}
+		}
+	}
+
+	return luckList, unluckList
 }

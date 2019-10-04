@@ -4,6 +4,7 @@ import (
 	"log"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
+	"xcxYaohao/src/dataMove"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/sms"
@@ -23,6 +24,8 @@ func RegistCmd() {
 	sgcmd.RegistCmd("SendTestRandom", "[\"SendTestRandom\"] :send  random", sms.SendTestRandom)
 	sgcmd.RegistCmd("SendTestLuck", "[\"SendTestLuck\"] :send  luck", sms.SendTestLuck)
 	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
+	sgcmd.RegistCmd("DataMove", "[\"DataMove\"] :move old data to new ", dataMove.InitDb)
+
 }
 
 func main() {
@@ -32,7 +35,7 @@ func main() {
 	sgserver.StartServer(sgserver.ServerTypeMail)
 
 	config.InitCfg()
-	
+
 	data.InitWxOpenIdCfg()
 
 	db.InitDb()

@@ -47,7 +47,6 @@ func UpdateNoticeData(data *define.NoticeData) error {
 		// 	ShareTimes:   data.ShareTimes}).FirstOrCreate(data).Error
 
 		err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(map[string]interface{}{
-			"token":           data.Token,
 			"status":          data.Status,
 			"name":            data.Name,
 			"title":           data.Title,

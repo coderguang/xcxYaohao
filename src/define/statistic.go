@@ -49,7 +49,7 @@ func (data *StatisticsData) Reset() {
 	defer data.Lock.Unlock()
 	data.TimesData = make(map[int]int)
 	now := sgtime.New()
-	data.Time = sgtime.YearString(now) + sgtime.MonthString(now)
+	data.Time = sgtime.YearString(now) + sgtime.MonthString(now) + sgtime.DayString(now)
 
 }
 

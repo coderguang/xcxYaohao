@@ -19,7 +19,7 @@ func InitClear() {
 		timeInt := normalTime.Sub(nowTime)
 		sleepTime := int(timeInt/time.Second) + 1 // +1 for avoid loop run in that second time
 		sglog.Info("next clear timer will run after ", sleepTime, " seconds in ", sleepTime, sgtime.NormalString(sgtime.TransfromTimeToDateTime(normalTime)))
-		sleepTime = 60
+		//sleepTime = 60
 		sgthread.SleepBySecond(sleepTime)
 
 		sglog.Info("start to run clear openid data")

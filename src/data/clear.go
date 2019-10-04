@@ -1,9 +1,11 @@
 package data
 
 import (
+	"xcxYaohao/src/config"
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/coderguang/GameEngine_go/sgmail"
 	"github.com/coderguang/GameEngine_go/sgtime"
 	"github.com/mohae/deepcopy"
 )
@@ -24,7 +26,7 @@ func ClearData() *define.StatisticsData {
 	globalOpenIds.Lock.Unlock()
 	sglog.Info("clear openid data complete,user size:", len(idset), globalStatics)
 
-	//sgmail.SendMail("xcxYaohao statistic", []string{config.GetUtilCfg().Receiver}, globalStatics.String())
+	sgmail.SendMail("xcxYaohao statistic", []string{config.GetUtilCfg().Receiver}, globalStatics.String())
 
 	tmp := deepcopy.Copy(globalStatics)
 

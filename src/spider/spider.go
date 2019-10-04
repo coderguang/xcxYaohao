@@ -172,7 +172,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 
 	sglog.Info("start loop spider ,title:", spider.cfg.Title)
 
-	//spider.StartLoopSpider()
+	spider.StartLoopSpider()
 }
 
 func (spider *Spider) StartLoopSpider() {

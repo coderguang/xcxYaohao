@@ -2,9 +2,12 @@ package httpHandle
 
 import (
 	"time"
+	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
+
+	"github.com/coderguang/GameEngine_go/sgmail"
 
 	"github.com/coderguang/GameEngine_go/sglog"
 )
@@ -15,6 +18,8 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		sglog.Info("notice already ", title, curTime, ",last notice is ", finalNotice)
 		return
 	}
+	sglog.Info("start to send sms,", title, curTime)
+	sgmail.SendMail("start send mails", []string{config.GetUtilCfg().Receiver}, title+" "+curTime)
 	finalNoticeData := data.UpdateNoticeFinalTime(title, curTime)
 	err := db.UpdateNoticeFinalData(finalNoticeData)
 	if err != nil {

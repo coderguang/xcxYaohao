@@ -83,6 +83,7 @@ func initAndLoadDownloadHistory() {
 }
 
 func initAndLoadCardData() {
+	//return
 	err := globalDb.AutoMigrate(define.CardData{}).Error
 	if err != nil {
 		sglog.Error("initAndLoadData", err)

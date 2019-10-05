@@ -26,11 +26,7 @@ func init() {
 }
 
 func GetLastestCardInfo(title string) define.SLastestCardData {
-	return define.SLastestCardData{}
-}
-
-func IsAllCardUpdate(title string, dt string) bool {
-	return true
+	return define.SLastestCardData{Title: title}
 }
 
 func InitCardDataFromDb(datas []define.CardData) {
@@ -116,6 +112,7 @@ func UpdateLastestInfo(title string, cardType int, memberType int, timestr strin
 	}
 	tmp := new(define.SLastestCardData)
 	tmp.Reset()
+	tmp.Title = title
 	tmp.TimeStr = timestr
 	tmp.UpdateLastestInfo(cardType, memberType)
 	globalLastestData.Data[title] = tmp

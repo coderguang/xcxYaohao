@@ -127,7 +127,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 			return
 		}
 
-		if !config.PageFliter(spider.cfg.Title, title) {
+		if !config.PageFliter(spider.cfg.Title, title, link) {
 			if _, err = strconv.Atoi(title); err != nil {
 				spider.hadVisitUrls[link] = true
 				return
@@ -172,7 +172,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 
 	sglog.Info("start loop spider ,title:", spider.cfg.Title)
 
-	//spider.StartLoopSpider()
+	spider.StartLoopSpider()
 }
 
 func (spider *Spider) StartLoopSpider() {
@@ -399,7 +399,7 @@ func (spider *Spider) RemoveAndRenameFile(pdfFileName string, txtFileName string
 		memberTypeStr = "company"
 	}
 	cardTypeStr := "normal"
-	if cardType == define.CARD_TYPE_COMPANY {
+	if cardType == define.CARD_TYPE_NEW_ENGINE {
 		cardTypeStr = "conservation"
 	}
 	rename := timestr + "_" + memberTypeStr + "_" + cardTypeStr

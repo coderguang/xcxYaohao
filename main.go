@@ -6,6 +6,7 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/dataMove"
 	"xcxYaohao/src/db"
+	"xcxYaohao/src/define"
 	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/sms"
 	"xcxYaohao/src/spider"
@@ -45,6 +46,9 @@ func main() {
 	titlelist := config.GetTitleList()
 	for _, v := range titlelist {
 		title := v
+		if title != define.CITY_TIANJIN {
+			continue
+		}
 		go spider.NewSpider(title)
 	}
 

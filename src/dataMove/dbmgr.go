@@ -35,11 +35,11 @@ func InitDb(cmd []string) {
 
 	sglog.Info("init old db connection ok")
 
-	//initOldRequireDatata()
+	initOldRequireDatata()
 
-	//initOldNotice()
+	initOldNotice()
 
-	//initOldCardDataShenzhen()
+	initOldCardDataShenzhen()
 
 	initOldCardDataGuangzhou()
 }
@@ -55,16 +55,18 @@ func initOldCardDataShenzhen() {
 	now := time.Now()
 	sglog.Info("get shenzhen card data ok,size:", len(datas))
 	for _, v := range datas {
-		tmp := new(define.CardData)
-		tmp.Title = "shenzhen"
-		tmp.CardType = v.CardType
-		tmp.Code = v.Code
-		tmp.Name = v.Name
-		tmp.Time = v.Time
-		tmp.Type = v.Type
-		tmp.Desc = v.Tips
-		tmp.UpdateDt = now
-		db.UpdateCardData(tmp)
+		if !data.IsDataExist(define.CITY_SHENZHEN, v.Code) {
+			tmp := new(define.CardData)
+			tmp.Title = define.CITY_SHENZHEN
+			tmp.CardType = v.CardType
+			tmp.Code = v.Code
+			tmp.Name = v.Name
+			tmp.Time = v.Time
+			tmp.Type = v.Type
+			tmp.Desc = v.Tips
+			tmp.UpdateDt = now
+			db.UpdateCardData(tmp)
+		}
 	}
 	sglog.Info("move shenzhen card data ok")
 }
@@ -79,16 +81,18 @@ func initOldCardDataGuangzhou() {
 	now := time.Now()
 	sglog.Info("get guangzhou card data ok,size:", len(datas))
 	for _, v := range datas {
-		tmp := new(define.CardData)
-		tmp.Title = "guangzhou"
-		tmp.CardType = v.CardType
-		tmp.Code = v.Code
-		tmp.Name = v.Name
-		tmp.Time = v.Time
-		tmp.Type = v.Type
-		tmp.Desc = v.Tips
-		tmp.UpdateDt = now
-		db.UpdateCardData(tmp)
+		if !data.IsDataExist(define.CITY_GUANGZHOU, v.Code) {
+			tmp := new(define.CardData)
+			tmp.Title = define.CITY_GUANGZHOU
+			tmp.CardType = v.CardType
+			tmp.Code = v.Code
+			tmp.Name = v.Name
+			tmp.Time = v.Time
+			tmp.Type = v.Type
+			tmp.Desc = v.Tips
+			tmp.UpdateDt = now
+			db.UpdateCardData(tmp)
+		}
 	}
 	sglog.Info("move guangzhou card data ok")
 }

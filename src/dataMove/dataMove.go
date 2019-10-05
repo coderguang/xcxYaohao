@@ -19,6 +19,10 @@ type XcxCardNotice struct {
 	NoticeTimes int
 }
 
+func (u XcxCardNotice) TableName() string {
+	return "xcx_card_notice"
+}
+
 func (data *XcxCardNotice) ShowMsg() {
 	sglog.Debug("token:", data.TokenId)
 	sglog.Debug("Name:", data.Name)
@@ -41,6 +45,10 @@ type XcxCardNoticeRequireData struct {
 	Tips        string
 }
 
+func (u XcxCardNoticeRequireData) TableName() string {
+	return "xcx_card_notice_require_data"
+}
+
 type XcxCardDataGuangzhou struct {
 	Type     int
 	CardType int
@@ -50,6 +58,10 @@ type XcxCardDataGuangzhou struct {
 	Tips     string
 }
 
+func (u XcxCardDataGuangzhou) TableName() string {
+	return "xcx_card_data_guangzhou"
+}
+
 type XcxCardDataShenzhen struct {
 	Type     int
 	CardType int
@@ -57,4 +69,8 @@ type XcxCardDataShenzhen struct {
 	Name     string `gorm:"primary_key"`
 	Time     string
 	Tips     string
+}
+
+func (u XcxCardDataShenzhen) TableName() string {
+	return "xcx_card_data_shenzhen"
 }

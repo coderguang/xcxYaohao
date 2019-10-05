@@ -6,13 +6,21 @@ import (
 )
 
 const (
-	CARD_TYPE_PERSION     = 1
-	CARD_TYPE_COMPANY     = 2
+	CARD_TYPE_NORMAL      = 1
+	CARD_TYPE_NEW_ENGINE  = 2
 	MEMBER_TYPE_PERSIONAL = 1
 	MEMBER_TYPE_COMPANY   = 2
 )
 
+const (
+	CITY_GUANGZHOU string = "guangzhou"
+	CITY_SHENZHEN  string = "shenzhen"
+	CITY_HANGZHOU  string = "hangzhou"
+	CITY_TIANJIN   string = "tianjin"
+)
+
 type SLastestCardData struct {
+	Title                 string
 	TimeStr               string
 	PersonalNormalUpdate  bool
 	PersonalJieNengUpdate bool
@@ -28,13 +36,13 @@ func (data *SLastestCardData) Reset() {
 }
 func (data *SLastestCardData) UpdateLastestInfo(cardType int, memberType int) {
 	if MEMBER_TYPE_PERSIONAL == memberType {
-		if CARD_TYPE_PERSION == cardType {
+		if CARD_TYPE_NORMAL == cardType {
 			data.PersonalNormalUpdate = true
 		} else {
 			data.PersonalJieNengUpdate = true
 		}
 	} else {
-		if CARD_TYPE_PERSION == cardType {
+		if CARD_TYPE_NORMAL == cardType {
 			data.CompanyNormalUpdate = true
 		} else {
 			data.CompanyJieNengUpdate = true
@@ -43,8 +51,23 @@ func (data *SLastestCardData) UpdateLastestInfo(cardType int, memberType int) {
 }
 
 func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
-	if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
-		return true
+	switch data.Title {
+	case CITY_GUANGZHOU:
+		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
+			return true
+		}
+	case CITY_SHENZHEN:
+		if data.PersonalNormalUpdate && data.CompanyNormalUpdate {
+			return true
+		}
+	case CITY_HANGZHOU:
+		if data.PersonalNormalUpdate && data.CompanyNormalUpdate {
+			return true
+		}
+	case CITY_TIANJIN:
+		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
+			return true
+		}
 	}
 	return false
 }

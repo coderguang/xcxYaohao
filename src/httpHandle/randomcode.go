@@ -166,21 +166,21 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 func checkCardTypeValid(title string, cardTypeInt int) bool {
 	switch title {
-	case "guangzhou":
-		return define.CARD_TYPE_PERSION == cardTypeInt || define.CARD_TYPE_COMPANY == cardTypeInt
-	case "shenzhen":
-		return define.CARD_TYPE_PERSION == cardTypeInt || define.CARD_TYPE_COMPANY == cardTypeInt
-	case "hangzhou":
-		return define.CARD_TYPE_PERSION == cardTypeInt || define.CARD_TYPE_COMPANY == cardTypeInt
-	case "tianjin":
-		return define.CARD_TYPE_PERSION == cardTypeInt || define.CARD_TYPE_COMPANY == cardTypeInt
+	case define.CITY_GUANGZHOU:
+		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
+	case define.CITY_SHENZHEN:
+		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
+	case define.CITY_HANGZHOU:
+		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
+	case define.CITY_TIANJIN:
+		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
 	}
 	return false
 }
 
 func checkCodeValid(title string, code string) bool {
 	switch title {
-	case "guangzhou":
+	case define.CITY_GUANGZHOU:
 		if !sgregex.AllNum(code) {
 			return false
 		}
@@ -188,7 +188,7 @@ func checkCodeValid(title string, code string) bool {
 			return false
 		}
 		return true
-	case "shenzhen":
+	case define.CITY_SHENZHEN:
 		if !sgregex.AllNum(code) {
 			return false
 		}
@@ -196,7 +196,7 @@ func checkCodeValid(title string, code string) bool {
 			return false
 		}
 		return true
-	case "hangzhou":
+	case define.CITY_HANGZHOU:
 		if !sgregex.AllNum(code) {
 			return false
 		}
@@ -204,7 +204,7 @@ func checkCodeValid(title string, code string) bool {
 			return false
 		}
 		return true
-	case "tianjin":
+	case define.CITY_TIANJIN:
 		if !sgregex.AllNum(code) {
 			return false
 		}

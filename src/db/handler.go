@@ -20,10 +20,12 @@ func UpdateDownloadToDb(data *define.DownloadHistoryUrl) {
 }
 
 func UpdateCardData(data *define.CardData) error {
-	err := globalDb.Create(data).Error
-	if err != nil {
-		return err
-	}
+	go func(d *define.CardData) {
+		err := globalDb.Create(d).Error
+		if err != nil {
+			sglog.Error("caarete card data error,", err)
+		}
+	}(data)
 	return nil
 }
 

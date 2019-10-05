@@ -39,9 +39,13 @@ func main() {
 
 	data.InitWxOpenIdCfg()
 
-	db.InitDb()
-
 	spider.AutoCreateFileDir()
+
+	spider.TianjinOldDataSpider([]string{})
+
+	sgcmd.StartCmdWaitInputLoop()
+
+	db.InitDb()
 
 	titlelist := config.GetTitleList()
 	for _, v := range titlelist {

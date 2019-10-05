@@ -35,7 +35,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		return randomCode, YAOHAO_ERR_LEFT_TIME
 	}
 
-	if !checkCodeValid(title, code) {
+	if !CheckCodeValid(title, code) {
 		sglog.Debug("require  code invalid")
 		return randomCode, YAOHAO_ERR_CODE
 	}
@@ -178,7 +178,7 @@ func checkCardTypeValid(title string, cardTypeInt int) bool {
 	return false
 }
 
-func checkCodeValid(title string, code string) bool {
+func CheckCodeValid(title string, code string) bool {
 	switch title {
 	case define.CITY_GUANGZHOU:
 		if !sgregex.AllNum(code) {

@@ -40,3 +40,21 @@ type XcxCardNoticeRequireData struct {
 	ShareTimes  int
 	Tips        string
 }
+
+type XcxCardDataGuangzhou struct {
+	Type     int
+	CardType int
+	Code     string `gorm:"primary_key"`
+	Name     string `gorm:"primary_key"`
+	Time     string
+	Tips     string
+}
+
+type XcxCardDataShenzhen struct {
+	Type     int
+	CardType int
+	Code     string `gorm:"primary_key"`
+	Name     string `gorm:"primary_key"`
+	Time     string
+	Tips     string
+}

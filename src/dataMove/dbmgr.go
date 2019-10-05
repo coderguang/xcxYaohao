@@ -2,8 +2,10 @@ package dataMove
 
 import (
 	"strconv"
+	"time"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
+	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sgcfg"
 	"github.com/coderguang/GameEngine_go/sgdb/sgmysql"
@@ -33,9 +35,62 @@ func InitDb(cmd []string) {
 
 	sglog.Info("init old db connection ok")
 
-	initOldRequireDatata()
+	//initOldRequireDatata()
 
-	initOldNotice()
+	//initOldNotice()
+
+	//initOldCardDataShenzhen()
+
+	initOldCardDataGuangzhou()
+}
+
+func initOldCardDataShenzhen() {
+	sglog.Info("star load old shenzhen card data")
+
+	datas := []XcxCardDataShenzhen{}
+	err := globalDb.Find(&datas).Error
+	if err != nil {
+		sglog.Error("init old shenzhencard find error", err)
+	}
+	now := time.Now()
+	sglog.Info("get shenzhen card data ok,size:", len(datas))
+	for _, v := range datas {
+		tmp := new(define.CardData)
+		tmp.Title = "shenzhen"
+		tmp.CardType = v.CardType
+		tmp.Code = v.Code
+		tmp.Name = v.Name
+		tmp.Time = v.Time
+		tmp.Type = v.Type
+		tmp.Desc = v.Tips
+		tmp.UpdateDt = now
+		db.UpdateCardData(tmp)
+	}
+	sglog.Info("move shenzhen card data ok")
+}
+func initOldCardDataGuangzhou() {
+	sglog.Info("star load old guangzhou card data")
+
+	datas := []XcxCardDataGuangzhou{}
+	err := globalDb.Find(&datas).Error
+	if err != nil {
+		sglog.Error("init old guangzhou find error", err)
+	}
+	now := time.Now()
+	sglog.Info("get guangzhou card data ok,size:", len(datas))
+	for _, v := range datas {
+		tmp := new(define.CardData)
+		tmp.Title = "guangzhou"
+		tmp.CardType = v.CardType
+		tmp.Code = v.Code
+		tmp.Name = v.Name
+		tmp.Time = v.Time
+		tmp.Type = v.Type
+		tmp.Desc = v.Tips
+		tmp.UpdateDt = now
+		db.UpdateCardData(tmp)
+	}
+	sglog.Info("move guangzhou card data ok")
 }
 
 func initOldRequireDatata() {

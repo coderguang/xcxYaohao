@@ -20,56 +20,39 @@ func UpdateDownloadToDb(data *define.DownloadHistoryUrl) {
 }
 
 func UpdateCardData(data *define.CardData) error {
-	go func(d *define.CardData) {
-		err := globalDb.Create(d).Error
-		if err != nil {
-			sglog.Error("caarete card data error,", err)
-		}
-	}(data)
-	return nil
+	//go func(d *define.CardData) {
+	err := globalDb.Create(data).Error
+	if err != nil {
+		sglog.Error("caarete card data error,", err)
+	}
+	//}(data)
+	return err
 }
 
 func UpdateNoticeData(data *define.NoticeData) error {
-	go func(d *define.NoticeData) {
-		// err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(define.NoticeData{
-		// 	Token:        data.Token,
-		// 	Status:       data.Status,
-		// 	Name:         data.Name,
-		// 	Title:        data.Title,
-		// 	CardType:     data.CardType,
-		// 	Code:         data.Code,
-		// 	Phone:        data.Phone,
-		// 	EndDt:        data.EndDt,
-		// 	Desc:         data.Desc,
-		// 	RenewTimes:   data.RenewTimes,
-		// 	NoticeTimes:  data.NoticeTimes,
-		// 	RequireTimes: data.RequireTimes,
-		// 	FinalLogin:   data.FinalLogin,
-		// 	CreateDt:     data.CreateDt,
-		// 	ShareTimes:   data.ShareTimes}).FirstOrCreate(data).Error
+	//go func(d *define.NoticeData) {
+	err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(map[string]interface{}{
+		"status":          data.Status,
+		"name":            data.Name,
+		"title":           data.Title,
+		"card_type":       data.CardType,
+		"code":            data.Code,
+		"phone":           data.Phone,
+		"end_dt":          data.EndDt,
+		"desc":            data.Desc,
+		"renew_times":     data.RenewTimes,
+		"notice_times":    data.NoticeTimes,
+		"require_times":   data.RequireTimes,
+		"final_login_dt":  data.FinalLoginDt,
+		"create_dt":       data.CreateDt,
+		"final_notice_dt": data.FinalNoticeDt,
+		"share_times":     data.ShareTimes}).FirstOrCreate(data).Error
+	if err != nil {
+		sglog.Error("update notice data error,token:", data.Token, err)
+	}
 
-		err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(map[string]interface{}{
-			"status":          data.Status,
-			"name":            data.Name,
-			"title":           data.Title,
-			"card_type":       data.CardType,
-			"code":            data.Code,
-			"phone":           data.Phone,
-			"end_dt":          data.EndDt,
-			"desc":            data.Desc,
-			"renew_times":     data.RenewTimes,
-			"notice_times":    data.NoticeTimes,
-			"require_times":   data.RequireTimes,
-			"final_login_dt":  data.FinalLoginDt,
-			"create_dt":       data.CreateDt,
-			"final_notice_dt": data.FinalNoticeDt,
-			"share_times":     data.ShareTimes}).FirstOrCreate(data).Error
-		if err != nil {
-			sglog.Error("update notice data error,token:", data.Token, err)
-		}
-
-	}(data)
-	return nil
+	//}(data)
+	return err
 }
 
 func UpdateStatisData(data *define.StatisticsData) error {

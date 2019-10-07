@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"xcxYaohao/src/data"
+	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
 	"xcxYaohao/src/httpHandle"
 
@@ -32,12 +34,14 @@ func StartSpiderTianJinOldData(index string, isPersonal bool) {
 	if err != nil {
 		sglog.Error("parse startDt error,", err)
 	}
-	searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
-
-	sglog.Info("start spider date:", searchTime, ",isPersonal:", isPersonal)
 
 	searchPage := 1
 	for {
+
+		searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
+
+		sglog.Info("start spider date:", searchTime, ",isPersonal:", isPersonal)
+
 		dataMap := make(map[string]string)
 
 		searchPageStr := strconv.Itoa(searchPage)
@@ -46,7 +50,6 @@ func StartSpiderTianJinOldData(index string, isPersonal bool) {
 			sglog.Error("search err,", searchTime, searchPageStr, err)
 			continue
 		}
-		sglog.Info("start search left page,", searchTime, "page:", totalPage, ",num:", totalNum)
 
 		for i := 1; i <= totalPage; i++ {
 			sgthread.SleepByMillSecond(200)
@@ -60,22 +63,42 @@ func StartSpiderTianJinOldData(index string, isPersonal bool) {
 			sglog.Error("end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
 			continue
 		} else {
-			//sglog.Info("end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
+			sglog.Info("end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
 			now := time.Now()
+			cardDataMap := make(map[string]*define.CardData)
 			for k, v := range dataMap {
 				tmp := new(define.CardData)
 				tmp.Title = define.CITY_TIANJIN
 				tmp.Type = define.CARD_TYPE_NORMAL
+				tmp.CardType = define.CARD_TYPE_NORMAL
 				if isPersonal {
-					tmp.CardType = define.MEMBER_TYPE_PERSIONAL
+					tmp.Type = define.MEMBER_TYPE_PERSIONAL
+				} else {
+					tmp.Type = define.MEMBER_TYPE_COMPANY
+				}
+				tmp.Code = k
+				tmp.Name = v
+				tmp.Time = searchTime
+				tmp.Desc = "by tianjin special"
+				tmp.UpdateDt = now
+
+				if data.IsDataExist(define.CITY_TIANJIN, k) {
+					sglog.Error("data already exist,time:", searchTime, "code:", k)
+				} else {
+					err = db.UpdateCardData(tmp)
+					if err != nil {
+						sglog.Error("tianjin speical update to db error,time:", searchTime, isPersonal, err)
+					}
+					cardDataMap[k] = tmp
 				}
 			}
+			data.AddCardData(cardDataMap)
 
 		}
 		if searchTime == "201910" {
 			break
 		}
-		break
+		startDt = startDt.AddDate(0, 1, 0)
 	}
 
 	sglog.Info("spider tianjin old data ok,isPersion:", isPersonal)

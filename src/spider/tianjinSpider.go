@@ -2,9 +2,17 @@ package spider
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 	"xcxYaohao/src/define"
 	"xcxYaohao/src/httpHandle"
+
+	"github.com/coderguang/GameEngine_go/sgthread"
+
+	"github.com/coderguang/GameEngine_go/sgtime"
+
+	"github.com/coderguang/GameEngine_go/sgstring"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/coderguang/GameEngine_go/sglog"
@@ -12,21 +20,71 @@ import (
 
 func TianjinOldDataSpider(cmd []string) {
 	unitIndex := "http://apply.xkctk.jtys.tj.gov.cn/apply/norm/unitQuery.html"
-	//persionIndex := "http://apply.xkctk.jtys.tj.gov.cn/apply/norm/personQuery.html"
-	dataMap := make(map[string]string)
-
-	totalPage, totalNum, err := dataSpider(unitIndex, "201907", "1", dataMap)
-
-	if err != nil {
-		return
-	}
-	sglog.Info("page:", totalPage, ",num:", totalNum, "data:", dataMap)
+	persionIndex := "http://apply.xkctk.jtys.tj.gov.cn/apply/norm/personQuery.html"
+	StartSpiderTianJinOldData(unitIndex, false)
+	StartSpiderTianJinOldData(persionIndex, true)
 
 }
 
-func dataSpider(index string, timestr string, page string, dataMap map[string]string) (string, string, error) {
-	totalPage := ""
-	totalNum := ""
+func StartSpiderTianJinOldData(index string, isPersonal bool) {
+
+	startDt, err := sgtime.ParseInLocation(sgtime.FORMAT_TIME_NORMAL, "2014-02-01 00:00:00")
+	if err != nil {
+		sglog.Error("parse startDt error,", err)
+	}
+	searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
+
+	sglog.Info("start spider date:", searchTime, ",isPersonal:", isPersonal)
+
+	searchPage := 1
+	for {
+		dataMap := make(map[string]string)
+
+		searchPageStr := strconv.Itoa(searchPage)
+		totalPage, totalNum, err := dataSpider(index, searchTime, searchPageStr, dataMap)
+		if err != nil {
+			sglog.Error("search err,", searchTime, searchPageStr, err)
+			continue
+		}
+		sglog.Info("start search left page,", searchTime, "page:", totalPage, ",num:", totalNum)
+
+		for i := 1; i <= totalPage; i++ {
+			sgthread.SleepByMillSecond(200)
+			_, _, err = dataSpider(index, searchTime, strconv.Itoa(i), dataMap)
+			if err != nil {
+				i--
+				continue
+			}
+		}
+		if totalNum != len(dataMap) {
+			sglog.Error("end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
+			continue
+		} else {
+			//sglog.Info("end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
+			now := time.Now()
+			for k, v := range dataMap {
+				tmp := new(define.CardData)
+				tmp.Title = define.CITY_TIANJIN
+				tmp.Type = define.CARD_TYPE_NORMAL
+				if isPersonal {
+					tmp.CardType = define.MEMBER_TYPE_PERSIONAL
+				}
+			}
+
+		}
+		if searchTime == "201910" {
+			break
+		}
+		break
+	}
+
+	sglog.Info("spider tianjin old data ok,isPersion:", isPersonal)
+
+}
+
+func dataSpider(index string, timestr string, page string, dataMap map[string]string) (int, int, error) {
+	totalPage := 0
+	totalNum := 0
 	params := "pageNo=" + page + "&issueNumber=" + timestr + "&applyCode= "
 	resp, err := http.Post(index,
 		"application/x-www-form-urlencoded",
@@ -55,7 +113,7 @@ func dataSpider(index string, timestr string, page string, dataMap map[string]st
 					code = td.Text()
 				} else {
 					name := td.Text()
-					sglog.Info(code, ":", name)
+					//sglog.Info(code, ":", name)
 					if httpHandle.CheckCodeValid(define.CITY_TIANJIN, code) {
 						dataMap[code] = name
 					}
@@ -63,9 +121,30 @@ func dataSpider(index string, timestr string, page string, dataMap map[string]st
 			})
 		} else if tmpS.Size() == 3 {
 			tr.Find("td").Each(func(ix int, td *goquery.Selection) {
-				sglog.Info(ix, ":", td.Text())
+				//sglog.Info(ix, ":", td.Text())
+				if 2 == ix {
+					str := td.Text()
+					if sgstring.ContainsWithAnd(str, []string{"共", "/", "页", "条"}) {
+						str = strings.Replace(str, "共", "", -1)
+						str = strings.Replace(str, "页", "", -1)
+						str = strings.Replace(str, "条", "", -1)
+						strlist := strings.Split(str, "/")
+						if 2 == len(strlist) {
+							totalPage, err = strconv.Atoi(strlist[0])
+							if err != nil {
+								sglog.Error("tranform error,", td.Text(), err)
+							}
+							totalNum, err = strconv.Atoi(strlist[1])
+							if err != nil {
+								sglog.Error("tranform error,", td.Text(), err)
+							}
+							//sglog.Info(td.Text(), "parse: page", totalPage, ",num:", totalNum)
+						}
+					}
+				}
 			})
+
 		}
 	})
-	return totalPage, totalPage, nil
+	return totalPage, totalNum, nil
 }

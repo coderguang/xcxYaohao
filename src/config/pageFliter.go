@@ -149,7 +149,7 @@ func guangzhouTxtFliter(title string, contents []string) (map[string]*define.Car
 				sglog.Error("name len more than", namemaxlen, ",it is ", len(data.Name), ",old name=", data.Name)
 				data.Name = data.Name[0 : namemaxlen-1]
 				data.Desc += "name cut "
-				sglog.Error("new name=%s", data.Name)
+				sglog.Error("new name=", data.Name)
 			}
 			datas[data.Code] = data
 		} else {

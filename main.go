@@ -6,7 +6,6 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/dataMove"
 	"xcxYaohao/src/db"
-	"xcxYaohao/src/define"
 	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/sms"
 	"xcxYaohao/src/spider"
@@ -26,6 +25,7 @@ func RegistCmd() {
 	sgcmd.RegistCmd("SendTestLuck", "[\"SendTestLuck\"] :send  luck", sms.SendTestLuck)
 	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
 	sgcmd.RegistCmd("DataMove", "[\"DataMove\"] :move old data to new ", dataMove.InitDb)
+	sgcmd.RegistCmd("ReloadBoardcast", "[\"ReloadBoardcast\"] :ReloadBoardcast cfg", data.ReloadBoardcast)
 
 }
 
@@ -36,6 +36,7 @@ func main() {
 	sgserver.StartServer(sgserver.ServerTypeMail)
 
 	config.InitCfg()
+	data.ReloadBoardcast([]string{})
 
 	data.InitWxOpenIdCfg()
 
@@ -43,16 +44,9 @@ func main() {
 
 	db.InitDb()
 
-	spider.TianjinOldDataSpider([]string{})
-
-	sgcmd.StartCmdWaitInputLoop()
-
 	titlelist := config.GetTitleList()
 	for _, v := range titlelist {
 		title := v
-		if title != define.CITY_TIANJIN {
-			continue
-		}
 		go spider.NewSpider(title)
 	}
 

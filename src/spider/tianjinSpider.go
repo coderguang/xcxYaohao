@@ -23,8 +23,8 @@ import (
 func TianjinOldDataSpider(cmd []string) {
 	unitIndex := "http://apply.xkctk.jtys.tj.gov.cn/apply/norm/unitQuery.html"
 	persionIndex := "http://apply.xkctk.jtys.tj.gov.cn/apply/norm/personQuery.html"
-	StartSpiderTianJinOldData(unitIndex, false)
-	StartSpiderTianJinOldData(persionIndex, true)
+	go StartSpiderTianJinOldData(unitIndex, false)
+	go StartSpiderTianJinOldData(persionIndex, true)
 
 }
 
@@ -45,22 +45,39 @@ func StartSpiderTianJinOldData(index string, isPersonal bool) {
 		dataMap := make(map[string]string)
 
 		searchPageStr := strconv.Itoa(searchPage)
-		totalPage, totalNum, err := dataSpider(index, searchTime, searchPageStr, dataMap)
+		ignoreMap := make(map[string]string)
+		totalPage, totalNum, err := dataSpider(index, searchTime, searchPageStr, ignoreMap)
 		if err != nil {
 			sglog.Error("search err,", searchTime, searchPageStr, err)
 			continue
 		}
-
+		deleteRecord := 0
 		for i := 1; i <= totalPage; i++ {
-			sgthread.SleepByMillSecond(200)
-			_, _, err = dataSpider(index, searchTime, strconv.Itoa(i), dataMap)
+			sgthread.SleepByMillSecond(50)
+			tmpDataMap := make(map[string]string)
+			_, _, err = dataSpider(index, searchTime, strconv.Itoa(i), tmpDataMap)
 			if err != nil {
+				sglog.Error("find spider err,", searchTime, i, err)
 				i--
 				continue
 			}
+			if len(tmpDataMap) != 16 {
+				//sglog.Debug("page size not 16,", searchTime, i, ",size is ", len(tmpDataMap))
+			}
+			//sglog.Debug("page:", i, "size:", len(tmpDataMap), ",totalsize:", len(dataMap))
+			for k, v := range tmpDataMap {
+				if vv, ok := dataMap[k]; ok {
+					sglog.Info("duplicate data,", k, v, vv)
+					if v == vv {
+						deleteRecord++
+					}
+				}
+				dataMap[k] = v
+			}
 		}
-		if totalNum != len(dataMap) {
+		if totalNum != len(dataMap)+deleteRecord {
 			sglog.Error("end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
+			sgthread.DelayExit(2)
 			continue
 		} else {
 			sglog.Info("end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
@@ -83,16 +100,27 @@ func StartSpiderTianJinOldData(index string, isPersonal bool) {
 				tmp.UpdateDt = now
 
 				if data.IsDataExist(define.CITY_TIANJIN, k) {
-					sglog.Error("data already exist,time:", searchTime, "code:", k)
+					//sglog.Error("data already exist,time:", searchTime, "code:", k)
 				} else {
-					err = db.UpdateCardData(tmp)
-					if err != nil {
-						sglog.Error("tianjin speical update to db error,time:", searchTime, isPersonal, err)
-					}
 					cardDataMap[k] = tmp
 				}
 			}
 			data.AddCardData(cardDataMap)
+
+			go func(updates map[string]*define.CardData) {
+				nowEx := sgtime.New()
+				updateDbNum := 0
+				for _, v := range updates {
+					if err = db.UpdateCardData(v); err != nil {
+						sglog.Error("update data to db error,title", v.Title, "code", v.Code, err)
+					} else {
+						updateDbNum++
+					}
+				}
+				endEx := sgtime.New()
+				sglog.Info(" update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
+
+			}(cardDataMap)
 
 		}
 		if searchTime == "201910" {
@@ -138,7 +166,13 @@ func dataSpider(index string, timestr string, page string, dataMap map[string]st
 					name := td.Text()
 					//sglog.Info(code, ":", name)
 					if httpHandle.CheckCodeValid(define.CITY_TIANJIN, code) {
-						dataMap[code] = name
+						if v, ok := dataMap[code]; ok {
+							sglog.Error("duplicate code:", code, ",name:", name, ",time:", timestr, ",oldname:", v, ",page:", page)
+						} else {
+							dataMap[code] = name
+						}
+					} else {
+						sglog.Error("code not valid,code:", code)
 					}
 				}
 			})

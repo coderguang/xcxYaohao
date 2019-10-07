@@ -28,6 +28,7 @@ const (
 	HTTP_RETURN_TIME     string = "time"
 	HTTP_RETURN_Data     string = "data"
 	HTTP_RETURN_STATUS   string = "status"
+	HTTP_RETURN_TIPS     string = "tips"
 )
 
 type YaoHaoNoticeError int

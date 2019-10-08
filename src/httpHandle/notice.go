@@ -9,6 +9,8 @@ import (
 	"xcxYaohao/src/define"
 	"xcxYaohao/src/sms"
 
+	"github.com/coderguang/GameEngine_go/sgtime"
+
 	"github.com/coderguang/GameEngine_go/sgmail"
 
 	"github.com/coderguang/GameEngine_go/sglog"
@@ -46,6 +48,11 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		if bindData.Status != define.YAOHAO_NOTICE_STATUS_NORMAL {
 			continue
 		}
+		if sgtime.GetTotalDay(sgtime.TransfromTimeToDateTime(bindData.FinalNoticeDt)) == sgtime.GetTotalDay(sgtime.TransfromTimeToDateTime(now)) {
+			sglog.Debug("title:", title, ",token:", bindData.Token, ",today had send,last send time:", bindData.FinalNoticeDt)
+			continue
+		}
+
 		luckPhone = append(luckPhone, bindData.Phone)
 
 		err = sms.SendLuck(bindData.Phone, title, curTime)

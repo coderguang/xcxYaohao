@@ -26,5 +26,5 @@ func ShowCurrentSmsFlang(cmd []string) {
 }
 func ChangeCurrentSmsFlang(cmd []string) {
 	globalSmsFlag = !globalSmsFlag
-	sglog.Info("after change current sms flag:", globalSmsFlag)
+	sglog.Info("after change current sms flag:", globalSmsFlag, "true will send,false would not send")
 }

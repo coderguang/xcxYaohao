@@ -166,7 +166,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 	})
 
 	spider.collector.OnResponse(func(r *colly.Response) {
-		sglog.Info("Visiting ", r.Request.URL.String(), " complete")
+		//sglog.Info("Visiting ", r.Request.URL.String(), " complete")
 		spider.hadVisitUrls[r.Request.URL.String()] = true
 	})
 
@@ -264,7 +264,7 @@ func (spider *Spider) DownloadFile(url string, title string) error {
 		}
 	}()
 
-	sglog.Info("start download pdf,title:", spider.cfg.Title, ",url:", url)
+	sglog.Info("\n\nstart download pdf,title:", spider.cfg.Title, ",url:", url)
 
 	downData := data.ChangeDownloadStatus(spider.cfg.Title, url, define.DEF_DOWNLOAD_STATUS_DOWNING, title)
 	db.UpdateDownloadToDb(downData)
@@ -336,13 +336,13 @@ func (spider *Spider) TransportPDFToTxt(rawFileName string, pdfFileName string) 
 	sglog.Info("start transform pdf to txt")
 
 	cmd := exec.Command("python3", "index.py", spider.cfg.Title, rawFileName)
-	sglog.Info("command is python3 index.py", spider.cfg.Title, " ", rawFileName)
+	//sglog.Info("command is python3 index.py", spider.cfg.Title, " ", rawFileName)
 	out, err := cmd.Output()
 	if err != nil {
-		sglog.Error("exec parse pdf to txt by python error,file=", pdfFileName, ",err=", err)
+		sglog.Error("exec parse pdf to txt by python error,file=", pdfFileName, ",err=", err, ",out:", string(out))
 		return err
 	}
-	sglog.Info("output is :\n", string(out))
+	//sglog.Info("output is :\n", string(out))
 	return nil
 }
 

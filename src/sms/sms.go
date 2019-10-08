@@ -34,11 +34,11 @@ func SendRandomCode(phone string, title string, code string, randomCode string) 
 
 	if err != nil {
 		sglog.Error("send sms randomCode error", err)
-		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		data.AddStatistic(define.StatisticSmsFail, 1)
 		return err
 	} else {
 		sglog.Info("recv sms randmcode,", res)
-		data.AddStatistic(define.StatisticSmsFail, 1)
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
 		return nil
 	}
 }
@@ -56,11 +56,11 @@ func SendLuck(phone string, title string, time string) error {
 
 	if err != nil {
 		sglog.Error("send sms luck error", err)
-		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		data.AddStatistic(define.StatisticSmsFail, 1)
 		return err
 	} else {
 		sglog.Info("recv sms luck,", res)
-		data.AddStatistic(define.StatisticSmsFail, 1)
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
 		return err
 	}
 }
@@ -78,11 +78,11 @@ func SendUnLuck(phone string, title string, time string) error {
 
 	if err != nil {
 		sglog.Error("send sms luck error", err)
-		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		data.AddStatistic(define.StatisticSmsFail, 1)
 		return err
 	} else {
 		sglog.Info("recv sms luck,", res)
-		data.AddStatistic(define.StatisticSmsFail, 1)
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
 		return err
 	}
 }

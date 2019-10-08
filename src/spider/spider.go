@@ -177,6 +177,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 
 func (spider *Spider) StartLoopSpider() {
 	sleepTime := 60
+	isFirstSpider := true
 	for {
 		//redownload
 		downlist := data.GetReDownloadList(spider.cfg.Title)
@@ -205,7 +206,7 @@ func (spider *Spider) StartLoopSpider() {
 
 		nowTime := time.Now()
 		timeInt := time.Duration(300) * time.Second
-		if 0 == len(downlist) && 0 == len(revisitlist) {
+		if 0 == len(downlist) && 0 == len(revisitlist) && !isFirstSpider {
 
 			normalTime := time.Date(nowTime.Year(), nowTime.Month(), 26, 9, 0, 0, 0, nowTime.Location())
 
@@ -246,6 +247,7 @@ func (spider *Spider) StartLoopSpider() {
 		}
 		sglog.Info(spider.cfg.Title, " data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt))
 		sgthread.SleepBySecond(sleepTime)
+		isFirstSpider = true
 	}
 }
 

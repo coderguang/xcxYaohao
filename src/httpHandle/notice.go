@@ -1,11 +1,13 @@
 package httpHandle
 
 import (
+	"strconv"
 	"time"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
+	"xcxYaohao/src/sms"
 
 	"github.com/coderguang/GameEngine_go/sgmail"
 
@@ -29,6 +31,8 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 	luckPhone := []string{}
 	unluckPhone := []string{}
 
+	failedSend := 0
+
 	now := time.Now()
 	for _, v := range lucklist {
 		bindData, err := data.GetNoticeData(v)
@@ -43,6 +47,13 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 			continue
 		}
 		luckPhone = append(luckPhone, bindData.Phone)
+
+		err = sms.SendLuck(bindData.Phone, title, curTime)
+		if err != nil {
+			failedSend++
+			sglog.Error("send result luck error,phone:", bindData.Phone, ",token:", bindData.Token, ",err:", err)
+		}
+
 		bindData.FinalNoticeDt = now
 		bindData.Status = define.YAOHAO_NOTICE_STATUS_CANCEL_BY_GM_BECASURE_LUCK
 		bindData.NoticeTimes++
@@ -63,6 +74,13 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		if bindData.Status != define.YAOHAO_NOTICE_STATUS_NORMAL {
 			continue
 		}
+
+		err = sms.SendLuck(bindData.Phone, title, curTime)
+		if err != nil {
+			failedSend++
+			sglog.Error("send result unluck error,phone:", bindData.Phone, ",token:", bindData.Token, ",err:", err)
+		}
+
 		unluckPhone = append(unluckPhone, bindData.Phone)
 		bindData.FinalNoticeDt = now
 		if bindData.EndDt.Month() == now.Month() {
@@ -72,6 +90,14 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		db.UpdateNoticeData(bindData)
 	}
 
-	sglog.Info("send sms unluck to ", title, luckPhone)
+	sglog.Info("send sms unluck to ", title, unluckPhone)
+
+	mailInfo := "title:" + title + "\ntime" + curTime +
+		"toalSend:" + strconv.Itoa(len(luckPhone)+len(unluckPhone)) + "\n" +
+		"failed:" + strconv.Itoa(failedSend) + "\n" +
+		"luck:" + strconv.Itoa(len(luckPhone)) + "\n" +
+		"unluck:" + strconv.Itoa(len(unluckPhone)) + "\n"
+
+	sgmail.SendMail("sms result:"+title+" ,"+curTime, []string{config.GetUtilCfg().Receiver}, mailInfo)
 
 }

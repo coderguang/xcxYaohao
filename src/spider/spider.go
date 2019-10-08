@@ -247,7 +247,7 @@ func (spider *Spider) StartLoopSpider() {
 		}
 		sglog.Info(spider.cfg.Title, " data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt))
 		sgthread.SleepBySecond(sleepTime)
-		isFirstSpider = true
+		isFirstSpider = false
 	}
 }
 

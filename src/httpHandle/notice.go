@@ -101,3 +101,9 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 	sgmail.SendMail("sms result:"+title+" ,"+curTime, []string{config.GetUtilCfg().Receiver}, mailInfo)
 
 }
+
+func NoticeSmsByCmd(cmd []string) {
+	title := cmd[1]
+	curTime := cmd[2]
+	NoticeCurrentMonthDataUpdate(title, curTime)
+}

@@ -26,7 +26,9 @@ func RegistCmd() {
 	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
 	sgcmd.RegistCmd("DataMove", "[\"DataMove\"] :move old data to new ", dataMove.InitDb)
 	sgcmd.RegistCmd("ReloadBoardcast", "[\"ReloadBoardcast\"] :ReloadBoardcast cfg", data.ReloadBoardcast)
-
+	sgcmd.RegistCmd("NoticeSmsByCmd", "[\"NoticeSmsByCmd\",\"shenzhen\",\"201908\"] :notice sms", httpHandle.NoticeSmsByCmd)
+	sgcmd.RegistCmd("ShowCurrentSmsFlang", "[\"ShowCurrentSmsFlang\"] :ShowCurrentSmsFlang", sms.ShowCurrentSmsFlang)
+	sgcmd.RegistCmd("changeCurrentSmsFlang", "[\"changeCurrentSmsFlang\"] :changeCurrentSmsFlang ", sms.ChangeCurrentSmsFlang)
 }
 
 func main() {

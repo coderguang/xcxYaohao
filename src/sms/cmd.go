@@ -2,6 +2,8 @@ package sms
 
 import (
 	"xcxYaohao/src/define"
+
+	"github.com/coderguang/GameEngine_go/sglog"
 )
 
 var testPhone string = "15711839048"
@@ -17,4 +19,12 @@ func SendTestLuck(cmd []string) {
 
 func SendTestUnLuck(cmd []string) {
 	SendUnLuck(testPhone, define.CITY_HANGZHOU, "201912")
+}
+
+func ShowCurrentSmsFlang(cmd []string) {
+	sglog.Info("current sms flag:", globalSmsFlag)
+}
+func ChangeCurrentSmsFlang(cmd []string) {
+	globalSmsFlag = !globalSmsFlag
+	sglog.Info("after change current sms flag:", globalSmsFlag)
 }

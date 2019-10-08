@@ -26,6 +26,7 @@ func getBindData(r *http.Request, city string, openId string, returnData map[str
 	returnData[HTTP_ARGS_CODE] = datas.Code
 	returnData[HTTP_ARGS_BIND_PHONE] = datas.Phone
 	returnData[HTTP_RETURN_TIME] = sgtime.YearString(sgtime.TransfromTimeToDateTime(datas.EndDt)) + sgtime.MonthString(sgtime.TransfromTimeToDateTime(datas.EndDt))
+	returnData[HTTP_ARGS_CITY] = datas.Title
 }
 
 func requireRandomCode(r *http.Request, city string, openId string, returnData map[string]interface{}) {

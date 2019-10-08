@@ -1,6 +1,7 @@
 package sms
 
 import (
+	"errors"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/define"
@@ -10,7 +11,19 @@ import (
 	"github.com/coderguang/GameEngine_go/sglog"
 )
 
+var (
+	globalSmsFlag bool
+)
+
+func init() {
+	globalSmsFlag = true
+}
+
 func SendRandomCode(phone string, title string, code string, randomCode string) error {
+
+	if globalSmsFlag {
+		return errors.New("sms flag false,would not send sms")
+	}
 
 	cityName := config.GetCityName(title)
 
@@ -32,6 +45,10 @@ func SendRandomCode(phone string, title string, code string, randomCode string) 
 
 func SendLuck(phone string, title string, time string) error {
 
+	if globalSmsFlag {
+		return errors.New("sms flag false,would not send sms")
+	}
+
 	cityName := config.GetCityName(title)
 
 	// 发送短信
@@ -49,6 +66,10 @@ func SendLuck(phone string, title string, time string) error {
 }
 
 func SendUnLuck(phone string, title string, time string) error {
+
+	if globalSmsFlag {
+		return errors.New("sms flag false,would not send sms")
+	}
 
 	cityName := config.GetCityName(title)
 

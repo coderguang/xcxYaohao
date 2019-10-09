@@ -33,6 +33,10 @@ func InitCardDataFromDb(datas []define.CardData) {
 
 	globalCardData.Lock.Lock()
 	defer globalCardData.Lock.Unlock()
+
+	globalCardDataByName.Lock.Lock()
+	defer globalCardDataByName.Lock.Unlock()
+
 	for _, v := range datas {
 		UpdateLastestInfo(v.Title, v.CardType, v.Type, v.Time)
 		tmp := deepcopy.Copy(v)
@@ -54,25 +58,7 @@ func InitCardDataFromDb(datas []define.CardData) {
 			tmp := []*define.CardData{&tmpV}
 			globalCardData.Data[v.Title][v.Code] = tmp
 		}
-	}
 
-	for _, v := range globalCardData.Data {
-		for _, vv := range v {
-			sort.Slice(vv, func(i, j int) bool {
-				return vv[i].Time > vv[j].Time
-			})
-		}
-	}
-
-	globalCardDataByName.Lock.Lock()
-	defer globalCardDataByName.Lock.Unlock()
-	for _, v := range datas {
-		tmp := deepcopy.Copy(v)
-		tmpV, ok := tmp.(define.CardData)
-		if !ok {
-			sglog.Error("deepcopy by name error,title:", v.Title, ",code:", v.Code)
-			continue
-		}
 		if cityMap, ok := globalCardDataByName.Data[v.Title]; ok {
 			if namelist, ok := cityMap[v.Name]; ok {
 				cityMap[v.Name] = append(namelist, &tmpV)
@@ -84,6 +70,15 @@ func InitCardDataFromDb(datas []define.CardData) {
 			globalCardDataByName.Data[v.Title] = make(map[string][]*define.CardData)
 			tmp := []*define.CardData{&tmpV}
 			globalCardDataByName.Data[v.Title][v.Name] = tmp
+		}
+
+	}
+
+	for _, v := range globalCardData.Data {
+		for _, vv := range v {
+			sort.Slice(vv, func(i, j int) bool {
+				return vv[i].Time > vv[j].Time
+			})
 		}
 	}
 

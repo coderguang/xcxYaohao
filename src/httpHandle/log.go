@@ -17,4 +17,5 @@ func share(r *http.Request, city string, openId string, returnData map[string]in
 	db.UpdateNoticeData(existData)
 
 	data.AddStatistic(define.StatisticShareTime, 1)
+	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
 }

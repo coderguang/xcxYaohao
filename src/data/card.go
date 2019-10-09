@@ -2,6 +2,7 @@ package data
 
 import (
 	"sort"
+	"strconv"
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sglog"
@@ -25,8 +26,17 @@ func init() {
 	globalLastestData.Data = make(map[string]*define.SLastestCardData)
 }
 
-func GetLastestCardInfo(title string) define.SLastestCardData {
-	return define.SLastestCardData{Title: title}
+func GetLastestCardInfo(title string) *define.SLastestCardData {
+	globalLastestData.Lock.Lock()
+	defer globalLastestData.Lock.Unlock()
+
+	if v, ok := globalLastestData.Data[title]; ok {
+		return v
+	}
+	tmp := new(define.SLastestCardData)
+	tmp.Title = title
+	tmp.TimeStr = "201101"
+	return tmp
 }
 
 func InitCardDataFromDb(datas []define.CardData) {
@@ -95,6 +105,11 @@ func InitCardDataFromDb(datas []define.CardData) {
 func UpdateLastestInfo(title string, cardType int, memberType int, timestr string) {
 	globalLastestData.Lock.Lock()
 	defer globalLastestData.Lock.Unlock()
+
+	_, err := strconv.Atoi(timestr)
+	if err != nil { //带字符的不算入其内
+		return
+	}
 
 	if v, ok := globalLastestData.Data[title]; ok {
 		if v.TimeStr < timestr {

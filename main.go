@@ -12,8 +12,13 @@ import (
 
 	"github.com/coderguang/GameEngine_go/sgcfg"
 	"github.com/coderguang/GameEngine_go/sgcmd"
+	"github.com/coderguang/GameEngine_go/sgmail"
 	"github.com/coderguang/GameEngine_go/sgserver"
 )
+
+func TestSendMail(cmd []string) {
+	sgmail.SendMail("xcxYaohao test", []string{config.GetUtilCfg().Receiver}, "test mail")
+}
 
 func RegistCmd() {
 	sgcmd.RegistCmd("ShowIgnors", "[\"ShowIgnors\",\"guangzhou\"] :show ignores", spider.ShowIgnors)
@@ -26,7 +31,10 @@ func RegistCmd() {
 	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
 	sgcmd.RegistCmd("DataMove", "[\"DataMove\"] :move old data to new ", dataMove.InitDb)
 	sgcmd.RegistCmd("ReloadBoardcast", "[\"ReloadBoardcast\"] :ReloadBoardcast cfg", data.ReloadBoardcast)
-
+	sgcmd.RegistCmd("NoticeSmsByCmd", "[\"NoticeSmsByCmd\",\"shenzhen\",\"201908\"] :notice sms", httpHandle.NoticeSmsByCmd)
+	sgcmd.RegistCmd("ShowCurrentSmsFlang", "[\"ShowCurrentSmsFlang\"] :ShowCurrentSmsFlang", sms.ShowCurrentSmsFlang)
+	sgcmd.RegistCmd("changeCurrentSmsFlang", "[\"changeCurrentSmsFlang\"] :changeCurrentSmsFlang ", sms.ChangeCurrentSmsFlang)
+	sgcmd.RegistCmd("TestSendMail", "[\"TestSendMail\"] :TestSendMail ", TestSendMail)
 }
 
 func main() {

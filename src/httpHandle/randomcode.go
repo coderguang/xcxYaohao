@@ -265,6 +265,7 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 	existData.EndDt = firstOfMonth.AddDate(0, oldData.LeftTime, 0)
 	existData.CardType = oldData.CardType
 	existData.Desc = ""
+	existData.Title = oldData.Title
 	existData.RenewTimes++
 	existData.Status = define.YAOHAO_NOTICE_STATUS_NORMAL
 

@@ -43,6 +43,8 @@ func main() {
 	sgserver.StartServer(sgserver.ServerTypeLog, "debug", "./log/", log.LstdFlags, true)
 	sgserver.StartServer(sgserver.ServerTypeMail)
 
+	sgcmd.StartCmdWaitInputLoop()
+
 	config.InitCfg()
 	data.ReloadBoardcast([]string{})
 

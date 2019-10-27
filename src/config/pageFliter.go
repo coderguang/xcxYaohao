@@ -21,6 +21,8 @@ func GetCityName(title string) string {
 		return "杭州市"
 	case define.CITY_TIANJIN:
 		return "天津市"
+	case define.CITY_HAINAN:
+		return "海南市"
 	}
 	return "未知"
 }

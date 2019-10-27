@@ -17,6 +17,7 @@ const (
 	CITY_SHENZHEN  string = "shenzhen"
 	CITY_HANGZHOU  string = "hangzhou"
 	CITY_TIANJIN   string = "tianjin"
+	CITY_HAINAN    string = "hainan"
 )
 
 type SLastestCardData struct {
@@ -65,6 +66,10 @@ func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
 			return true
 		}
 	case CITY_TIANJIN:
+		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
+			return true
+		}
+	case CITY_HAINAN:
 		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
 			return true
 		}

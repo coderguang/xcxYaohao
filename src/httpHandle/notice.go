@@ -82,7 +82,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 			continue
 		}
 
-		err = sms.SendLuck(bindData.Phone, title, curTime)
+		err = sms.SendUnLuck(bindData.Phone, title, curTime)
 		if err != nil {
 			failedSend++
 			sglog.Error("send result unluck error,phone:", bindData.Phone, ",token:", bindData.Token, ",err:", err)

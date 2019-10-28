@@ -52,13 +52,13 @@ func main() {
 
 	db.InitDb()
 
-	go spider.HainanOldDataSpider([]string{})
+	//go spider.HainanOldDataSpider([]string{})
 
-	// titlelist := config.GetTitleList()
-	// for _, v := range titlelist {
-	// 	title := v
-	// 	go spider.NewSpider(title)
-	// }
+	titlelist := config.GetTitleList()
+	for _, v := range titlelist {
+		title := v
+		go spider.NewSpider(title)
+	}
 
 	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
 

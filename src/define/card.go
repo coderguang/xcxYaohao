@@ -86,7 +86,7 @@ type CardData struct {
 	Title    string `gorm:"primary_key;type:varchar(64)"`
 	Type     int    //个人/公司
 	CardType int    //普通/节能
-	Code     string `gorm:"primary_key;type:varchar(256)"`
+	Code     string `gorm:"primary_key;type:varchar(100)"`
 	Name     string
 	Time     string
 	Desc     string

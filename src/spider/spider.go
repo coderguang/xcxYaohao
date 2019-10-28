@@ -176,7 +176,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 }
 
 func (spider *Spider) StartLoopSpider() {
-	sleepTime := 60
+	sleepTime := 30
 	isFirstSpider := true
 	for {
 		//redownload
@@ -227,7 +227,7 @@ func (spider *Spider) StartLoopSpider() {
 
 				if curMonthAllUpdate {
 					//
-					sglog.Info("current month data all updates!!!!!")
+					sglog.Info(spider.cfg.Title, "current month data all updates!!!!!")
 					httpHandle.NoticeCurrentMonthDataUpdate(spider.cfg.Title, curTimeStr)
 					nextMonthDt := normalTime.AddDate(0, 1, 0)
 					timeInt = nextMonthDt.Sub(nowTime)

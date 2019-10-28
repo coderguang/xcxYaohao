@@ -23,7 +23,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		return
 	}
 	sglog.Info("start to send sms,", title, curTime)
-	sgmail.SendMail("start send mails", []string{config.GetUtilCfg().Receiver}, title+" "+curTime)
+	//sgmail.SendMail("start send mails", []string{config.GetUtilCfg().Receiver}, title+" "+curTime)
 	finalNoticeData := data.UpdateNoticeFinalTime(title, curTime)
 	err := db.UpdateNoticeFinalData(finalNoticeData)
 	if err != nil {

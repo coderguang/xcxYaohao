@@ -36,7 +36,7 @@ const (
 )
 
 type NoticeData struct {
-	Token         string `gorm:"primary_key;type:varchar(512)"`
+	Token         string `gorm:"primary_key;type:varchar(200)"`
 	Status        int
 	Name          string
 	Title         string

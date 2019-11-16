@@ -35,6 +35,7 @@ func RegistCmd() {
 	sgcmd.RegistCmd("ShowCurrentSmsFlang", "[\"ShowCurrentSmsFlang\"] :ShowCurrentSmsFlang", sms.ShowCurrentSmsFlang)
 	sgcmd.RegistCmd("changeCurrentSmsFlang", "[\"changeCurrentSmsFlang\"] :changeCurrentSmsFlang ", sms.ChangeCurrentSmsFlang)
 	sgcmd.RegistCmd("TestSendMail", "[\"TestSendMail\"] :TestSendMail ", TestSendMail)
+	sgcmd.RegistCmd("TianJinOldData", "[\"TianJinOldData\"] :TianJinOldData spider data", spider.TianjinOldDataSpider)
 }
 
 func main() {
@@ -52,7 +53,8 @@ func main() {
 
 	db.InitDb()
 
-	//go spider.HainanOldDataSpider([]string{})
+	//hainan special logic
+	go spider.HainanOldDataSpider([]string{})
 
 	titlelist := config.GetTitleList()
 	for _, v := range titlelist {

@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"sync"
+	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sgtc/tcsms"
 
@@ -85,6 +86,9 @@ func GetTitleList() []string {
 
 func IsSupportCity(title string) bool {
 	if _, err := GetSpiderCfg(title); err != nil {
+		if title == define.CITY_HAINAN {
+			return true
+		}
 		return false
 	}
 	return true

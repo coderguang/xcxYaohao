@@ -176,7 +176,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 }
 
 func (spider *Spider) StartLoopSpider() {
-	sleepTime := 30
+	sleepTime := 60
 	isFirstSpider := true
 	for {
 		//redownload

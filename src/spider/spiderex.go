@@ -20,9 +20,55 @@ import (
 func StartSpiderEx(title string, startDt time.Time, index string, isPersonal bool) {
 
 	searchPage := 1
+	sleepTime := 60
+	timeInt := time.Duration(300) * time.Second
 	for {
 
 		searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
+
+		if !data.NeedDownloadFile(title, searchTime) {
+			startDt = startDt.AddDate(0, 1, 0)
+			sglog.Info(title, "had already download ", searchTime, ",isPersonal:", isPersonal)
+			continue
+		}
+
+		nowTime := time.Now()
+		curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
+		if searchTime == curTimeStr {
+			normalTime := time.Date(nowTime.Year(), nowTime.Month(), 26, 9, 0, 0, 0, nowTime.Location())
+			if nowTime.Before(normalTime) {
+				timeInt = normalTime.Sub(nowTime)
+			} else {
+				curLastestInfo := data.GetLastestCardInfo(title)
+				curMonthAllUpdate := false
+				if curTimeStr == curLastestInfo.TimeStr {
+					if curLastestInfo.IsAllCardInfoUpdate() {
+						curMonthAllUpdate = true
+					}
+				}
+				if curMonthAllUpdate {
+					//
+					sglog.Info(title, " ex current month data all updates!!!!!")
+					httpHandle.NoticeCurrentMonthDataUpdate(title, curTimeStr)
+					nextMonthDt := normalTime.AddDate(0, 1, 0)
+					timeInt = nextMonthDt.Sub(nowTime)
+				} else {
+					hour := time.Now().Hour()
+					if hour < 9 {
+						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
+						timeInt = nextRun.Sub(nowTime)
+					} else if hour > 19 {
+						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
+						timeInt = nextRun.Sub(nowTime)
+					}
+				}
+			}
+			sleepTime = int(timeInt/time.Second) + 1
+
+			sglog.Info(title, "ex data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt))
+
+			sgthread.SleepBySecond(sleepTime)
+		}
 
 		sglog.Info(title, "start spider date:", searchTime, ",isPersonal:", isPersonal)
 
@@ -36,7 +82,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			continue
 		}
 		deleteRecord := 0
-		totalPage = 1
+		//totalPage = 1
 		for i := 1; i <= totalPage; i++ {
 			sgthread.SleepByMillSecond(50)
 			tmpDataMap := make(map[string]string)
@@ -107,11 +153,13 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 
 			}(cardDataMap)
 
-		}
-		if searchTime == "201910" {
-			break
+			downData := data.ChangeDownloadStatus(title, searchTime, define.DEF_DOWNLOAD_STATUS_COMPLETE, title)
+			db.UpdateDownloadToDb(downData)
+
 		}
 		startDt = startDt.AddDate(0, 1, 0)
+
+		sgthread.SleepBySecond(5)
 	}
 
 	sglog.Info("spider ", title, " old data ok,isPersion:", isPersonal)
@@ -161,31 +209,54 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 				}
 			})
 		} else if tmpS.Size() == 3 {
-			tr.Find("td").Each(func(ix int, td *goquery.Selection) {
-				sglog.Info(ix, ":", td.Text())
-				if 2 == ix {
-					str := td.Text()
-					if sgstring.ContainsWithAnd(str, []string{"共", "/", "页", "条"}) {
-						str = strings.Replace(str, "共", "", -1)
-						str = strings.Replace(str, "页", "", -1)
-						str = strings.Replace(str, "条", "", -1)
-						strlist := strings.Split(str, "/")
-						if 2 == len(strlist) {
-							totalPage, err = strconv.Atoi(strlist[0])
-							if err != nil {
-								sglog.Error("tranform error,", td.Text(), err)
+			if define.CITY_TIANJIN == title {
+				tr.Find("td").Each(func(ix int, td *goquery.Selection) {
+					sglog.Info(ix, ":", td.Text())
+					if 2 == ix {
+						str := td.Text()
+						if sgstring.ContainsWithAnd(str, []string{"共", "/", "页", "条"}) {
+							str = strings.Replace(str, "共", "", -1)
+							str = strings.Replace(str, "页", "", -1)
+							str = strings.Replace(str, "条", "", -1)
+							strlist := strings.Split(str, "/")
+							if 2 == len(strlist) {
+								totalPage, err = strconv.Atoi(strlist[0])
+								if err != nil {
+									sglog.Error("tranform error,", td.Text(), err)
+								}
+								totalNum, err = strconv.Atoi(strlist[1])
+								if err != nil {
+									sglog.Error("tranform error,", td.Text(), err)
+								}
+								//sglog.Info(td.Text(), "parse: page", totalPage, ",num:", totalNum)
 							}
-							totalNum, err = strconv.Atoi(strlist[1])
-							if err != nil {
-								sglog.Error("tranform error,", td.Text(), err)
-							}
-							//sglog.Info(td.Text(), "parse: page", totalPage, ",num:", totalNum)
 						}
 					}
-				}
-			})
-
+				})
+			}
 		}
 	})
+
+	if title == define.CITY_HAINAN {
+		doc.Find("div,span,li,ul").Each(func(_ int, cl *goquery.Selection) {
+			tmpS := cl.Text()
+			tmpS = strings.Replace(tmpS, " ", "", -1)
+			strlist := strings.Split(tmpS, "\n")
+			//sglog.Debug("len:", len(strlist), strlist)
+			if len(strlist) == 5 {
+				//sglog.Debug("22:", cl.Text())
+				totalNum, err = strconv.Atoi(strlist[1])
+				if err != nil {
+					sglog.Error("tranform error,", strlist[1], err)
+				}
+				totalPage, err = strconv.Atoi(strlist[2])
+				if err != nil {
+					sglog.Error("tranform error,", strlist[2], err)
+				}
+				//sglog.Info(strlist, "parse: page", totalPage, ",num:", totalNum)
+			}
+		})
+	}
+
 	return totalPage, totalNum, nil
 }

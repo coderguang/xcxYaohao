@@ -70,7 +70,7 @@ func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
 			return true
 		}
 	case CITY_HAINAN:
-		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
+		if data.PersonalNormalUpdate && data.CompanyNormalUpdate {
 			return true
 		}
 	}

@@ -25,8 +25,13 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 	for {
 
 		searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
-
-		if !data.NeedDownloadFile(title, searchTime) {
+		urlTips := searchTime
+		if isPersonal {
+			urlTips += "personal"
+		} else {
+			urlTips += "company"
+		}
+		if !data.NeedDownloadFile(title, urlTips) {
 			startDt = startDt.AddDate(0, 1, 0)
 			sglog.Info(title, "had already download ", searchTime, ",isPersonal:", isPersonal)
 			continue
@@ -153,8 +158,13 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 
 			}(cardDataMap)
 
-			downData := data.ChangeDownloadStatus(title, searchTime, define.DEF_DOWNLOAD_STATUS_COMPLETE, title)
+			downData := data.ChangeDownloadStatus(title, urlTips, define.DEF_DOWNLOAD_STATUS_COMPLETE, searchTime)
 			db.UpdateDownloadToDb(downData)
+			memberType := define.MEMBER_TYPE_COMPANY
+			if isPersonal {
+				memberType = define.MEMBER_TYPE_PERSIONAL
+			}
+			data.UpdateLastestInfo(title, define.CARD_TYPE_NORMAL, memberType, searchTime)
 
 		}
 		startDt = startDt.AddDate(0, 1, 0)

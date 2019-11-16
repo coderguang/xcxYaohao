@@ -9,7 +9,7 @@ import (
 )
 
 func HainanOldDataSpider(cmd []string) {
-	//unitIndex := "https://apply.hnjdctk.gov.cn/apply/app/status/norm/unit"
+	unitIndex := "https://apply.hnjdctk.gov.cn/apply/app/status/norm/unit"
 	persionIndex := "https://apply.hnjdctk.gov.cn/apply/app/status/norm/person"
 
 	startDt, err := sgtime.ParseInLocation(sgtime.FORMAT_TIME_NORMAL, "2018-08-01 00:00:00")
@@ -17,7 +17,7 @@ func HainanOldDataSpider(cmd []string) {
 		sglog.Error("parse startDt error,", err)
 	}
 
-	//go StartSpiderEx(define.CITY_HAINAN, startDt, unitIndex, false)
+	go StartSpiderEx(define.CITY_HAINAN, startDt, unitIndex, false)
 	go StartSpiderEx(define.CITY_HAINAN, startDt, persionIndex, true)
 
 }

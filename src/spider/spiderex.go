@@ -171,7 +171,6 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 				memberType = define.MEMBER_TYPE_PERSIONAL
 			}
 			data.UpdateLastestInfo(title, define.CARD_TYPE_NORMAL, memberType, searchTime)
-
 		}
 		startDt = startDt.AddDate(0, 1, 0)
 
@@ -259,7 +258,7 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 			tmpS = strings.Replace(tmpS, " ", "", -1)
 			strlist := strings.Split(tmpS, "\n")
 			//sglog.Debug("len:", len(strlist), strlist)
-			if len(strlist) == 5 {
+			if len(strlist) == 5&&strlist[1]!="" {
 				//sglog.Debug("22:", cl.Text())
 				totalNum, err = strconv.Atoi(strlist[1])
 				if err != nil {

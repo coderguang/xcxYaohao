@@ -86,6 +86,12 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			sglog.Error("search err,", searchTime, searchPageStr, err)
 			continue
 		}
+		if 0 == totalPage || 0 == totalNum {
+			sglog.Error("not valid error,page or num is zero,page:", totalPage, ",num:", totalNum)
+			sgthread.SleepBySecond(60)
+			continue
+		}
+
 		deleteRecord := 0
 		//totalPage = 1
 		for i := 1; i <= totalPage; i++ {
@@ -232,11 +238,11 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 							if 2 == len(strlist) {
 								totalPage, err = strconv.Atoi(strlist[0])
 								if err != nil {
-									sglog.Error("tranform error,", td.Text(), err)
+									sglog.Error("tranform error by tr1,", td.Text(), err)
 								}
 								totalNum, err = strconv.Atoi(strlist[1])
 								if err != nil {
-									sglog.Error("tranform error,", td.Text(), err)
+									sglog.Error("tranform error by tr2,", td.Text(), err)
 								}
 								//sglog.Info(td.Text(), "parse: page", totalPage, ",num:", totalNum)
 							}
@@ -257,11 +263,11 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 				//sglog.Debug("22:", cl.Text())
 				totalNum, err = strconv.Atoi(strlist[1])
 				if err != nil {
-					sglog.Error("tranform error,", strlist[1], err)
+					sglog.Error("tranform error hainan1,", strlist[1], err)
 				}
 				totalPage, err = strconv.Atoi(strlist[2])
 				if err != nil {
-					sglog.Error("tranform error,", strlist[2], err)
+					sglog.Error("tranform error hainan2,", strlist[2], err)
 				}
 				//sglog.Info(strlist, "parse: page", totalPage, ",num:", totalNum)
 			}

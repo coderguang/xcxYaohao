@@ -53,7 +53,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 				}
 				if curMonthAllUpdate {
 					//
-					sglog.Info(title, " ex current month data all updates!!!!!")
+					sglog.Info(title, " ex current month data all updates!!!!!", "isPerson:", isPersonal)
 					httpHandle.NoticeCurrentMonthDataUpdate(title, curTimeStr)
 					nextMonthDt := normalTime.AddDate(0, 1, 0)
 					timeInt = nextMonthDt.Sub(nowTime)
@@ -70,8 +70,15 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			}
 			sleepTime = int(timeInt/time.Second) + 1
 
-			sglog.Info(title, "ex data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt))
+			sglog.Info(title, "ex data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt), "isPerson:", isPersonal)
 
+			sgthread.SleepBySecond(sleepTime)
+		} else if searchTime > curTimeStr {
+			nextDt := nowTime.AddDate(0, 1, 0)
+			nextSearchDt := time.Date(nextDt.Year(), nextDt.Month(), 26, 9, 0, 0, 0, nextDt.Location())
+			timeInt := nextSearchDt.Sub(nowTime)
+			sleepTime = int(timeInt/time.Second) + 1
+			sglog.Info(title, "ex data collection now in sleep,will run after ", sleepTime, "s,", nextSearchDt, "isPerson:", isPersonal)
 			sgthread.SleepBySecond(sleepTime)
 		}
 
@@ -83,11 +90,11 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 		ignoreMap := make(map[string]string)
 		totalPage, totalNum, err := dataSpider(title, index, searchTime, searchPageStr, ignoreMap)
 		if err != nil {
-			sglog.Error("search err,", searchTime, searchPageStr, err)
+			sglog.Error("search err,", searchTime, searchPageStr, err, "isPerson:", isPersonal)
 			continue
 		}
 		if 0 == totalPage || 0 == totalNum {
-			sglog.Error("not valid error,page or num is zero,page:", totalPage, ",num:", totalNum)
+			sglog.Error("not valid error,page or num is zero,page:", totalPage, ",num:", totalNum, "isPerson:", isPersonal)
 			sgthread.SleepBySecond(60)
 			continue
 		}
@@ -118,11 +125,11 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			}
 		}
 		if totalNum != len(dataMap)+deleteRecord {
-			sglog.Error(title, "end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
+			sglog.Error(title, "end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap), "isPerson:", isPersonal)
 			sgthread.SleepBySecond(60)
 			continue
 		} else {
-			sglog.Info(title, "end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
+			sglog.Info(title, "end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap), "isPerson:", isPersonal)
 			now := time.Now()
 			cardDataMap := make(map[string]*define.CardData)
 			for k, v := range dataMap {
@@ -258,7 +265,7 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 			tmpS = strings.Replace(tmpS, " ", "", -1)
 			strlist := strings.Split(tmpS, "\n")
 			//sglog.Debug("len:", len(strlist), strlist)
-			if len(strlist) == 5&&strlist[1]!="" {
+			if len(strlist) == 5 && strlist[1] != "" {
 				//sglog.Debug("22:", cl.Text())
 				totalNum, err = strconv.Atoi(strlist[1])
 				if err != nil {

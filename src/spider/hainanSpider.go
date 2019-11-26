@@ -53,7 +53,7 @@ func HainanIsShowResultInWebIndex(searchTimeStr string) bool {
 			title := td.Text()
 			if sgstring.ContainsWithAnd(title, keyStr) {
 				//sglog.Debug("title:", title)
-				title = strings.ReplaceAll(title, "\t", "")
+				title = strings.Replace(title, "\t", "", -1)
 				strlist := strings.Split(title, "\n")
 				newTitleList := []string{}
 				for _, v := range strlist {

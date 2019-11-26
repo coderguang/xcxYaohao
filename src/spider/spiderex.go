@@ -119,7 +119,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 		}
 		if totalNum != len(dataMap)+deleteRecord {
 			sglog.Error(title, "end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
-			sgthread.DelayExit(2)
+			sgthread.SleepBySecond(60)
 			continue
 		} else {
 			sglog.Info(title, "end search ok", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap))
@@ -263,11 +263,11 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 				//sglog.Debug("22:", cl.Text())
 				totalNum, err = strconv.Atoi(strlist[1])
 				if err != nil {
-					sglog.Error("tranform error hainan1,", strlist[1], err)
+					sglog.Error("tranform error hainan1,", strlist[1], err, strlist)
 				}
 				totalPage, err = strconv.Atoi(strlist[2])
 				if err != nil {
-					sglog.Error("tranform error hainan2,", strlist[2], err)
+					sglog.Error("tranform error hainan2,", strlist[2], err, strlist)
 				}
 				//sglog.Info(strlist, "parse: page", totalPage, ",num:", totalNum)
 			}

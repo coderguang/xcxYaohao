@@ -16,6 +16,7 @@ func InitAndLoadCardData() {
 		db.InitLastestCardData()
 	} else {
 		db.InitAndLoadCardData()
+		data.ShowLastestInfo([]string{})
 	}
 }
 

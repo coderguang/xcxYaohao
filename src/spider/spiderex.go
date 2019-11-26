@@ -70,6 +70,16 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 
 		sglog.Info(title, "start spider date:", searchTime, ",isPersonal:", isPersonal)
 
+		if title == define.CITY_HAINAN {
+			if !HainanIsShowResultInWebIndex(searchTime) {
+				sglog.Debug("hainan not show result in web,sleep..,", searchTime)
+				sgthread.SleepBySecond(sleepTime)
+				continue
+			} else {
+				sglog.Debug("hainan had show result in web,", searchTime)
+			}
+		}
+
 		dataMap := make(map[string]string)
 
 		searchPageStr := strconv.Itoa(searchPage)

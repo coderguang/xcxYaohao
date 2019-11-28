@@ -232,3 +232,21 @@ func GetSmsNoticeData(title string) ([]string, []string) {
 
 	return luckList, unluckList
 }
+
+func GetNoticeOpenIdAndCodeMap(title string) map[string]string {
+	globalNoticeData.Lock.Lock()
+	defer globalNoticeData.Lock.Unlock()
+
+	datas := make(map[string]string)
+
+	for k, v := range globalNoticeData.MapData {
+		if v.Title != title {
+			continue
+		}
+		if v.Status != define.YAOHAO_NOTICE_STATUS_NORMAL {
+			continue
+		}
+		datas[k] = v.Code
+	}
+	return datas
+}

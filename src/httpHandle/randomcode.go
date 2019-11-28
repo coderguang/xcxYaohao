@@ -3,6 +3,7 @@ package httpHandle
 import (
 	"strconv"
 	"time"
+	"xcxYaohao/src/cache"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
@@ -50,7 +51,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		return randomCode, YAOHAO_ERR_PHONE_BIND_TOO_MANY
 	}
 
-	if ok, _ := data.GetMatchData(title, code); ok {
+	if ok, _ := cache.GetMatchData(title, code); ok {
 		return randomCode, YAOHAO_ERR_CODE_HAD_LUCK
 	}
 

@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+	"xcxYaohao/src/cache"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/dataMove"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/httpHandle"
+	"xcxYaohao/src/notice"
 	"xcxYaohao/src/sms"
 	"xcxYaohao/src/spider"
 
@@ -31,7 +33,7 @@ func RegistCmd() {
 	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
 	sgcmd.RegistCmd("DataMove", "[\"DataMove\"] :move old data to new ", dataMove.InitDb)
 	sgcmd.RegistCmd("ReloadBoardcast", "[\"ReloadBoardcast\"] :ReloadBoardcast cfg", data.ReloadBoardcast)
-	sgcmd.RegistCmd("NoticeSmsByCmd", "[\"NoticeSmsByCmd\",\"shenzhen\",\"201908\"] :notice sms", httpHandle.NoticeSmsByCmd)
+	sgcmd.RegistCmd("NoticeSmsByCmd", "[\"NoticeSmsByCmd\",\"shenzhen\",\"201908\"] :notice sms", notice.NoticeSmsByCmd)
 	sgcmd.RegistCmd("ShowCurrentSmsFlang", "[\"ShowCurrentSmsFlang\"] :ShowCurrentSmsFlang", sms.ShowCurrentSmsFlang)
 	sgcmd.RegistCmd("changeCurrentSmsFlang", "[\"changeCurrentSmsFlang\"] :changeCurrentSmsFlang ", sms.ChangeCurrentSmsFlang)
 	sgcmd.RegistCmd("TestSendMail", "[\"TestSendMail\"] :TestSendMail ", TestSendMail)
@@ -52,6 +54,8 @@ func main() {
 	spider.AutoCreateFileDir()
 
 	db.InitDb()
+
+	cache.InitAndLoadCardData()
 
 	//hainan special logic
 	go spider.HainanOldDataSpider([]string{})

@@ -2,13 +2,14 @@ package httpHandle
 
 import (
 	"net/http"
+	"xcxYaohao/src/cache"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/define"
 )
 
 func matchData(r *http.Request, city string, openId string, returnData map[string]interface{}) {
 	key := r.FormValue(HTTP_ARGS_MATCH_KEY)
-	if ok, v := data.GetMatchData(city, key); ok {
+	if ok, v := cache.GetMatchData(city, key); ok {
 		tmplist := []*define.CardDataForClient{}
 		for _, vv := range v {
 			tmplist = append(tmplist, vv.CardDataToClient())

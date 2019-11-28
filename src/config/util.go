@@ -17,6 +17,7 @@ type UtilCfg struct {
 	Receiver string `json:"receiver"`
 	Sign     string `json:"sign"`
 	UnluckID int    `json:"unluckId"`
+	NoCache  bool   `json:"noCache"`
 }
 
 func initUtilCfg() {
@@ -47,4 +48,8 @@ func GetLuckId() int {
 
 func GetUnLuckId() int {
 	return globalUtilCfg.UnluckID
+}
+
+func IsNoCache() bool {
+	return globalUtilCfg.NoCache
 }

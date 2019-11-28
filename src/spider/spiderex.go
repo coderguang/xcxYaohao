@@ -5,10 +5,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"xcxYaohao/src/cache"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
 	"xcxYaohao/src/httpHandle"
+	"xcxYaohao/src/notice"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/coderguang/GameEngine_go/sglog"
@@ -44,32 +46,16 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			if nowTime.Before(normalTime) {
 				timeInt = normalTime.Sub(nowTime)
 			} else {
-				curLastestInfo := data.GetLastestCardInfo(title)
-				curMonthAllUpdate := false
-				if curTimeStr == curLastestInfo.TimeStr {
-					if curLastestInfo.IsAllCardInfoUpdate() {
-						curMonthAllUpdate = true
-					}
-				}
-				if curMonthAllUpdate {
-					//
-					sglog.Info(title, " ex current month data all updates!!!!!", "isPerson:", isPersonal)
-					httpHandle.NoticeCurrentMonthDataUpdate(title, curTimeStr)
-					nextMonthDt := normalTime.AddDate(0, 1, 0)
-					timeInt = nextMonthDt.Sub(nowTime)
-				} else {
-					hour := time.Now().Hour()
-					if hour < 9 {
-						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
-						timeInt = nextRun.Sub(nowTime)
-					} else if hour > 19 {
-						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
-						timeInt = nextRun.Sub(nowTime)
-					}
+				hour := time.Now().Hour()
+				if hour < 9 {
+					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
+					timeInt = nextRun.Sub(nowTime)
+				} else if hour > 19 {
+					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
+					timeInt = nextRun.Sub(nowTime)
 				}
 			}
 			sleepTime = int(timeInt/time.Second) + 1
-
 			sglog.Info(title, "ex data collection now in sleep,will run after ", sleepTime, "s,", nowTime.Add(timeInt), "isPerson:", isPersonal)
 
 			sgthread.SleepBySecond(sleepTime)
@@ -148,14 +134,20 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 				tmp.Desc = "by " + title + " special"
 				tmp.UpdateDt = now
 
-				if data.IsDataExist(title, k) {
+				if cache.IsCardDataExist(title, k) {
 					sglog.Error("data already exist,time:", searchTime, "code:", k)
 				} else {
 					cardDataMap[k] = tmp
 				}
 			}
-			data.AddCardData(cardDataMap)
+			cache.AddCardDataToMem(cardDataMap)
 
+			downData := data.ChangeDownloadStatus(title, urlTips, define.DEF_DOWNLOAD_STATUS_COMPLETE, searchTime)
+			db.UpdateDownloadToDb(downData)
+			memberType := define.MEMBER_TYPE_COMPANY
+			if isPersonal {
+				memberType = define.MEMBER_TYPE_PERSIONAL
+			}
 			go func(updates map[string]*define.CardData) {
 				nowEx := sgtime.New()
 				updateDbNum := 0
@@ -169,15 +161,19 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 				endEx := sgtime.New()
 				sglog.Info(title, " update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
 
-			}(cardDataMap)
+				data.UpdateLastestInfo(title, define.CARD_TYPE_NORMAL, memberType, searchTime)
 
-			downData := data.ChangeDownloadStatus(title, urlTips, define.DEF_DOWNLOAD_STATUS_COMPLETE, searchTime)
-			db.UpdateDownloadToDb(downData)
-			memberType := define.MEMBER_TYPE_COMPANY
-			if isPersonal {
-				memberType = define.MEMBER_TYPE_PERSIONAL
-			}
-			data.UpdateLastestInfo(title, define.CARD_TYPE_NORMAL, memberType, searchTime)
+				//check notice
+				if searchTime == curTimeStr {
+					curLastestInfo := data.GetLastestCardInfo(title)
+					if curTimeStr == curLastestInfo.TimeStr {
+						if curLastestInfo.IsAllCardInfoUpdate() {
+							sglog.Info(title, " ex current month data all updates!!!!!", "isPerson:", isPersonal)
+							notice.NoticeCurrentMonthDataUpdate(title, curTimeStr)
+						}
+					}
+				}
+			}(cardDataMap)
 		}
 		startDt = startDt.AddDate(0, 1, 0)
 

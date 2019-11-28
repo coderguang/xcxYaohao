@@ -1,6 +1,7 @@
 package define
 
 import (
+	"strconv"
 	"sync"
 	"time"
 )
@@ -35,6 +36,19 @@ func (data *SLastestCardData) Reset() {
 	data.CompanyNormalUpdate = false
 	data.CompanyJieNengUpdate = false
 }
+
+func (data *SLastestCardData) String() string {
+	str := "=======\n+\n" + data.Title + "\n" +
+		"\npersonalNormal:" + strconv.FormatBool(data.PersonalNormalUpdate) +
+		"\nPersonalJieNengUpdate:" + strconv.FormatBool(data.PersonalJieNengUpdate) +
+		"\nCompanyNormalUpdate:" + strconv.FormatBool(data.CompanyNormalUpdate) +
+		"\nCompanyJieNengUpdate:" + strconv.FormatBool(data.CompanyJieNengUpdate) +
+		"\n======\n"
+
+	return str
+
+}
+
 func (data *SLastestCardData) UpdateLastestInfo(cardType int, memberType int) {
 	if MEMBER_TYPE_PERSIONAL == memberType {
 		if CARD_TYPE_NORMAL == cardType {
@@ -49,6 +63,7 @@ func (data *SLastestCardData) UpdateLastestInfo(cardType int, memberType int) {
 			data.CompanyJieNengUpdate = true
 		}
 	}
+	//sglog.Debug("after udpate:cardType", cardType, ",memberType", memberType, data)
 }
 
 func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
@@ -83,11 +98,11 @@ type SecureLastestCardData struct {
 }
 
 type CardData struct {
-	Title    string `gorm:"primary_key;type:varchar(64)"`
+	Title    string `gorm:"primary_key;type:varchar(64);index:title_name;index:title_code"`
 	Type     int    //个人/公司
 	CardType int    //普通/节能
-	Code     string `gorm:"primary_key;type:varchar(100)"`
-	Name     string
+	Code     string `gorm:"primary_key;type:varchar(100);index:title_name"`
+	Name     string `gorm:"index:title_name"`
 	Time     string
 	Desc     string
 	UpdateDt time.Time

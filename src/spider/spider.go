@@ -10,11 +10,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"xcxYaohao/src/cache"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
-	"xcxYaohao/src/httpHandle"
+	"xcxYaohao/src/notice"
 
 	"github.com/coderguang/GameEngine_go/sgfile"
 
@@ -213,34 +214,13 @@ func (spider *Spider) StartLoopSpider() {
 			if nowTime.Before(normalTime) {
 				timeInt = normalTime.Sub(nowTime)
 			} else {
-
-				// check is current month day all get
-				curLastestInfo := data.GetLastestCardInfo(spider.cfg.Title)
-				curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
-
-				curMonthAllUpdate := false
-				if curTimeStr == curLastestInfo.TimeStr {
-					if curLastestInfo.IsAllCardInfoUpdate() {
-						curMonthAllUpdate = true
-					}
-				}
-
-				if curMonthAllUpdate {
-					//
-					sglog.Info(spider.cfg.Title, "current month data all updates!!!!!")
-					httpHandle.NoticeCurrentMonthDataUpdate(spider.cfg.Title, curTimeStr)
-					nextMonthDt := normalTime.AddDate(0, 1, 0)
-					timeInt = nextMonthDt.Sub(nowTime)
-				} else {
-
-					hour := time.Now().Hour()
-					if hour < 9 {
-						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
-						timeInt = nextRun.Sub(nowTime)
-					} else if hour > 19 {
-						nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
-						timeInt = nextRun.Sub(nowTime)
-					}
+				hour := time.Now().Hour()
+				if hour < 9 {
+					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
+					timeInt = nextRun.Sub(nowTime)
+				} else if hour > 19 {
+					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
+					timeInt = nextRun.Sub(nowTime)
 				}
 			}
 			sleepTime = int(timeInt/time.Second) + 1
@@ -364,15 +344,14 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 	updateNum := 0
 	updateMap := make(map[string]*define.CardData)
 	for _, v := range datas {
-		if !data.IsDataExist(v.Title, v.Code) {
+		if !cache.IsCardDataExist(v.Title, v.Code) {
 			updateNum++
 			updateMap[v.Code] = v
 		}
 	}
 
 	now := sgtime.New()
-	data.AddCardData(updateMap)
-	data.UpdateLastestInfo(spider.cfg.Title, cardType, memberType, timestr)
+	cache.AddCardDataToMem(updateMap)
 	end := sgtime.New()
 	sglog.Info("update card data in member size:", updateNum, ",use time:", (sgtime.GetTotalSecond(end) - sgtime.GetTotalSecond(now)))
 
@@ -389,6 +368,18 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 		endEx := sgtime.New()
 		sglog.Info(spider.cfg.Title, " update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
 
+		nowTime := time.Now()
+
+		// check is current month day all get
+		data.UpdateLastestInfo(spider.cfg.Title, cardType, memberType, timestr)
+		curLastestInfo := data.GetLastestCardInfo(spider.cfg.Title)
+		curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
+		if curTimeStr == curLastestInfo.TimeStr {
+			if curLastestInfo.IsAllCardInfoUpdate() {
+				sglog.Info(spider.cfg.Title, "current month data all updates!!!!!")
+				notice.NoticeCurrentMonthDataUpdate(spider.cfg.Title, curTimeStr)
+			}
+		}
 	}(updateMap)
 
 	return timestr, memberType, cardType, updateNum, nil

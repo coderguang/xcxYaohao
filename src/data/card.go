@@ -118,6 +118,7 @@ func UpdateLastestInfo(title string, cardType int, memberType int, timestr strin
 		} else if v.TimeStr == timestr {
 			v.UpdateLastestInfo(cardType, memberType)
 		}
+		//sglog.Debug("after udpate by spider,", title, ":cardType", cardType, ",memberType", memberType, timestr, v)
 		return
 	}
 	tmp := new(define.SLastestCardData)
@@ -126,6 +127,9 @@ func UpdateLastestInfo(title string, cardType int, memberType int, timestr strin
 	tmp.TimeStr = timestr
 	tmp.UpdateLastestInfo(cardType, memberType)
 	globalLastestData.Data[title] = tmp
+
+	//sglog.Debug("spider new,", title, ":cardType", cardType, ",memberType", memberType, timestr, tmp)
+
 }
 
 func IsDataExist(title string, code string) bool {

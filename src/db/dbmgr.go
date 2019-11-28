@@ -35,8 +35,6 @@ func InitDb() {
 
 	initAndLoadDownloadHistory()
 
-	initAndLoadCardData()
-
 	initAndLoadNoticeData()
 
 	initAndLoadFinalNoticeTime()
@@ -82,7 +80,7 @@ func initAndLoadDownloadHistory() {
 	data.InitHistoryDataFromDb(historyDatas)
 }
 
-func initAndLoadCardData() {
+func InitAndLoadCardData() {
 	//return
 	err := globalDb.AutoMigrate(define.CardData{}).Error
 	if err != nil {
@@ -134,4 +132,46 @@ func initAndLoadNoticeData() {
 
 	sglog.Info("init NoticeData data use ", useTime, " seconds,size:", len(noticeDatas))
 
+}
+
+func InitLastestCardData() {
+	//-- select * from card_data group by time,title;
+	lastsDatas := []define.CardData{}
+	err := globalDb.Select(`*`).Table("card_data").Group("title,time,type,card_type").Scan(&lastsDatas).Error
+	if err != nil {
+		sglog.Error("init lastest card time data error,", err)
+		sgthread.DelayExit(2)
+		return
+	}
+
+	for _, v := range lastsDatas {
+		data.UpdateLastestInfo(v.Title, v.CardType, v.Type, v.Time)
+	}
+	data.ShowLastestInfo([]string{})
+}
+
+func IsCardDataExistByDb(title string, code string) bool {
+	cards := []define.CardData{}
+	err := globalDb.Where("title =? AND code=?", title, code).Find(&cards).Error
+	if err != nil {
+		sglog.Error("find data exist error,", title, code, err)
+		return false
+	}
+	if len(cards) == 0 {
+		return false
+	}
+	return true
+}
+
+func GetMatchDataByDb(title string, code string) (bool, []*define.CardData) {
+	cards := []*define.CardData{}
+	err := globalDb.Where("title =? AND (code=? OR name=?)", title, code, code).Find(&cards).Error
+	if err != nil {
+		sglog.Error("find data exist error,", title, code, err)
+		return false, cards
+	}
+	if len(cards) != 0 {
+		return true, cards
+	}
+	return false, cards
 }

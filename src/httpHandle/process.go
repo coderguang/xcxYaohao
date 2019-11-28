@@ -14,25 +14,33 @@ import (
 
 func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
+	requireData := make(map[string][]string)
 	returnData := make(map[string]interface{})
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_DO_NOT_THING
 
 	defer func() {
 
-		str, err := json.Marshal(returnData)
-		if err != nil {
-			sglog.Error("parse returnData to string error", err)
-			return
+		strRequire, err := json.Marshal(requireData)
+		if err == nil {
+			sglog.Info("require data is", string(strRequire))
+		} else {
+			sglog.Error("parse requireData to string error", err)
 		}
-		sglog.Info("return str is", string(str))
-		w.Write([]byte(string(str)))
 
+		str, err := json.Marshal(returnData)
+		if err == nil {
+			sglog.Info("return str is", string(str))
+			w.Write([]byte(string(str)))
+		} else {
+			sglog.Error("parse returnData to string error", err)
+		}
 		flag <- true
 	}()
 
 	r.ParseForm()
 
-	sglog.Debug("require data is ", r.Form)
+	requireData = r.Form
+	//sglog.Debug("require data is ", r.Form)
 
 	op := r.FormValue(HTTP_ARGS_KEY)
 	city := r.FormValue(HTTP_ARGS_CITY)
@@ -58,6 +66,8 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			data.AddStatistic(define.StatisticNewOpenTimes, 1)
 		}
 	}
+
+	requireData["token"] = []string{openId.Openid}
 
 	//openId.Openid = loginCode
 

@@ -113,7 +113,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			if len(tmpDataMap) != 16 {
 				sglog.Debug("page size not 16,", searchTime, i, ",size is ", len(tmpDataMap))
 			}
-			sglog.Debug("page:", i, "size:", len(tmpDataMap), ",totalsize:", len(dataMap))
+			//sglog.Debug("page:", i, "size:", len(tmpDataMap), ",totalsize:", len(dataMap))
 			for k, v := range tmpDataMap {
 				if vv, ok := dataMap[k]; ok {
 					sglog.Info(title, "duplicate data,", k, v, vv)

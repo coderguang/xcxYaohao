@@ -36,13 +36,13 @@ func requireRandomCode(r *http.Request, city string, openId string, returnData m
 	phone := r.FormValue(HTTP_ARGS_BIND_PHONE)
 	leftTime := r.FormValue(HTTP_ARGS_TIME)
 
-	randomCode, errcode := requireRandomCodeFromClient(city, openId, cardType, code, phone, leftTime)
+	_, errcode := requireRandomCodeFromClient(city, openId, cardType, code, phone, leftTime)
 	if errcode != YAOHAO_OK {
 		returnData[HTTP_RETURN_ERR_CODE] = errcode
 		return
 	}
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
-	returnData[HTTP_RETURN_Data] = randomCode
+	//returnData[HTTP_RETURN_Data] = randomCode
 
 }
 

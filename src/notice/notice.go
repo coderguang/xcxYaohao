@@ -3,6 +3,7 @@ package notice
 import (
 	"strconv"
 	"time"
+	"xcxYaohao/src/cache"
 	"xcxYaohao/src/config"
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
@@ -29,7 +30,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 	if err != nil {
 		sglog.Error("update final notice time to db error,", err)
 	}
-	lucklist, unlucklist := data.GetSmsNoticeData(title)
+	lucklist, unlucklist := cache.GetSmsNoticeDataList(title)
 	luckPhone := []string{}
 	unluckPhone := []string{}
 

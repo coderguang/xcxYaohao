@@ -115,6 +115,7 @@ func UpdateLastestInfo(title string, cardType int, memberType int, timestr strin
 		if v.TimeStr < timestr {
 			v.Reset()
 			v.TimeStr = timestr
+			v.UpdateLastestInfo(cardType, memberType)
 		} else if v.TimeStr == timestr {
 			v.UpdateLastestInfo(cardType, memberType)
 		}

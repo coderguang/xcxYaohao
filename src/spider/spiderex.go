@@ -22,8 +22,8 @@ import (
 func StartSpiderEx(title string, startDt time.Time, index string, isPersonal bool) {
 
 	searchPage := 1
-	sleepTime := 60
-	timeInt := time.Duration(300) * time.Second
+	sleepTime := define.SPIDER_SLEEP_TIME
+	timeInt := time.Duration(define.SPIDER_TIME_INT) * time.Second
 	for {
 
 		searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
@@ -42,15 +42,15 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 		nowTime := time.Now()
 		curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
 		if searchTime == curTimeStr {
-			normalTime := time.Date(nowTime.Year(), nowTime.Month(), 26, 9, 0, 0, 0, nowTime.Location())
+			normalTime := time.Date(nowTime.Year(), nowTime.Month(), define.SPIDER_START_DAY, define.SPIDER_START_HOUR, 0, 0, 0, nowTime.Location())
 			if nowTime.Before(normalTime) {
 				timeInt = normalTime.Sub(nowTime)
 			} else {
 				hour := time.Now().Hour()
-				if hour < 9 {
-					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
+				if hour < define.SPIDER_START_HOUR {
+					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), define.SPIDER_START_HOUR, 0, 0, 0, nowTime.Location())
 					timeInt = nextRun.Sub(nowTime)
-				} else if hour > 19 {
+				} else if hour > define.SPIDER_END_HOUR {
 					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
 					timeInt = nextRun.Sub(nowTime)
 				}
@@ -61,7 +61,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			sgthread.SleepBySecond(sleepTime)
 		} else if searchTime > curTimeStr {
 			nextDt := nowTime.AddDate(0, 1, 0)
-			nextSearchDt := time.Date(nextDt.Year(), nextDt.Month(), 26, 9, 0, 0, 0, nextDt.Location())
+			nextSearchDt := time.Date(nextDt.Year(), nextDt.Month(), define.SPIDER_START_DAY, define.SPIDER_START_HOUR, 0, 0, 0, nextDt.Location())
 			timeInt := nextSearchDt.Sub(nowTime)
 			sleepTime = int(timeInt/time.Second) + 1
 			sglog.Info(title, "ex data collection now in sleep,will run after ", sleepTime, "s,", nextSearchDt, "isPerson:", isPersonal)
@@ -162,17 +162,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 				sglog.Info(title, " update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
 
 				data.UpdateLastestInfo(title, define.CARD_TYPE_NORMAL, memberType, searchTime)
-
-				//check notice
-				if searchTime == curTimeStr {
-					curLastestInfo := data.GetLastestCardInfo(title)
-					if curTimeStr == curLastestInfo.TimeStr {
-						if curLastestInfo.IsAllCardInfoUpdate() {
-							sglog.Info(title, " ex current month data all updates!!!!!", "isPerson:", isPersonal)
-							notice.NoticeCurrentMonthDataUpdate(title, curTimeStr)
-						}
-					}
-				}
+				checkNoticeToUser(title)
 			}(cardDataMap)
 		}
 		startDt = startDt.AddDate(0, 1, 0)
@@ -277,4 +267,25 @@ func dataSpider(title string, index string, timestr string, page string, dataMap
 	}
 
 	return totalPage, totalNum, nil
+}
+
+func checkNoticeToUser(title string) {
+	if isCurrentMonthAllUpdate(title) {
+		nowTime := time.Now()
+		curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
+		sglog.Info(title, " ex current month data all updates!!!!!")
+		notice.NoticeCurrentMonthDataUpdate(title, curTimeStr)
+	}
+}
+
+func isCurrentMonthAllUpdate(title string) bool {
+	nowTime := time.Now()
+	curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
+	curLastestInfo := data.GetLastestCardInfo(title)
+	if curTimeStr == curLastestInfo.TimeStr {
+		if curLastestInfo.IsAllCardInfoUpdate() {
+			return true
+		}
+	}
+	return false
 }

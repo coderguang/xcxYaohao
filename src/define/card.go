@@ -14,6 +14,14 @@ const (
 )
 
 const (
+	SPIDER_SLEEP_TIME int = 60
+	SPIDER_TIME_INT   int = 60
+	SPIDER_START_HOUR int = 9
+	SPIDER_END_HOUR   int = 19
+	SPIDER_START_DAY  int = 26
+)
+
+const (
 	CITY_GUANGZHOU string = "guangzhou"
 	CITY_SHENZHEN  string = "shenzhen"
 	CITY_HANGZHOU  string = "hangzhou"
@@ -38,7 +46,8 @@ func (data *SLastestCardData) Reset() {
 }
 
 func (data *SLastestCardData) String() string {
-	str := "=======\n+\n" + data.Title + "\n" +
+	str := "=======\n\n" + data.Title + "\n" +
+		"\ntime:" + data.TimeStr +
 		"\npersonalNormal:" + strconv.FormatBool(data.PersonalNormalUpdate) +
 		"\nPersonalJieNengUpdate:" + strconv.FormatBool(data.PersonalJieNengUpdate) +
 		"\nCompanyNormalUpdate:" + strconv.FormatBool(data.CompanyNormalUpdate) +
@@ -130,7 +139,7 @@ type SecureCardData struct {
 func (data *SecureLastestCardData) String() string {
 	data.Lock.Lock()
 	defer data.Lock.Unlock()
-	str := "\n\n==============lastest data========="
+	str := "\n\n==============lastest data=========\n"
 	for k, v := range data.Data {
 		str += k + ":" + v.TimeStr + "\n"
 	}

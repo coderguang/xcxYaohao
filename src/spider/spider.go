@@ -15,7 +15,6 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
-	"xcxYaohao/src/notice"
 
 	"github.com/coderguang/GameEngine_go/sgfile"
 
@@ -177,7 +176,7 @@ func (spider *Spider) StartAutoVisitUrl(title string) {
 }
 
 func (spider *Spider) StartLoopSpider() {
-	sleepTime := 60
+	sleepTime := define.SPIDER_SLEEP_TIME
 	isFirstSpider := true
 	for {
 		//redownload
@@ -206,20 +205,26 @@ func (spider *Spider) StartLoopSpider() {
 		}
 
 		nowTime := time.Now()
-		timeInt := time.Duration(300) * time.Second
+		timeInt := time.Duration(define.SPIDER_TIME_INT) * time.Second
 		if 0 == len(downlist) && 0 == len(revisitlist) && !isFirstSpider {
 
-			normalTime := time.Date(nowTime.Year(), nowTime.Month(), 26, 9, 0, 0, 0, nowTime.Location())
+			normalTime := time.Date(nowTime.Year(), nowTime.Month(), define.SPIDER_START_DAY, define.SPIDER_START_HOUR, 0, 0, 0, nowTime.Location())
 
 			if nowTime.Before(normalTime) {
 				timeInt = normalTime.Sub(nowTime)
 			} else {
 				hour := time.Now().Hour()
-				if hour < 9 {
-					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 9, 0, 0, 0, nowTime.Location())
+				if hour < define.SPIDER_START_HOUR {
+					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), define.SPIDER_START_HOUR, 0, 0, 0, nowTime.Location())
 					timeInt = nextRun.Sub(nowTime)
-				} else if hour > 19 {
+				} else if hour > define.SPIDER_END_HOUR {
 					nextRun := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 23, 59, 59, 0, nowTime.Location())
+					timeInt = nextRun.Sub(nowTime)
+				}
+
+				if isCurrentMonthAllUpdate(spider.cfg.Title) {
+					nextMonth := nowTime.AddDate(0, 1, 0)
+					nextRun := time.Date(nextMonth.Year(), nextMonth.Month(), define.SPIDER_START_DAY, 9, 0, 0, 0, nowTime.Location())
 					timeInt = nextRun.Sub(nowTime)
 				}
 			}
@@ -367,19 +372,9 @@ func (spider *Spider) ReadTxtFileAndInsertToDb(fileDir string) (string, int, int
 		}
 		endEx := sgtime.New()
 		sglog.Info(spider.cfg.Title, " update card data in databases size:", updateDbNum, ",use time:", (sgtime.GetTotalSecond(endEx) - sgtime.GetTotalSecond(nowEx)))
-
-		nowTime := time.Now()
-
 		// check is current month day all get
 		data.UpdateLastestInfo(spider.cfg.Title, cardType, memberType, timestr)
-		curLastestInfo := data.GetLastestCardInfo(spider.cfg.Title)
-		curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
-		if curTimeStr == curLastestInfo.TimeStr {
-			if curLastestInfo.IsAllCardInfoUpdate() {
-				sglog.Info(spider.cfg.Title, "current month data all updates!!!!!")
-				notice.NoticeCurrentMonthDataUpdate(spider.cfg.Title, curTimeStr)
-			}
-		}
+		checkNoticeToUser(spider.cfg.Title)
 	}(updateMap)
 
 	return timestr, memberType, cardType, updateNum, nil

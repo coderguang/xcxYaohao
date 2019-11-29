@@ -14,11 +14,15 @@ import (
 
 func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
+	startDt := sgtime.New()
 	requireData := make(map[string][]string)
 	returnData := make(map[string]interface{})
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_DO_NOT_THING
 
 	defer func() {
+		endDt := sgtime.New()
+
+		sglog.Debug("handle use ", (sgtime.GetTotalSecond(endDt) - sgtime.GetTotalSecond(endDt)), "start:", startDt, "--------->", endDt)
 
 		strRequire, err := json.Marshal(requireData)
 		if err == nil {

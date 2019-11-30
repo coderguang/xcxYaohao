@@ -21,9 +21,10 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
 	defer func() {
 		endDt := sgtime.New()
-
-		sglog.Debug("handle use ", (sgtime.GetTotalSecond(endDt) - sgtime.GetTotalSecond(endDt)), "start:", startDt, "--------->", endDt)
-
+		useTime := sgtime.GetTotalSecond(endDt) - sgtime.GetTotalSecond(endDt)
+		if useTime > 0 {
+			sglog.Debug("handle use ", useTime, "start:", startDt, "--------->", endDt)
+		}
 		strRequire, err := json.Marshal(requireData)
 		if err == nil {
 			sglog.Info("require data is", string(strRequire))

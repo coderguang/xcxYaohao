@@ -109,7 +109,7 @@ func initOldRequireDatata() {
 	for _, v := range datas {
 		bindData, err := data.GetNoticeData(v.TokenId)
 		if err != nil {
-			bindData = data.AddOpenXcxTimes(v.TokenId)
+			bindData = data.AddOpenXcxTimes(v.TokenId, "")
 			bindData.CreateDt = *v.FinalLogin
 			bindData.RequireTimes = v.RequireTime
 			bindData.ShareTimes = v.ShareTimes
@@ -132,7 +132,7 @@ func initOldNotice() {
 		bindData, err := data.GetNoticeData(v.TokenId)
 		if err != nil {
 			sglog.Info("transfrom notice record error,token:", v.TokenId)
-			bindData = data.AddOpenXcxTimes(v.TokenId)
+			bindData = data.AddOpenXcxTimes(v.TokenId, "")
 		}
 		bindData.Title = v.Title
 		bindData.CardType = v.CardType

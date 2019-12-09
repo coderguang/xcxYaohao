@@ -25,12 +25,12 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		if useTime > 0 {
 			sglog.Debug("handle use ", useTime, "start:", startDt, "--------->", endDt)
 		}
-		strRequire, err := json.Marshal(requireData)
-		if err == nil {
-			sglog.Info("require data is", string(strRequire))
-		} else {
-			sglog.Error("parse requireData to string error", err)
-		}
+		// strRequire, err := json.Marshal(requireData)
+		// if err == nil {
+		// 	sglog.Info("require data is", string(strRequire))
+		// } else {
+		// 	sglog.Error("parse requireData to string error", err)
+		// }
 
 		str, err := json.Marshal(returnData)
 		if err == nil {
@@ -39,6 +39,9 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		} else {
 			sglog.Error("parse returnData to string error", err)
 		}
+
+		sglog.Debug("require token:", requireData["token"], ",op:", requireData[HTTP_ARGS_KEY], ",return code:", returnData[HTTP_RETURN_ERR_CODE])
+
 		flag <- true
 	}()
 

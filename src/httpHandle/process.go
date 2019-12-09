@@ -34,13 +34,13 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
 		str, err := json.Marshal(returnData)
 		if err == nil {
-			sglog.Info("return str is", string(str))
+			//sglog.Info("return str is", string(str))
 			w.Write([]byte(string(str)))
 		} else {
 			sglog.Error("parse returnData to string error", err)
 		}
 
-		sglog.Debug("require token:", requireData["token"], ",op:", requireData[HTTP_ARGS_KEY], ",return code:", returnData[HTTP_RETURN_ERR_CODE])
+		sglog.Info("require token:", requireData["token"], ",op:", requireData[HTTP_ARGS_KEY], ",return code:", returnData[HTTP_RETURN_ERR_CODE])
 
 		flag <- true
 	}()

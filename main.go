@@ -32,6 +32,7 @@ func RegistCmd() {
 	sgcmd.RegistCmd("SendTestLuck", "[\"SendTestLuck\"] :send  luck", sms.SendTestLuck)
 	sgcmd.RegistCmd("SendTestUnLuck", "[\"SendTestUnLuck\"] :send  unluck", sms.SendTestUnLuck)
 	sgcmd.RegistCmd("DataMove", "[\"DataMove\"] :move old data to new ", dataMove.InitDb)
+	sgcmd.RegistCmd("ShowCurrentDatas", "[\"ShowCurrentDatas\"]:show current statistic data", data.ShowCurrentDatas)
 	sgcmd.RegistCmd("ReloadBoardcast", "[\"ReloadBoardcast\"] :ReloadBoardcast cfg", data.ReloadBoardcast)
 	sgcmd.RegistCmd("NoticeSmsByCmd", "[\"NoticeSmsByCmd\",\"shenzhen\",\"201908\"] :notice sms", notice.NoticeSmsByCmd)
 	sgcmd.RegistCmd("ShowCurrentSmsFlang", "[\"ShowCurrentSmsFlang\"] :ShowCurrentSmsFlang", sms.ShowCurrentSmsFlang)

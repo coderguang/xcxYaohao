@@ -41,6 +41,7 @@ type StatisticsData struct {
 	BindTimes       int
 	CancelTimes     int
 	ShareTimes      int
+	UserSize        int
 }
 
 func (data *StatisticsData) Reset() {
@@ -60,6 +61,7 @@ func (data *StatisticsData) String() string {
 	for k, v := range data.TimesData {
 		str += "\n" + staticStr[k] + ":" + strconv.Itoa(v)
 	}
+	str += "\n 总用户数:" + strconv.Itoa(data.UserSize)
 	return str
 }
 

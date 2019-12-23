@@ -24,6 +24,7 @@ func ClearData() *define.StatisticsData {
 		}
 	}
 	globalOpenIds.Lock.Unlock()
+	globalStatics.UserSize = len(idset)
 	sglog.Info("clear openid data complete\n,user size:", len(idset), globalStatics)
 
 	sgmail.SendMail("xcxYaohao statistic", []string{config.GetUtilCfg().Receiver}, globalStatics.String())
@@ -48,5 +49,6 @@ func ShowCurrentDatas(cmds []string) {
 		}
 	}
 	globalOpenIds.Lock.Unlock()
+	globalStatics.UserSize = len(idset)
 	sglog.Info("current datas \n,user size:", len(idset), globalStatics)
 }

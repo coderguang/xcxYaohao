@@ -22,9 +22,10 @@ import (
 func StartSpiderEx(title string, startDt time.Time, index string, isPersonal bool) {
 
 	searchPage := 1
-	sleepTime := define.SPIDER_SLEEP_TIME
-	timeInt := time.Duration(define.SPIDER_TIME_INT) * time.Second
 	for {
+
+		sleepTime := define.SPIDER_SLEEP_TIME
+		timeInt := time.Duration(define.SPIDER_TIME_INT) * time.Second
 
 		searchTime := sgtime.YMString(sgtime.TransfromTimeToDateTime(startDt))
 		urlTips := searchTime
@@ -72,7 +73,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 
 		if title == define.CITY_HAINAN {
 			if !HainanIsShowResultInWebIndex(searchTime) {
-				sglog.Debug("hainan not show result in web,sleep..,", searchTime)
+				sglog.Debug("hainan not show result in web,sleep..,", searchTime, ",sleepTime:", sleepTime)
 				sgthread.SleepBySecond(sleepTime)
 				continue
 			} else {

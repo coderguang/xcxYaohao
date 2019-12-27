@@ -23,6 +23,8 @@ func GetCityName(title string) string {
 		return "天津市"
 	case define.CITY_HAINAN:
 		return "海南市"
+	case define.CITY_BEIJING:
+		return "北京市"
 	}
 	return "未知"
 }
@@ -38,6 +40,8 @@ func PageFliter(title, pageTitle, link string) bool {
 		return hangzhouFliter(pageTitle, link)
 	case define.CITY_TIANJIN:
 		return tianjinFliter(pageTitle)
+	case define.CITY_BEIJING:
+		return beijingFliter(pageTitle)
 	}
 	return false
 }
@@ -73,6 +77,14 @@ func tianjinFliter(pageTitle string) bool {
 	return true
 }
 
+func beijingFliter(pageTitle string) bool {
+	pageTxt := []string{"配置结果"}
+	if !sgstring.ContainsWithOr(pageTitle, pageTxt) && !strings.Contains(pageTitle, "下一页") && !strings.Contains(pageTitle, "pdf") && !strings.Contains(pageTitle, "PDF") {
+		return false
+	}
+	return true
+}
+
 //return data,timestr,totalnum,cardtype,membertype,error
 func TxtFileFliter(title string, contents []string) (map[string]*define.CardData, string, int, int, int, error) {
 
@@ -85,6 +97,8 @@ func TxtFileFliter(title string, contents []string) (map[string]*define.CardData
 		return hangzhouTxtFliter(title, contents)
 	case define.CITY_TIANJIN:
 		return tianjinTxtFliter(title, contents)
+	case define.CITY_BEIJING:
+		return beijingTxtFliter(title, contents)
 	}
 	return nil, "", 0, 0, 0, errors.New("no match title fliter")
 }
@@ -201,7 +215,7 @@ func guangzhouTxtFliter(title string, contents []string) (map[string]*define.Car
 	}
 
 	if !ignoreNumMath && len(datas) != totalNum {
-		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
+		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match,need:" + strconv.Itoa(totalNum) + ",real:" + strconv.Itoa(len(datas)))
 	}
 	return datas, timestr, len(datas), cardType, memberType, nil
 }
@@ -319,7 +333,7 @@ func shenzhenTxtFliter(title string, contents []string) (map[string]*define.Card
 	}
 
 	if !ignoreNumMath && len(datas) != totalNum {
-		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
+		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match,need:" + strconv.Itoa(totalNum) + ",real:" + strconv.Itoa(len(datas)))
 	}
 	return datas, timestr, len(datas), cardType, memberType, nil
 }
@@ -430,7 +444,7 @@ func hangzhouTxtFliter(title string, contents []string) (map[string]*define.Card
 	}
 
 	if !ignoreNumMath && len(datas) != totalNum {
-		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
+		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match,need:" + strconv.Itoa(totalNum) + ",real:" + strconv.Itoa(len(datas)))
 	}
 	return datas, timestr, len(datas), cardType, memberType, nil
 }
@@ -547,7 +561,126 @@ func tianjinTxtFliter(title string, contents []string) (map[string]*define.CardD
 	}
 
 	if !ignoreNumMath && len(datas) != totalNum {
-		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match")
+		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match,need:" + strconv.Itoa(totalNum) + ",real:" + strconv.Itoa(len(datas)))
+	}
+	return datas, timestr, len(datas), cardType, memberType, nil
+}
+
+func beijingTxtFliter(title string, contents []string) (map[string]*define.CardData, string, int, int, int, error) {
+
+	datas := make(map[string]*define.CardData)
+	timestr := ""
+	totalNum := 0
+	cardType := 0
+	memberType := 0
+	startParseData := false
+	ignoreNumMath := false
+	for _, v := range contents {
+		if startParseData {
+			if strings.Contains(v, "中签详细列表数据完成") {
+				ignoreNumMath = true
+			}
+			strlist := strings.Split(v, " ")
+			strlistex := []string{}
+			for _, v := range strlist {
+				if v != " " && v != "" {
+					strlistex = append(strlistex, v)
+				}
+			}
+			if len(strlistex) < 3 {
+				continue
+			}
+
+			_, err := strconv.Atoi(strlistex[0])
+			if err != nil {
+				continue
+			}
+			targetName := strlistex[2]
+			for i := 3; i < len(strlistex); i++ {
+				targetName += " " + strlistex[i]
+			}
+
+			// if len(strlistex) > 3 {
+			// 	sglog.Error("not suport current format data,please check")
+			// 	return datas, timestr, totalNum, cardType, memberType, errors.New("parse code name time data error,data:" + v)
+			// }
+
+			data := new(define.CardData)
+			data.Title = title
+			data.Time = timestr
+			data.CardType = cardType
+			data.Type = memberType
+			codemaxlen := 50
+			namemaxlen := 300
+			data.Code = strlistex[2]
+			data.Name = strlistex[1]
+			data.UpdateDt = time.Now()
+			if len(data.Code) > codemaxlen {
+				sglog.Error("code len more than ", codemaxlen, ",it is ", len(data.Code), ",old code=", data.Code)
+				data.Code = data.Code[0 : codemaxlen-1]
+				data.Desc = "code cut "
+				sglog.Error("new code=", data.Code)
+			}
+			if len(data.Name) > namemaxlen {
+				sglog.Error("name len more than", namemaxlen, ",it is ", len(data.Name), ",old name=", data.Name)
+				data.Name = data.Name[0 : namemaxlen-1]
+				data.Desc += "name cut "
+				sglog.Error("new name=", data.Name)
+			}
+			datas[data.Code] = data
+		} else {
+			if strings.Contains(v, "序号") {
+				if "" == timestr || 0 == totalNum || 0 == memberType {
+					return datas, timestr, totalNum, cardType, memberType, errors.New("head params parse error")
+				}
+				if 0 == cardType {
+					cardType = define.CARD_TYPE_NORMAL
+					sglog.Info("title:", title, ",time:", timestr, ",no cardType")
+				}
+				startParseData = true
+				sglog.Info("start parse txt file detail,time:", timestr, ",num:", totalNum, "type:", memberType, ",cardType:", cardType)
+				continue
+			} else {
+				if "" == timestr {
+					timelist := []string{"分期编号", "期号"}
+					if sgstring.ContainsWithOr(v, timelist) {
+						strlist := strings.Split(v, "：")
+						if len(strlist) >= 2 {
+							timestr = strlist[len(strlist)-1]
+						}
+					}
+				}
+				if 0 == totalNum {
+					if sgstring.ContainsWithOr(v, []string{"指标总数", "指标配置总数"}) {
+						strlist := strings.Split(v, "：")
+						if len(strlist) >= 2 {
+							totalNum, _ = strconv.Atoi(strlist[len(strlist)-1])
+						}
+					}
+				}
+				if 0 == memberType {
+					if strings.Contains(v, "个人") {
+						memberType = define.MEMBER_TYPE_PERSIONAL
+					}
+					if strings.Contains(v, "单位") {
+						memberType = define.MEMBER_TYPE_COMPANY
+					}
+				}
+				if 0 == cardType {
+					if strings.Contains(v, "普通") {
+						cardType = define.CARD_TYPE_NORMAL
+					}
+					newEngineTxt := []string{"新能源", "节能"}
+					if sgstring.ContainsWithOr(v, newEngineTxt) {
+						cardType = define.CARD_TYPE_NEW_ENGINE
+					}
+				}
+			}
+		}
+	}
+
+	if !ignoreNumMath && len(datas) != totalNum {
+		return datas, timestr, totalNum, cardType, memberType, errors.New("total parse num not match,need:" + strconv.Itoa(totalNum) + ",real:" + strconv.Itoa(len(datas)))
 	}
 	return datas, timestr, len(datas), cardType, memberType, nil
 }

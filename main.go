@@ -7,7 +7,6 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/dataMove"
 	"xcxYaohao/src/db"
-	"xcxYaohao/src/httpHandle"
 	"xcxYaohao/src/notice"
 	"xcxYaohao/src/sms"
 	"xcxYaohao/src/spider"
@@ -59,17 +58,19 @@ func main() {
 	cache.InitAndLoadCardData()
 
 	//hainan special logic
-	go spider.HainanOldDataSpider([]string{})
+	//go spider.HainanOldDataSpider([]string{})
 
-	titlelist := config.GetTitleList()
-	for _, v := range titlelist {
-		title := v
-		go spider.NewSpider(title)
-	}
+	// titlelist := config.GetTitleList()
+	// for _, v := range titlelist {
+	// 	title := v
+	// 	go spider.NewSpider(title)
+	// }
 
-	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
+	spider.NewSpider("beijing")
 
-	go spider.InitClear()
+	// go httpHandle.NewWebServer(config.GetUtilCfg().Port)
+
+	// go spider.InitClear()
 
 	RegistCmd()
 	sgcmd.StartCmdWaitInputLoop()

@@ -177,6 +177,8 @@ func checkCardTypeValid(title string, cardTypeInt int) bool {
 		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
 	case define.CITY_HAINAN:
 		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
+	case define.CITY_BEIJING:
+		return define.CARD_TYPE_NORMAL == cardTypeInt || define.CARD_TYPE_NEW_ENGINE == cardTypeInt
 	}
 	return false
 }
@@ -216,6 +218,14 @@ func CheckCodeValid(title string, code string) bool {
 		}
 		return true
 	case define.CITY_HAINAN:
+		if !sgregex.AllNum(code) {
+			return false
+		}
+		if len(code) != 13 {
+			return false
+		}
+		return true
+	case define.CITY_BEIJING:
 		if !sgregex.AllNum(code) {
 			return false
 		}

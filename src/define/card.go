@@ -14,8 +14,8 @@ const (
 )
 
 const (
-	SPIDER_SLEEP_TIME int = 60
-	SPIDER_TIME_INT   int = 60
+	SPIDER_SLEEP_TIME int = 10 //60
+	SPIDER_TIME_INT   int = 10 //60
 	SPIDER_START_HOUR int = 9
 	SPIDER_END_HOUR   int = 19
 	SPIDER_START_DAY  int = 26
@@ -27,6 +27,7 @@ const (
 	CITY_HANGZHOU  string = "hangzhou"
 	CITY_TIANJIN   string = "tianjin"
 	CITY_HAINAN    string = "hainan"
+	CITY_BEIJING   string = "beijing"
 )
 
 type SLastestCardData struct {
@@ -95,6 +96,10 @@ func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
 		}
 	case CITY_HAINAN:
 		if data.PersonalNormalUpdate && data.CompanyNormalUpdate {
+			return true
+		}
+	case CITY_BEIJING:
+		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
 			return true
 		}
 	}

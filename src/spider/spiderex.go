@@ -113,7 +113,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			//sglog.Debug("page:", i, "size:", len(tmpDataMap), ",totalsize:", len(dataMap))
 			for k, v := range tmpDataMap {
 				if vv, ok := dataMap[k]; ok {
-					sglog.Info(title, "duplicate data,", k, v, vv)
+					//sglog.Info(title, "duplicate data,", k, v, vv)
 					if v == vv {
 						deleteRecord++
 					}
@@ -122,7 +122,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			}
 		}
 		if totalNum != len(dataMap)+deleteRecord {
-			sglog.Error(title, "end search ", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap), "isPerson:", isPersonal)
+			sglog.Error(title, "end search but not ok,", searchTime, ",needSize:", totalNum, ",real size:", len(dataMap), "isPerson:", isPersonal)
 			sgthread.SleepBySecond(60)
 			continue
 		} else {

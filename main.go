@@ -57,20 +57,20 @@ func main() {
 
 	cache.InitAndLoadCardData()
 
+	//spider.NewSpider("beijing")
+
 	//hainan special logic
-	//go spider.HainanOldDataSpider([]string{})
+	go spider.HainanOldDataSpider([]string{})
 
-	// titlelist := config.GetTitleList()
-	// for _, v := range titlelist {
-	// 	title := v
-	// 	go spider.NewSpider(title)
-	// }
+	titlelist := config.GetTitleList()
+	for _, v := range titlelist {
+		title := v
+		go spider.NewSpider(title)
+	}
 
-	spider.NewSpider("beijing")
+	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
 
-	// go httpHandle.NewWebServer(config.GetUtilCfg().Port)
-
-	// go spider.InitClear()
+	go spider.InitClear()
 
 	RegistCmd()
 	sgcmd.StartCmdWaitInputLoop()

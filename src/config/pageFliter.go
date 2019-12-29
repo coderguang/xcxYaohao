@@ -155,6 +155,12 @@ func guangzhouTxtFliter(title string, contents []string) (map[string]*define.Car
 			data.Code = strlistex[1]
 			data.Name = strlistex[2]
 			data.UpdateDt = time.Now()
+
+			_, err = strconv.Atoi(data.Code)
+			if err != nil {
+				return datas, timestr, totalNum, cardType, memberType, errors.New("code can't transform to a number")
+			}
+
 			if len(data.Code) > codemaxlen {
 				sglog.Error("code len more than ", codemaxlen, ",it is ", len(data.Code), ",old code=", data.Code)
 				data.Code = data.Code[0 : codemaxlen-1]
@@ -270,6 +276,12 @@ func shenzhenTxtFliter(title string, contents []string) (map[string]*define.Card
 			codemaxlen := 50
 			namemaxlen := 300
 			data.Code = strlistex[1]
+
+			_, err = strconv.Atoi(data.Code)
+			if err != nil {
+				return datas, timestr, totalNum, cardType, memberType, errors.New("code can't transform to a number")
+			}
+
 			//data.Name = strlistex[2]
 			data.Name = targetName
 			data.UpdateDt = time.Now()
@@ -390,6 +402,12 @@ func hangzhouTxtFliter(title string, contents []string) (map[string]*define.Card
 			data.Code = strlistex[1]
 			data.Name = strlistex[2]
 			data.UpdateDt = time.Now()
+
+			_, err = strconv.Atoi(data.Code)
+			if err != nil {
+				return datas, timestr, totalNum, cardType, memberType, errors.New("code can't transform to a number")
+			}
+
 			if len(data.Code) > codemaxlen {
 				sglog.Error("code len more than ", codemaxlen, ",it is ", len(data.Code), ",old code=", data.Code)
 				data.Code = data.Code[0 : codemaxlen-1]
@@ -500,6 +518,12 @@ func tianjinTxtFliter(title string, contents []string) (map[string]*define.CardD
 			namemaxlen := 300
 			data.Code = strlistex[1]
 			data.Name = strlistex[2]
+
+			_, err = strconv.Atoi(data.Code)
+			if err != nil {
+				return datas, timestr, totalNum, cardType, memberType, errors.New("code can't transform to a number")
+			}
+
 			data.UpdateDt = time.Now()
 			if len(data.Code) > codemaxlen {
 				sglog.Error("code len more than ", codemaxlen, ",it is ", len(data.Code), ",old code=", data.Code)
@@ -575,6 +599,10 @@ func beijingTxtFliter(title string, contents []string) (map[string]*define.CardD
 	memberType := 0
 	startParseData := false
 	ignoreNumMath := false
+	isNormalOrder := false
+	isTurnTimes := false
+	isOrderNum := false
+	isHadName := false
 	for _, v := range contents {
 		if startParseData {
 			if strings.Contains(v, "中签详细列表数据完成") {
@@ -595,15 +623,6 @@ func beijingTxtFliter(title string, contents []string) (map[string]*define.CardD
 			if err != nil {
 				continue
 			}
-			targetName := strlistex[2]
-			for i := 3; i < len(strlistex); i++ {
-				targetName += " " + strlistex[i]
-			}
-
-			// if len(strlistex) > 3 {
-			// 	sglog.Error("not suport current format data,please check")
-			// 	return datas, timestr, totalNum, cardType, memberType, errors.New("parse code name time data error,data:" + v)
-			// }
 
 			data := new(define.CardData)
 			data.Title = title
@@ -612,9 +631,65 @@ func beijingTxtFliter(title string, contents []string) (map[string]*define.CardD
 			data.Type = memberType
 			codemaxlen := 50
 			namemaxlen := 300
-			data.Code = strlistex[2]
-			data.Name = strlistex[1]
+			if isTurnTimes { //轮候序号 轮候时间 申请编码
+				if len(strlistex) != 4 {
+					return datas, timestr, totalNum, cardType, memberType, errors.New("turn format error,len not equal 4")
+				}
+				data.Code = strlistex[3]
+				data.TurnsTime = strlistex[1]
+				// orderN, err := strconv.Atoi(strlistex[0])
+				// if err != nil {
+				// 	return datas, timestr, totalNum, cardType, memberType, errors.New("turn format error,order can't trans to num")
+				// }
+				// data.OrderNum = orderN
+			} else {
+				if isOrderNum && isHadName { //序号 摇号基数序号 申请编码 名称
+					if len(strlistex) != 4 {
+						return datas, timestr, totalNum, cardType, memberType, errors.New("order code name error,len not equal 4")
+					}
+					data.Code = strlistex[2]
+					data.Name = strlistex[3]
+					orderN, err := strconv.Atoi(strlistex[1])
+					if err != nil {
+						return datas, timestr, totalNum, cardType, memberType, errors.New("order code name  error,order can't trans to num")
+					}
+					data.OrderNum = orderN
+				} else if isOrderNum { //序号 摇号基数序号 申请编码
+					if len(strlistex) != 3 {
+						return datas, timestr, totalNum, cardType, memberType, errors.New("order code error,len not equal 4")
+					}
+					data.Code = strlistex[2]
+					orderN, err := strconv.Atoi(strlistex[1])
+					if err != nil {
+						return datas, timestr, totalNum, cardType, memberType, errors.New("order code error,order can't trans to num")
+					}
+					data.OrderNum = orderN
+				} else if isNormalOrder { //序号 申请编码 名称
+					if len(strlistex) < 3 {
+						return datas, timestr, totalNum, cardType, memberType, errors.New("order code error,len not equal 4")
+					}
+					targetName := ""
+					for i := 2; i < len(strlistex); i++ {
+						targetName += strlistex[i]
+					}
+
+					data.Code = strlistex[1]
+					data.Name = targetName
+				} else {
+					return datas, timestr, totalNum, cardType, memberType, errors.New("bejing unknow format error,please check")
+				}
+			}
 			data.UpdateDt = time.Now()
+
+			_, err = strconv.Atoi(data.Code)
+			if err != nil {
+				return datas, timestr, totalNum, cardType, memberType, errors.New("code can't transform to a number")
+			}
+
+			if len(data.Code) != 13 {
+				return datas, timestr, totalNum, cardType, memberType, errors.New("code len not 13")
+			}
+
 			if len(data.Code) > codemaxlen {
 				sglog.Error("code len more than ", codemaxlen, ",it is ", len(data.Code), ",old code=", data.Code)
 				data.Code = data.Code[0 : codemaxlen-1]
@@ -637,6 +712,21 @@ func beijingTxtFliter(title string, contents []string) (map[string]*define.CardD
 					cardType = define.CARD_TYPE_NORMAL
 					sglog.Info("title:", title, ",time:", timestr, ",no cardType")
 				}
+				if sgstring.ContainsWithAnd(v, []string{"申请编码"}) {
+					if sgstring.ContainsWithOr(v, []string{"姓名", "名称"}) {
+						isNormalOrder = true
+					}
+				}
+				if strings.Contains(v, "轮候时间") {
+					isTurnTimes = true
+				}
+				if strings.Contains(v, "摇号基数") {
+					isOrderNum = true
+				}
+				if strings.Contains(v, "名称") {
+					isHadName = true
+				}
+
 				startParseData = true
 				sglog.Info("start parse txt file detail,time:", timestr, ",num:", totalNum, "type:", memberType, ",cardType:", cardType)
 				continue

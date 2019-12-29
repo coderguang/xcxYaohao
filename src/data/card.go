@@ -70,6 +70,9 @@ func InitCardDataFromDb(datas []define.CardData) {
 		}
 
 		if cityMap, ok := globalCardDataByName.Data[v.Title]; ok {
+			if v.Name == "" {
+				continue
+			}
 			if namelist, ok := cityMap[v.Name]; ok {
 				cityMap[v.Name] = append(namelist, &tmpV)
 			} else {

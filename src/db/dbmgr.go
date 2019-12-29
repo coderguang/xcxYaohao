@@ -39,23 +39,41 @@ func InitDb() {
 
 	initAndLoadFinalNoticeTime()
 
-	err = globalDb.AutoMigrate(define.StatisticsData{}).Error
-	if err != nil {
-		sglog.Error("init statis data error")
-	}
-
 }
 
-func initAndLoadFinalNoticeTime() {
+func AutoMirgrateTable() {
 	err := globalDb.AutoMigrate(define.NoticeFinalTime{}).Error
 	if err != nil {
 		sglog.Error("initAndLoadFinalNoticeTime", err)
 	}
 
+	err = globalDb.AutoMigrate(define.DownloadHistoryUrl{}).Error
+	if err != nil {
+		sglog.Error("initAndLoadDownloadHistory", err)
+	}
+
+	err = globalDb.AutoMigrate(define.CardData{}).Error
+	if err != nil {
+		sglog.Error("initAndLoadData", err)
+	}
+
+	err = globalDb.AutoMigrate(define.NoticeData{}).Error
+	if err != nil {
+		sglog.Error("initAndLoadNoticeData", err)
+	}
+
+	err = globalDb.AutoMigrate(define.StatisticsData{}).Error
+	if err != nil {
+		sglog.Error("init statis data error")
+	}
+}
+
+func initAndLoadFinalNoticeTime() {
+
 	sglog.Info("init and load initAndLoadFinalNoticeTime data ok")
 
 	datas := []define.NoticeFinalTime{}
-	err = globalDb.Find(&datas).Error
+	err := globalDb.Find(&datas).Error
 	if err != nil {
 		sglog.Error("initAndLoadFinalNoticeTime find error", err)
 	}
@@ -65,15 +83,10 @@ func initAndLoadFinalNoticeTime() {
 }
 
 func initAndLoadDownloadHistory() {
-	err := globalDb.AutoMigrate(define.DownloadHistoryUrl{}).Error
-	if err != nil {
-		sglog.Error("initAndLoadDownloadHistory", err)
-	}
-
 	sglog.Info("init and load hitory data ok")
 
 	historyDatas := []define.DownloadHistoryUrl{}
-	err = globalDb.Find(&historyDatas).Error
+	err := globalDb.Find(&historyDatas).Error
 	if err != nil {
 		sglog.Error("initAndLoadDownloadHistory find error", err)
 	}
@@ -82,16 +95,11 @@ func initAndLoadDownloadHistory() {
 
 func InitAndLoadCardData() {
 	//return
-	err := globalDb.AutoMigrate(define.CardData{}).Error
-	if err != nil {
-		sglog.Error("initAndLoadData", err)
-	}
-
 	sglog.Info("init and load initAndLoadCardData data ok")
 
 	now := sgtime.New()
 	cardDatas := []define.CardData{}
-	err = globalDb.Find(&cardDatas).Error
+	err := globalDb.Find(&cardDatas).Error
 	if err != nil {
 		sglog.Error("initAndLoadCardData find error", err)
 	}
@@ -108,16 +116,12 @@ func InitAndLoadCardData() {
 }
 
 func initAndLoadNoticeData() {
-	err := globalDb.AutoMigrate(define.NoticeData{}).Error
-	if err != nil {
-		sglog.Error("initAndLoadNoticeData", err)
-	}
 
 	sglog.Info("init and load initAndLoadNoticeData data ok")
 
 	now := sgtime.New()
 	noticeDatas := []define.NoticeData{}
-	err = globalDb.Find(&noticeDatas).Error
+	err := globalDb.Find(&noticeDatas).Error
 	if err != nil {
 		sglog.Error("NoticeData find error", err)
 	}

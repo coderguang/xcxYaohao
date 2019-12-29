@@ -11,6 +11,7 @@ import (
 
 func InitAndLoadCardData() {
 
+	db.AutoMirgrateTable()
 	if config.IsNoCache() {
 		sglog.Debug("no cache flag!true")
 		db.InitLastestCardData()

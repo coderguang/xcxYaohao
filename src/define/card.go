@@ -14,8 +14,8 @@ const (
 )
 
 const (
-	SPIDER_SLEEP_TIME int = 10 //60
-	SPIDER_TIME_INT   int = 10 //60
+	SPIDER_SLEEP_TIME int = 60 //60
+	SPIDER_TIME_INT   int = 60 //60
 	SPIDER_START_HOUR int = 9
 	SPIDER_END_HOUR   int = 19
 	SPIDER_START_DAY  int = 26
@@ -112,14 +112,16 @@ type SecureLastestCardData struct {
 }
 
 type CardData struct {
-	Title    string `gorm:"primary_key;type:varchar(64);index:title_name;index:title_code"`
-	Type     int    //个人/公司
-	CardType int    //普通/节能
-	Code     string `gorm:"primary_key;type:varchar(100);index:title_code"`
-	Name     string `gorm:"index:title_name"`
-	Time     string
-	Desc     string
-	UpdateDt time.Time
+	Title     string `gorm:"primary_key;type:varchar(64);index:title_name;index:title_code"`
+	Type      int    //个人/公司
+	CardType  int    //普通/节能
+	Code      string `gorm:"primary_key;type:varchar(100);index:title_code"`
+	Name      string `gorm:"index:title_name"`
+	Time      string
+	Desc      string
+	OrderNum  int    //摇号基数(beijng)
+	TurnsTime string //轮候时间
+	UpdateDt  time.Time
 }
 
 type CardDataForClient struct {

@@ -20,11 +20,11 @@ func requireLastestTime(r *http.Request, city string, openId string, returnData 
 
 	existData, shareByData := data.AddOpenXcxTimes(openId, city, scenId, shareBy)
 	db.UpdateNoticeData(existData)
-	sglog.Info("scenEId:", scenId, ",shareBy:", shareBy)
+	//sglog.Info("scenEId:", scenId, ",shareBy:", shareBy)
 	if shareByData != nil && shareByData.Token != "" {
 		shareByData.ShareToNum++
 		db.UpdateNoticeData(shareByData)
-		sglog.Info("shared:", shareByData.Token, ",num:", shareByData.ShareToNum)
+		sglog.Info("new player shared by other:", shareByData.Token, ",num:", shareByData.ShareToNum, ",scene:", scenId)
 	}
 
 	data.AddStatistic(define.StatisticOpenTimes, 1)

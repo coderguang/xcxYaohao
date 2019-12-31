@@ -64,8 +64,9 @@ func GetNoticeData(openid string) (*define.NoticeData, error) {
 	return nil, errors.New("no this data")
 }
 
-func AddOpenXcxTimes(openid string, title string) *define.NoticeData {
+func AddOpenXcxTimes(openid string, title string, scenId string, shareFrom string) (*define.NoticeData, *define.NoticeData) {
 	data, err := GetNoticeData(openid)
+	shareFromData := new(define.NoticeData)
 	if err != nil {
 		data = new(define.NoticeData)
 		data.Token = openid
@@ -74,7 +75,15 @@ func AddOpenXcxTimes(openid string, title string) *define.NoticeData {
 		data.Status = define.YAOHAO_NOTICE_STATUS_NOT_BIND
 		data.FinalNoticeDt = time.Now()
 		data.Title = title
+		data.SceneId = scenId
+		data.SharedBy = shareFrom
 
+		if "" != shareFrom && shareFrom != data.Token {
+			shareFromData, err = GetNoticeData(shareFrom)
+			if err == nil {
+				shareFromData.ShareToNum++
+			}
+		}
 		globalNoticeData.Lock.Lock()
 		defer globalNoticeData.Lock.Unlock()
 
@@ -88,7 +97,7 @@ func AddOpenXcxTimes(openid string, title string) *define.NoticeData {
 		data.Title = title
 	}
 
-	return data
+	return data, shareFromData
 }
 
 func CanBindPhone(phone string) bool {

@@ -52,6 +52,9 @@ type NoticeData struct {
 	CreateDt      time.Time
 	FinalNoticeDt time.Time
 	ShareTimes    int
+	SceneId       string
+	ShareToNum    int
+	SharedBy      string `gorm:"type:varchar(200)"` //来自token
 }
 
 type SecureNoticeData struct {

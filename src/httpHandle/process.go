@@ -67,6 +67,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 			return
 		}
+
 		data.AddWxOpenId(openId)
 
 		_, err := data.GetNoticeData(openId.Openid)

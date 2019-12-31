@@ -18,7 +18,8 @@ func requireLastestTime(r *http.Request, city string, openId string, returnData 
 
 	existData, shareByData := data.AddOpenXcxTimes(openId, city, scenId, shareBy)
 	db.UpdateNoticeData(existData)
-	if shareByData.Token != "" {
+	if shareByData != nil && shareByData.Token != "" {
+		shareByData.ShareToNum++
 		db.UpdateNoticeData(shareByData)
 	}
 

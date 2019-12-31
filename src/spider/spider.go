@@ -224,6 +224,9 @@ func (spider *Spider) StartLoopSpider() {
 
 				if isCurrentMonthAllUpdate(spider.cfg.Title) {
 					nextMonth := nowTime.AddDate(0, 1, 0)
+					if define.CITY_BEIJING == spider.cfg.Title {
+						nextMonth = nowTime.AddDate(0, 2, 0)
+					}
 					nextRun := time.Date(nextMonth.Year(), nextMonth.Month(), define.SPIDER_START_DAY, 9, 0, 0, 0, nowTime.Location())
 					timeInt = nextRun.Sub(nowTime)
 				}

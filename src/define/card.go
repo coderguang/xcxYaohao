@@ -99,8 +99,15 @@ func (data *SLastestCardData) IsAllCardInfoUpdate() bool {
 			return true
 		}
 	case CITY_BEIJING:
-		if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
-			return true
+		lastestMonth := data.TimeStr[4:6]
+		if "01" == lastestMonth {
+			if data.PersonalJieNengUpdate && data.PersonalNormalUpdate && data.CompanyJieNengUpdate && data.CompanyNormalUpdate {
+				return true
+			}
+		} else {
+			if data.PersonalNormalUpdate && data.CompanyNormalUpdate {
+				return true
+			}
 		}
 	}
 	return false

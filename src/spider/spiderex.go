@@ -293,9 +293,37 @@ func isCurrentMonthAllUpdate(title string) bool {
 	nowTime := time.Now()
 	curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)
 	curLastestInfo := data.GetLastestCardInfo(title)
-	if curTimeStr == curLastestInfo.TimeStr {
+	if title == define.CITY_BEIJING {
+		curYear := sgtime.YearString(&nowTime)
+		curMonth := sgtime.MonthString(&nowTime)
+
+		lastestYear := curLastestInfo.TimeStr[0:4]
+		lastestMonth := curLastestInfo.TimeStr[4:6]
+
+		if curYear != lastestYear {
+			return false
+		}
+		curMonthInt, err := strconv.Atoi(curMonth)
+		if err != nil {
+			sglog.Error(title, ",try to transfrom curMonth to int err,", curMonth, ",ERR:", err)
+			return false
+		}
+		lastestMonthInt, err := strconv.Atoi(lastestMonth)
+		if err != nil {
+			sglog.Error(title, ",try to transfrom lastestMonth to int err,", lastestMonth, ",ERR:", err)
+			return false
+		}
+		if curMonthInt != lastestMonthInt*2 {
+			return false
+		}
 		if curLastestInfo.IsAllCardInfoUpdate() {
 			return true
+		}
+	} else {
+		if curTimeStr == curLastestInfo.TimeStr {
+			if curLastestInfo.IsAllCardInfoUpdate() {
+				return true
+			}
 		}
 	}
 	return false

@@ -100,7 +100,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 
 	sglog.Info("send sms unluck to ", title, unluckPhone)
 
-	mailInfo := "title:" + title + "\ntime" + curTime +
+	mailInfo := "title:" + title + "\ntime:" + curTime + "\n" +
 		"toalSend:" + strconv.Itoa(len(luckPhone)+len(unluckPhone)) + "\n" +
 		"failed:" + strconv.Itoa(failedSend) + "\n" +
 		"luck:" + strconv.Itoa(len(luckPhone)) + "\n" +

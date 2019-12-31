@@ -52,8 +52,8 @@ type NoticeData struct {
 	CreateDt      time.Time
 	FinalNoticeDt time.Time
 	ShareTimes    int
-	SceneId       string `gorm:default:0`
-	ShareToNum    int    `gorm:default:0`
+	SceneId       string `gorm:default:'0'`
+	ShareToNum    int    `gorm:default:'0'`
 	SharedBy      string `gorm:"type:varchar(200)"` //来自token
 }
 

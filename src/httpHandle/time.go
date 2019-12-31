@@ -5,6 +5,8 @@ import (
 	"xcxYaohao/src/data"
 	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
+
+	"github.com/coderguang/GameEngine_go/sglog"
 )
 
 func requireLastestTime(r *http.Request, city string, openId string, returnData map[string]interface{}) {
@@ -18,10 +20,13 @@ func requireLastestTime(r *http.Request, city string, openId string, returnData 
 
 	existData, shareByData := data.AddOpenXcxTimes(openId, city, scenId, shareBy)
 	db.UpdateNoticeData(existData)
+	sglog.Info("scenEId:", scenId, ",shareBy:", shareBy)
 	if shareByData != nil && shareByData.Token != "" {
 		shareByData.ShareToNum++
 		db.UpdateNoticeData(shareByData)
+		sglog.Info("shared:", shareByData.Token, ",num:", shareByData.ShareToNum)
 	}
 
 	data.AddStatistic(define.StatisticOpenTimes, 1)
+
 }

@@ -14,6 +14,7 @@ func requireLastestTime(r *http.Request, city string, openId string, returnData 
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
 	returnData[HTTP_RETURN_TIME] = timestr
 	returnData[HTTP_RETURN_TIPS] = data.GetBoardcast(city)
+	returnData[HTTP_RETURN_Data] = openId
 
 	scenId := r.FormValue(HTTP_ARGS_SCENE_ID)
 	shareBy := r.FormValue(HTTP_ARGS_SHARE_FROM)

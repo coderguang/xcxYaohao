@@ -46,7 +46,10 @@ func UpdateNoticeData(data *define.NoticeData) error {
 		"final_login_dt":  data.FinalLoginDt,
 		"create_dt":       data.CreateDt,
 		"final_notice_dt": data.FinalNoticeDt,
-		"share_times":     data.ShareTimes}).FirstOrCreate(data).Error
+		"share_times":     data.ShareTimes,
+		"scene_id":        data.SceneId,
+		"share_to_num":    data.ShareToNum,
+		"shared_by":       data.SharedBy}).FirstOrCreate(data).Error
 	if err != nil {
 		sglog.Error("update notice data error,token:", data.Token, err)
 	}

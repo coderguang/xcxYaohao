@@ -82,7 +82,7 @@ func AddOpenXcxTimes(openid string, title string, scenId string, shareFrom strin
 		if "" != shareFrom && shareFrom != data.Token {
 			shareFromData, err = GetNoticeData(shareFrom)
 			if err != nil {
-				sglog.Debug("share token not find,token:", shareFrom, ",err:", err)
+				sglog.Debug("share token not find,token:", "["+shareFrom+"]", ",err:", err)
 			}
 		}
 		globalNoticeData.Lock.Lock()

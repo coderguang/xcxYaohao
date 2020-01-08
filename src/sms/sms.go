@@ -77,7 +77,29 @@ func SendUnLuck(phone string, title string, time string) error {
 	res, err := tcsms.SingleSend(config.GetSign(), 86, phone, config.GetUnLuckId(), cityName, time)
 
 	if err != nil {
-		sglog.Error("send sms luck error", err)
+		sglog.Error("send sms unluck error", err)
+		data.AddStatistic(define.StatisticSmsFail, 1)
+		return err
+	} else {
+		sglog.Info("recv sms luck,", res)
+		data.AddStatistic(define.StatisticSmsSuccess, 1)
+		return err
+	}
+}
+
+func SendUnLuckAndTimeout(phone string, title string, time string) error {
+
+	if !globalSmsFlag {
+		return errors.New("sms flag false,would not send sms")
+	}
+
+	cityName := config.GetCityName(title)
+
+	// 发送短信
+	res, err := tcsms.SingleSend(config.GetSign(), 86, phone, config.GetTimeOutId(), cityName, time)
+
+	if err != nil {
+		sglog.Error("send sms timeout unluck error", err)
 		data.AddStatistic(define.StatisticSmsFail, 1)
 		return err
 	} else {

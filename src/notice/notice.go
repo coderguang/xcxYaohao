@@ -82,11 +82,18 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		if bindData.Status != define.YAOHAO_NOTICE_STATUS_NORMAL {
 			continue
 		}
-
-		err = sms.SendUnLuck(bindData.Phone, title, curTime)
-		if err != nil {
-			failedSend++
-			sglog.Error("send result unluck error,phone:", bindData.Phone, ",token:", bindData.Token, ",err:", err)
+		if bindData.EndDt.Month() == now.Month() {
+			err = sms.SendUnLuckAndTimeout(bindData.Phone, title, curTime)
+			if err != nil {
+				failedSend++
+				sglog.Error("send result unluck error,phone:", bindData.Phone, ",token:", bindData.Token, ",err:", err)
+			}
+		} else {
+			err = sms.SendUnLuck(bindData.Phone, title, curTime)
+			if err != nil {
+				failedSend++
+				sglog.Error("send result unluck error,phone:", bindData.Phone, ",token:", bindData.Token, ",err:", err)
+			}
 		}
 
 		unluckPhone = append(unluckPhone, bindData.Phone)

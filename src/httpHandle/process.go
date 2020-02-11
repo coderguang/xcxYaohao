@@ -105,6 +105,8 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		case HTTP_ARGS_SHARE:
 			// ?op=share&&code=
 			share(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_COMPLETE_AD:
+			completeAd(r, city, openId.Openid, returnData)
 		}
 	}
 }

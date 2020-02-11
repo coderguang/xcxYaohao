@@ -69,6 +69,13 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		}
 	}
 	now := sgtime.New()
+
+	if existData.AdTimes > 0 && sgtime.GetTotalSecond(now)-sgtime.GetTotalSecond(sgtime.TransfromTimeToDateTime(existData.AdCompleteDt)) < int64(300) {
+		leftTimeInt = 6
+	} else {
+		leftTimeInt = 3
+	}
+
 	oldData := data.GetRequireData(openid)
 	if oldData != nil {
 		lastRequireDt := sgtime.TransfromTimeToDateTime(oldData.RequireDt)

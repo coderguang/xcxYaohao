@@ -55,6 +55,8 @@ type NoticeData struct {
 	SceneId       string `gorm:default:'0'`
 	ShareToNum    int    `gorm:default:'0'`
 	SharedBy      string `gorm:"type:varchar(200)"` //来自token
+	AdCompleteDt  time.Time
+	AdTimes       int `gorm:default:'0'`
 }
 
 type SecureNoticeData struct {

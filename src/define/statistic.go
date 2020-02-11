@@ -10,7 +10,7 @@ import (
 var staticStr []string
 
 func init() {
-	staticStr = []string{"打开次数", "新用户", "请求次数", "验证码请求次数", "短信成功", "短信失败", "绑定人数", "取消绑定", "分享", "unknow", "", "", "", "", ""}
+	staticStr = []string{"打开次数", "新用户", "请求次数", "验证码请求次数", "短信成功", "短信失败", "绑定人数", "取消绑定", "分享", "激励视频观看", "unknow", "", "", "", ""}
 }
 
 const (
@@ -23,7 +23,8 @@ const (
 	StatisticBindTimes      int = 6
 	StatisticBindCancel     int = 7
 	StatisticShareTime      int = 8
-	StatisticMax            int = 9
+	StatisticAdComplete     int = 9
+	StatisticMax            int = 10
 )
 
 type StatisticsData struct {
@@ -42,6 +43,7 @@ type StatisticsData struct {
 	CancelTimes     int
 	ShareTimes      int
 	UserSize        int
+	AdComplete      int
 }
 
 func (data *StatisticsData) Reset() {
@@ -86,6 +88,8 @@ func (data *StatisticsData) ParseToDb() {
 			data.CancelTimes = v
 		case StatisticShareTime:
 			data.ShareTimes = v
+		case StatisticAdComplete:
+			data.AdComplete = v
 		}
 	}
 }

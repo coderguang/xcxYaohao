@@ -23,6 +23,7 @@ const (
 	HTTP_ARGS_DATA           string = "data"
 	HTTP_ARGS_SCENE_ID       string = "sceneId"
 	HTTP_ARGS_SHARE_FROM     string = "shareFrom"
+	HTTP_ARGS_COMPLETE_AD    string = "ad"
 )
 
 const (

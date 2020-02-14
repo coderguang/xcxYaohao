@@ -37,6 +37,7 @@ const (
 
 type NoticeData struct {
 	Token         string `gorm:"primary_key;type:varchar(200)"`
+	Platform      string
 	Status        int
 	Name          string
 	Title         string

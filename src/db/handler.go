@@ -34,6 +34,7 @@ func UpdateNoticeData(data *define.NoticeData) error {
 	err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(map[string]interface{}{
 		"status":          data.Status,
 		"name":            data.Name,
+		"platform":        data.Platform,
 		"title":           data.Title,
 		"card_type":       data.CardType,
 		"code":            data.Code,

@@ -24,6 +24,7 @@ const (
 	HTTP_ARGS_SCENE_ID       string = "sceneId"
 	HTTP_ARGS_SHARE_FROM     string = "shareFrom"
 	HTTP_ARGS_COMPLETE_AD    string = "ad"
+	HTTP_ARGS_PLATFORM       string = "p"
 )
 
 const (

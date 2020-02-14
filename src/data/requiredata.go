@@ -4,6 +4,7 @@ import (
 	"errors"
 	"xcxYaohao/src/define"
 
+	"github.com/coderguang/GameEngine_go/sgbytedance/sgttopenid"
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgthread"
 
@@ -17,9 +18,10 @@ import (
 )
 
 var (
-	globalOpenIds     *define.SecureWxOpenid
-	globalWxOpenIdCfg *sgwxdef.WxAppidCfg
-	globalAliAppidCfg *alisms.AliAppidCfg
+	globalOpenIds            *define.SecureWxOpenid
+	globalWxOpenIdCfg        *sgwxdef.WxAppidCfg
+	globalAliAppidCfg        *alisms.AliAppidCfg
+	globalBytedanceOpenIdCfg *sgttopenid.SByteDanceAppidCfg
 )
 
 func init() {
@@ -27,7 +29,7 @@ func init() {
 	globalOpenIds.Data = make(map[string]*sgwxopenid.SWxOpenid)
 }
 
-func InitWxOpenIdCfg() {
+func InitOpenIdCfgs() {
 	globalWxOpenIdCfg = new(sgwxdef.WxAppidCfg)
 	cfgFile := sgcfg.GetServerCfgDir() + "wx_appid.json"
 	err := sgcfg.ReadCfg(cfgFile, globalWxOpenIdCfg)
@@ -44,6 +46,13 @@ func InitWxOpenIdCfg() {
 		sgthread.DelayExit(2)
 	}
 
+	globalBytedanceOpenIdCfg = new(sgttopenid.SByteDanceAppidCfg)
+	cfgFile = sgcfg.GetServerCfgDir() + "tt_appid.json"
+	err = sgcfg.ReadCfg(cfgFile, globalBytedanceOpenIdCfg)
+	if err != nil {
+		sglog.Error("InitByteDanceAppidIdCfg error,", err)
+		sgthread.DelayExit(2)
+	}
 }
 
 func AddWxOpenId(data *sgwxopenid.SWxOpenid) error {
@@ -69,4 +78,8 @@ func GetWxOpenId(code string) (*sgwxopenid.SWxOpenid, error) {
 
 func GetAppidCfg() (string, string) {
 	return globalWxOpenIdCfg.Appid, globalWxOpenIdCfg.Secret
+}
+
+func GetByteDanceCfg() (string, string) {
+	return globalBytedanceOpenIdCfg.Appid, globalBytedanceOpenIdCfg.Secret
 }

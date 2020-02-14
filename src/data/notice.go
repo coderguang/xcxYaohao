@@ -64,7 +64,7 @@ func GetNoticeData(openid string) (*define.NoticeData, error) {
 	return nil, errors.New("no this data")
 }
 
-func AddOpenXcxTimes(openid string, title string, scenId string, shareFrom string) (*define.NoticeData, *define.NoticeData) {
+func AddOpenXcxTimes(platform string, openid string, title string, scenId string, shareFrom string) (*define.NoticeData, *define.NoticeData) {
 	data, err := GetNoticeData(openid)
 	shareFromData := new(define.NoticeData)
 	shareFromData.Token = ""
@@ -78,6 +78,7 @@ func AddOpenXcxTimes(openid string, title string, scenId string, shareFrom strin
 		data.Title = title
 		data.SceneId = scenId
 		data.SharedBy = shareFrom
+		data.Platform = platform
 
 		if "" != shareFrom && shareFrom != data.Token {
 			shareFromData, err = GetNoticeData(shareFrom)

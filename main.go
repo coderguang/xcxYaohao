@@ -50,9 +50,12 @@ func main() {
 	config.InitCfg()
 	data.ReloadBoardcast([]string{})
 
-	data.InitWxOpenIdCfg()
+	data.InitOpenIdCfgs()
 
 	spider.AutoCreateFileDir()
+
+
+	return
 
 	db.InitDb()
 

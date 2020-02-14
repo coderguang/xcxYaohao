@@ -4,7 +4,6 @@ import (
 	"errors"
 	"xcxYaohao/src/define"
 
-	"github.com/coderguang/GameEngine_go/sgbytedance/sgttopenid"
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgthread"
 
@@ -15,6 +14,8 @@ import (
 	"github.com/coderguang/GameEngine_go/sgwx/sgwxopenid"
 
 	"github.com/coderguang/GameEngine_go/sgali/alisms"
+
+	"github.com/coderguang/GameEngine_go/sgbytedance/sgttopenid"
 )
 
 var (

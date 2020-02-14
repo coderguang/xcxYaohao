@@ -54,9 +54,6 @@ func main() {
 
 	spider.AutoCreateFileDir()
 
-
-	return
-
 	db.InitDb()
 
 	cache.InitAndLoadCardData()

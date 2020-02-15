@@ -65,6 +65,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		openId.Time = sgtime.New()
 
 		if platform == "" || platform == "weixin" {
+			platform = "weixin"
 			appid, secret := data.GetAppidCfg()
 			openId.Openid, err = sgwxopenid.GetOpenIdFromWx(appid, secret, openId.Code)
 			if err != nil {

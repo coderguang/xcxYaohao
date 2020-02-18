@@ -31,6 +31,11 @@ func UpdateCardData(data *define.CardData) error {
 
 func UpdateNoticeData(data *define.NoticeData) error {
 	//go func(d *define.NoticeData) {
+
+	if data.Platform == "alipay" {
+		return nil
+	}
+
 	err := globalDb.Where(define.NoticeData{Token: data.Token}).Assign(map[string]interface{}{
 		"status":          data.Status,
 		"name":            data.Name,

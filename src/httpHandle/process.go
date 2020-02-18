@@ -79,6 +79,20 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 				return
 			}
+		} else if platform == "alipay" {
+			sglog.Debug("alipay no token,code", openId.Code)
+			openId.Openid = openId.Code
+			switch op {
+			case HTTP_ARGS_BIND_GET_DATA:
+			case HTTP_ARGS_BIND_REQUIRE:
+			case HTTP_ARGS_BIND_CONFIRM:
+			case HTTP_ARGS_BIND_CANCEL:
+				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+				return
+			}
+		} else {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
 		}
 
 		data.AddWxOpenId(openId)

@@ -49,7 +49,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 	r.ParseForm()
 
 	requireData = r.Form
-	//sglog.Debug("require data is ", r.Form)
+	sglog.Debug("require data is ", r.Form)
 
 	op := r.FormValue(HTTP_ARGS_KEY)
 	city := r.FormValue(HTTP_ARGS_CITY)

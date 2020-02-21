@@ -69,11 +69,11 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			sgthread.SleepBySecond(sleepTime)
 		}
 
-		sglog.Info(title, "start spider date:", searchTime, ",isPersonal:", isPersonal)
+		//sglog.Info(title, "start spider date:", searchTime, ",isPersonal:", isPersonal)
 
 		if title == define.CITY_HAINAN {
 			if !HainanIsShowResultInWebIndex(searchTime) {
-				sglog.Debug("hainan not show result in web,sleep..,", searchTime, ",sleepTime:", sleepTime)
+				//sglog.Debug("hainan not show result in web,sleep..,", searchTime, ",sleepTime:", sleepTime)
 				sgthread.SleepBySecond(sleepTime)
 				continue
 			} else {

@@ -175,7 +175,7 @@ func guangzhouTxtFliter(title string, contents []string) (map[string]*define.Car
 			}
 			datas[data.Code] = data
 		} else {
-			if strings.Contains(v, "序号") && strings.Contains(v, "姓名") {
+			if strings.Contains(v, "序号") && (strings.Contains(v, "姓名") || strings.Contains(v, "名称")) {
 				if "" == timestr || 0 == totalNum || 0 == memberType || 0 == cardType {
 					sglog.Error("guangzhou time:", timestr, ",total:", totalNum, ",memberType:", memberType, ",cardType:", cardType)
 					return datas, timestr, totalNum, cardType, memberType, errors.New("head params parse error")

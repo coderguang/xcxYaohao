@@ -58,8 +58,6 @@ func main() {
 
 	cache.InitAndLoadCardData()
 
-	//spider.NewSpider("beijing")
-
 	//hainan special logic
 	go spider.HainanOldDataSpider([]string{})
 

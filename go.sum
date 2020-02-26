@@ -28,6 +28,8 @@ github.com/coderguang/GameEngine_go v1.9.2 h1:yP4CzUF4zI+QY3ConReeCRlQILVcjsDFwG
 github.com/coderguang/GameEngine_go v1.9.2/go.mod h1:iF8pE3JG1aeTq5VJqzI+gkwiUuVs2baupOiEq/ydOTQ=
 github.com/coderguang/GameEngine_go v1.9.3 h1:5bMGZ1bODwFLi2HGtMr4DjA+cAFmzPOrSJ4DbFMCgfY=
 github.com/coderguang/GameEngine_go v1.9.3/go.mod h1:iF8pE3JG1aeTq5VJqzI+gkwiUuVs2baupOiEq/ydOTQ=
+github.com/coderguang/GameEngine_go v1.9.4 h1:TnW6Ii+n3R7PBfakckDOINhqU+/Ak/VQPKbRehye4O0=
+github.com/coderguang/GameEngine_go v1.9.4/go.mod h1:iF8pE3JG1aeTq5VJqzI+gkwiUuVs2baupOiEq/ydOTQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

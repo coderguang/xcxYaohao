@@ -5,6 +5,7 @@ import (
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/coderguang/GameEngine_go/sgqq/sgqqopenid"
 	"github.com/coderguang/GameEngine_go/sgthread"
 
 	"github.com/coderguang/GameEngine_go/sgcfg"
@@ -23,6 +24,7 @@ var (
 	globalWxOpenIdCfg        *sgwxdef.WxAppidCfg
 	globalAliAppidCfg        *alisms.AliAppidCfg
 	globalBytedanceOpenIdCfg *sgttopenid.SByteDanceAppidCfg
+	globalQQAppidCfg         *sgqqopenid.SQQAppidCfg
 )
 
 func init() {
@@ -54,6 +56,14 @@ func InitOpenIdCfgs() {
 		sglog.Error("InitByteDanceAppidIdCfg error,", err)
 		sgthread.DelayExit(2)
 	}
+
+	globalQQAppidCfg = new(sgqqopenid.SQQAppidCfg)
+	cfgFile = sgcfg.GetServerCfgDir() + "qq_appid.json"
+	err = sgcfg.ReadCfg(cfgFile, globalQQAppidCfg)
+	if err != nil {
+		sglog.Error("InitQQAppidIdCfg error,", err)
+		sgthread.DelayExit(2)
+	}
 }
 
 func AddWxOpenId(data *sgwxopenid.SWxOpenid) error {
@@ -83,4 +93,8 @@ func GetAppidCfg() (string, string) {
 
 func GetByteDanceCfg() (string, string) {
 	return globalBytedanceOpenIdCfg.Appid, globalBytedanceOpenIdCfg.Secret
+}
+
+func GetQQCfg() (string, string) {
+	return globalQQAppidCfg.Appid, globalQQAppidCfg.Secret
 }

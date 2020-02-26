@@ -9,6 +9,7 @@ import (
 
 	"github.com/coderguang/GameEngine_go/sgbytedance/sgttopenid"
 	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/coderguang/GameEngine_go/sgqq/sgqqopenid"
 	"github.com/coderguang/GameEngine_go/sgtime"
 	"github.com/coderguang/GameEngine_go/sgwx/sgwxopenid"
 )
@@ -75,6 +76,13 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		} else if platform == "bytedance" {
 			appid, secret := data.GetByteDanceCfg()
 			openId.Openid, err = sgttopenid.GetOpenIdFromServer(appid, secret, openId.Code)
+			if err != nil {
+				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+				return
+			}
+		} else if platform == "qq" {
+			appid, secret := data.GetQQCfg()
+			openId.Openid, err = sgqqopenid.GetOpenIdFromServer(appid, secret, openId.Code)
 			if err != nil {
 				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 				return

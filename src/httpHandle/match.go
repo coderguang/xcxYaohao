@@ -22,3 +22,18 @@ func matchData(r *http.Request, city string, openId string, returnData map[strin
 
 	data.AddStatistic(define.StatisticRequireTimes, 1)
 }
+
+func matchDataByName(r *http.Request, city string, openId string, key string, returnData map[string]interface{}) {
+	if ok, v := cache.GetMatchData(city, key); ok {
+		tmplist := []*define.CardDataForClient{}
+		for _, vv := range v {
+			tmplist = append(tmplist, vv.CardDataToClient())
+		}
+		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_OK
+		returnData[HTTP_RETURN_Data] = tmplist
+	} else {
+		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NO_MATCH_DATA
+	}
+
+	data.AddStatistic(define.StatisticRequireTimes, 1)
+}

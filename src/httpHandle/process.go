@@ -30,6 +30,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 	city := r.FormValue(HTTP_ARGS_CITY)
 	loginCode := r.FormValue(HTTP_ARGS_CODE)
 	platform := r.FormValue(HTTP_ARGS_PLATFORM)
+	searchName := r.FormValue(HTTP_ARGS_MATCH_KEY)
 
 	if len(requireData) == 1 && op == "" && loginCode == "" {
 		sglog.Debug("require from alipay")
@@ -75,6 +76,13 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		if !ok {
 			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 			return
+		}
+		matchKeyStr, ok := jsonMap[HTTP_ARGS_MATCH_KEY]
+		if ok {
+			matchkeyValue, ok := matchKeyStr.(string)
+			if ok {
+				searchName = matchkeyValue
+			}
 		}
 	}
 
@@ -175,7 +183,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			requireLastestTime(r, city, openId.Openid, platform, returnData)
 		case HTTP_ARGS_SEARCH:
 			// ?op=search&city=guangzhou&key=0000100748077&code=0
-			matchData(r, city, openId.Openid, returnData)
+			matchDataByName(r, city, openId.Openid, searchName, returnData)
 		case HTTP_ARGS_BIND_GET_DATA:
 			// ?op=getData&city=guangzhou&code=0
 			getBindData(r, city, openId.Openid, returnData)

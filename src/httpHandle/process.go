@@ -155,7 +155,9 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 
 		_, err := data.GetNoticeData(openId.Openid)
 		if err != nil {
-			data.AddStatistic(define.StatisticNewOpenTimes, 1)
+			if platform != define.PLATFORM_ALIPAY {
+				data.AddStatistic(define.StatisticNewOpenTimes, 1)
+			}
 		}
 	}
 	loginCode = openId.Openid

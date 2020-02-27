@@ -21,6 +21,63 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 	returnData := make(map[string]interface{})
 	returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_DO_NOT_THING
 
+	r.ParseForm()
+
+	requireData = r.Form
+	//sglog.Debug("require data is ", r.Form)
+
+	op := r.FormValue(HTTP_ARGS_KEY)
+	city := r.FormValue(HTTP_ARGS_CITY)
+	loginCode := r.FormValue(HTTP_ARGS_CODE)
+	platform := r.FormValue(HTTP_ARGS_PLATFORM)
+
+	if len(requireData) == 1 && op == "" && loginCode == "" {
+		sglog.Debug("require from alipay")
+		platform = define.PLATFORM_ALIPAY
+		jsonMap := make(map[string]interface{})
+		for k, _ := range requireData {
+			//sglog.Debug("key is ", k)
+			if err := json.Unmarshal([]byte(k), &jsonMap); err != nil {
+				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+				return
+			}
+			break
+		}
+
+		opStr, ok := jsonMap[HTTP_ARGS_KEY]
+		if !ok {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+		op, ok = opStr.(string)
+		if !ok {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+
+		cityStr, ok := jsonMap[HTTP_ARGS_CITY]
+		if !ok {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+		city, ok = cityStr.(string)
+		if !ok {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+
+		loginCodeStr, ok := jsonMap[HTTP_ARGS_CODE]
+		if !ok {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+		loginCode, ok = loginCodeStr.(string)
+		if !ok {
+			returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
+			return
+		}
+	}
+
 	defer func() {
 		endDt := sgtime.New()
 		useTime := sgtime.GetTotalSecond(endDt) - sgtime.GetTotalSecond(endDt)
@@ -42,20 +99,10 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			sglog.Error("parse returnData to string error", err)
 		}
 
-		sglog.Info("require token:", requireData["token"], ",op:", requireData[HTTP_ARGS_KEY], ",return code:", returnData[HTTP_RETURN_ERR_CODE])
+		sglog.Info("platform:", "["+platform+"]", "require token:", "["+loginCode+"]", ",op:", "["+op+"]", ",return code:", returnData[HTTP_RETURN_ERR_CODE])
 
 		flag <- true
 	}()
-
-	r.ParseForm()
-
-	requireData = r.Form
-	sglog.Debug("require data is ", r.Form)
-
-	op := r.FormValue(HTTP_ARGS_KEY)
-	city := r.FormValue(HTTP_ARGS_CITY)
-	loginCode := r.FormValue(HTTP_ARGS_CODE)
-	platform := r.FormValue(HTTP_ARGS_PLATFORM)
 
 	//init wx openid
 	openId, err := data.GetWxOpenId(loginCode)
@@ -65,36 +112,37 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		openId.Code = loginCode
 		openId.Time = sgtime.New()
 
-		if platform == "" || platform == "weixin" {
-			platform = "weixin"
+		if platform == "" || platform == define.PLATFORM_WEIXIN {
+			platform = define.PLATFORM_WEIXIN
 			appid, secret := data.GetAppidCfg()
 			openId.Openid, err = sgwxopenid.GetOpenIdFromWx(appid, secret, openId.Code)
 			if err != nil {
 				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 				return
 			}
-		} else if platform == "bytedance" {
+		} else if platform == define.PLATFORM_BYTEDANCE {
 			appid, secret := data.GetByteDanceCfg()
 			openId.Openid, err = sgttopenid.GetOpenIdFromServer(appid, secret, openId.Code)
 			if err != nil {
 				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 				return
 			}
-		} else if platform == "qq" {
+		} else if platform == define.PLATFORM_QQ {
 			appid, secret := data.GetQQCfg()
 			openId.Openid, err = sgqqopenid.GetOpenIdFromServer(appid, secret, openId.Code)
 			if err != nil {
 				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 				return
 			}
-		} else if platform == "alipay" {
-			sglog.Debug("alipay no token,code", openId.Code)
+		} else if platform == define.PLATFORM_ALIPAY {
+			//sglog.Debug("alipay no token,code", openId.Code)
 			openId.Openid = openId.Code
 			switch op {
-			case HTTP_ARGS_BIND_GET_DATA:
-			case HTTP_ARGS_BIND_REQUIRE:
-			case HTTP_ARGS_BIND_CONFIRM:
-			case HTTP_ARGS_BIND_CANCEL:
+			case HTTP_ARGS_TIME:
+			case HTTP_ARGS_SEARCH:
+			case HTTP_ARGS_SHARE:
+				break
+			default:
 				returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_WX_ERROR_CODE
 				return
 			}

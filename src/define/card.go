@@ -30,6 +30,13 @@ const (
 	CITY_BEIJING   string = "beijing"
 )
 
+const (
+	PLATFORM_WEIXIN    string = "weixin"
+	PLATFORM_BYTEDANCE string = "bytedance"
+	PLATFORM_QQ        string = "qq"
+	PLATFORM_ALIPAY    string = "alipay"
+)
+
 type SLastestCardData struct {
 	Title                 string
 	TimeStr               string

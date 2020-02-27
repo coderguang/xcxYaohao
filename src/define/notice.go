@@ -92,6 +92,7 @@ type SRequireData struct {
 	Status       int
 	LeftTime     int
 	RequireTimes int
+	Platform     string
 }
 
 type SecureSRequireData struct {
@@ -108,6 +109,7 @@ func (data *SRequireData) IsDataChange(title string, code string, phone string, 
 
 func (data *SRequireData) ShowMsg() {
 	sglog.Debug("=======start===========")
+	sglog.Debug("platform", data.Platform)
 	sglog.Debug("token:", data.Token)
 	sglog.Debug("Title:", data.Title)
 	sglog.Debug("Code:", data.Code)

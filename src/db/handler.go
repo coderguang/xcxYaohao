@@ -32,7 +32,7 @@ func UpdateCardData(data *define.CardData) error {
 func UpdateNoticeData(data *define.NoticeData) error {
 	//go func(d *define.NoticeData) {
 
-	if data.Platform == "alipay" {
+	if data.Platform == define.PLATFORM_ALIPAY {
 		return nil
 	}
 

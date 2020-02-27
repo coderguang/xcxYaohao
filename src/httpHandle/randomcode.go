@@ -163,6 +163,7 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 		newRequireData.LeftTime = leftTimeInt
 		newRequireData.RandomNum = tmpRandomCode
 		newRequireData.RequireTimes = 0
+		newRequireData.Platform = existData.Platform
 
 		randomCode = newRequireData.RandomNum
 		data.AddOrUpdateRequireData(newRequireData)

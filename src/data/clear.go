@@ -44,6 +44,9 @@ func ShowCurrentDatas(cmds []string) {
 	globalOpenIds.Lock.Lock()
 	idset := make(map[string]bool)
 	for _, v := range globalOpenIds.Data {
+		if v.Code == v.Openid {
+			continue
+		}
 		if _, ok := idset[v.Openid]; !ok {
 			idset[v.Openid] = true
 		}

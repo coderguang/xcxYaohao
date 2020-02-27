@@ -158,6 +158,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			data.AddStatistic(define.StatisticNewOpenTimes, 1)
 		}
 	}
+	loginCode = openId.Openid
 
 	requireData["token"] = []string{openId.Openid}
 

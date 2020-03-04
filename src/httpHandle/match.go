@@ -4,7 +4,10 @@ import (
 	"net/http"
 	"xcxYaohao/src/cache"
 	"xcxYaohao/src/data"
+	"xcxYaohao/src/db"
 	"xcxYaohao/src/define"
+
+	"github.com/coderguang/GameEngine_go/sglog"
 )
 
 func matchData(r *http.Request, city string, openId string, returnData map[string]interface{}) {
@@ -36,4 +39,14 @@ func matchDataByName(r *http.Request, city string, openId string, key string, re
 	}
 
 	data.AddStatistic(define.StatisticRequireTimes, 1)
+}
+
+func TestMathDataByDbSort(cmd []string) {
+	ok, results := db.GetMatchDataByDb("guangzhou", "李静")
+	if ok {
+		for _, v := range results {
+			sglog.Debug("code:", v.Code, ",name:", v.Name, ",time:", v.Time)
+		}
+	}
+
 }

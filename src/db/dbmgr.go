@@ -169,7 +169,7 @@ func IsCardDataExistByDb(title string, code string) bool {
 
 func GetMatchDataByDb(title string, code string) (bool, []*define.CardData) {
 	cards := []*define.CardData{}
-	err := globalDb.Where("title =? AND (code=? OR name=?)", title, code, code).Find(&cards).Error
+	err := globalDb.Order("time desc").Where("title =? AND (code=? OR name=?)", title, code, code).Find(&cards).Error
 	if err != nil {
 		sglog.Error("find data exist error,", title, code, err)
 		return false, cards

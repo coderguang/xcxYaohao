@@ -39,6 +39,7 @@ func RegistCmd() {
 	sgcmd.RegistCmd("changeCurrentSmsFlang", "[\"changeCurrentSmsFlang\"] :changeCurrentSmsFlang ", sms.ChangeCurrentSmsFlang)
 	sgcmd.RegistCmd("TestSendMail", "[\"TestSendMail\"] :TestSendMail ", TestSendMail)
 	sgcmd.RegistCmd("TianJinOldData", "[\"TianJinOldData\"] :TianJinOldData spider data", spider.TianjinOldDataSpider)
+	sgcmd.RegistCmd("TestDbMatch", "[\"TestDbMatch\"] :TestDbMatch by db sort", httpHandle.TestMathDataByDbSort)
 }
 
 func main() {
@@ -59,10 +60,11 @@ func main() {
 	cache.InitAndLoadCardData()
 
 	//next to return is for test
-	// go httpHandle.NewWebServer(config.GetUtilCfg().Port)
-	// RegistCmd()
-	// sgcmd.StartCmdWaitInputLoop()
-	// return
+
+	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
+	RegistCmd()
+	sgcmd.StartCmdWaitInputLoop()
+	return
 
 	//hainan special logic
 	go spider.HainanOldDataSpider([]string{})

@@ -5,26 +5,28 @@ import (
 )
 
 const (
-	HTTP_ARGS_KEY            string = "op"
-	HTTP_ARGS_TIME           string = "time"
-	HTTP_ARGS_SEARCH         string = "search"
-	HTTP_ARGS_CODE           string = "code"
-	HTTP_ARGS_CITY           string = "city"
-	HTTP_ARGS_MATCH_KEY      string = "key"
-	HTTP_ARGS_BIND_REQUIRE   string = "require"
-	HTTP_ARGS_BIND_CONFIRM   string = "confirm"
-	HTTP_ARGS_BIND_GET_DATA  string = "getData"
-	HTTP_ARGS_BIND_CANCEL    string = "cancel"
-	HTTP_ARGS_SHARE          string = "share"
-	HTTP_ARGS_BIND_ONE_KEY   string = "reBind"
-	HTTP_ARGS_BIND_PHONE     string = "phone"
-	HTTP_ARGS_BIND_CARD_TYPE string = "card"
-	HTTP_ARGS_BIND_CODE      string = "bindCode"
-	HTTP_ARGS_DATA           string = "data"
-	HTTP_ARGS_SCENE_ID       string = "sceneId"
-	HTTP_ARGS_SHARE_FROM     string = "shareFrom"
-	HTTP_ARGS_COMPLETE_AD    string = "ad"
-	HTTP_ARGS_PLATFORM       string = "p"
+	HTTP_ARGS_KEY             string = "op"
+	HTTP_ARGS_TIME            string = "time"
+	HTTP_ARGS_SEARCH          string = "search"
+	HTTP_ARGS_CODE            string = "code"
+	HTTP_ARGS_CITY            string = "city"
+	HTTP_ARGS_MATCH_KEY       string = "key"
+	HTTP_ARGS_BIND_REQUIRE    string = "require"
+	HTTP_ARGS_BIND_CONFIRM    string = "confirm"
+	HTTP_ARGS_BIND_GET_DATA   string = "getData"
+	HTTP_ARGS_BIND_CANCEL     string = "cancel"
+	HTTP_ARGS_SHARE           string = "share"
+	HTTP_ARGS_BIND_ONE_KEY    string = "reBind"
+	HTTP_ARGS_BIND_PHONE      string = "phone"
+	HTTP_ARGS_BIND_CARD_TYPE  string = "card"
+	HTTP_ARGS_BIND_CODE       string = "bindCode"
+	HTTP_ARGS_DATA            string = "data"
+	HTTP_ARGS_SCENE_ID        string = "sceneId"
+	HTTP_ARGS_SHARE_FROM      string = "shareFrom"
+	HTTP_ARGS_COMPLETE_AD     string = "ad"
+	HTTP_ARGS_PLATFORM        string = "p"
+	HTTP_ARGS_ONE_KEY_RE_BIND string = "rb"
+	HTTP_ARGS_DO_AD_TASK      string = "adt"
 )
 
 const (
@@ -77,6 +79,12 @@ const (
 	YAOHAO_ERR_DO_NOT_THING                                               //36 default
 	YAOHAO_ERR_NO_MATCH_DATA                                              //37 not match code or name data
 	YAOHAO_ERR_CODE_HAD_LUCK                                              //38 已中签
+	YAOHAO_ERR_HAD_BIND_NOW                                               //39 已绑定
+	YAOHAO_ERR_DO_AD_TASK_TOO_SHORT                                       //40 观看视频过于频繁，请24小时后再试
+	YAOHAO_ERR_DO_AD_TASK_OK                                              //41 视频观看成功,短信通知延长1个月
+	YAOHAO_ERR_DO_AD_TASK_OK_AND_LUCK                                     //42 视频观看成功,短信通知延长1年
+	YAOHAO_ERR_DO_AD_TASK_OK_AND_UNLUCK                                   //43 视频观看成功,短信通知无延长
+	YAOHAO_ERR_DO_AD_TASK_OK_BUG_MAX                                      //44 通知期限已达上限
 )
 
 func errorToStr(index YaoHaoNoticeError) string {

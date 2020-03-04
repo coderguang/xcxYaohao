@@ -201,12 +201,16 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			share(r, city, openId.Openid, returnData)
 		case HTTP_ARGS_COMPLETE_AD:
 			completeAd(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_ONE_KEY_RE_BIND:
+			reBindOneKey(r, city, openId.Openid, returnData)
+		case HTTP_ARGS_DO_AD_TASK:
+			taskAdComplete(r, city, openId.Openid, returnData)
 		}
 	}
 }
 
 func isIgnoreCityArgs(op string) bool {
-	if op == HTTP_ARGS_BIND_CONFIRM || op == HTTP_ARGS_BIND_CANCEL || op == HTTP_ARGS_SHARE {
+	if op == HTTP_ARGS_BIND_CONFIRM || op == HTTP_ARGS_BIND_CANCEL || op == HTTP_ARGS_SHARE || op == HTTP_ARGS_ONE_KEY_RE_BIND || op == HTTP_ARGS_DO_AD_TASK {
 		return true
 	}
 	return false

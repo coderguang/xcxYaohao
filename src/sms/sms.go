@@ -25,6 +25,14 @@ func SendRandomCode(phone string, title string, code string, randomCode string) 
 		return errors.New("sms flag false,would not send sms")
 	}
 
+	ignorePhoneList := config.GetUtilCfg().IgnorePhone
+	for _, v := range ignorePhoneList {
+		if phone == v {
+			sglog.Debug("ignore phone num:", v)
+			return nil
+		}
+	}
+
 	cityName := config.GetCityName(title)
 
 	code = "***" + code[len(code)-4:len(code)]

@@ -11,14 +11,15 @@ var (
 )
 
 type UtilCfg struct {
-	BindID    int    `json:"bindId"`
-	LuckID    int    `json:"luckId"`
-	Port      string `json:"port"`
-	Receiver  string `json:"receiver"`
-	Sign      string `json:"sign"`
-	UnluckID  int    `json:"unluckId"`
-	NoCache   bool   `json:"noCache"`
-	TimeOutId int    `json:"timeoutId"`
+	BindID      int      `json:"bindId"`
+	LuckID      int      `json:"luckId"`
+	Port        string   `json:"port"`
+	Receiver    string   `json:"receiver"`
+	Sign        string   `json:"sign"`
+	UnluckID    int      `json:"unluckId"`
+	NoCache     bool     `json:"noCache"`
+	TimeOutId   int      `json:"timeoutId"`
+	IgnorePhone []string `json:"ignorePhone`
 }
 
 func initUtilCfg() {

@@ -10,7 +10,7 @@ import (
 var staticStr []string
 
 func init() {
-	staticStr = []string{"打开次数", "新用户", "请求次数", "验证码请求次数", "短信成功", "短信失败", "绑定人数", "取消绑定", "分享", "激励视频观看", "unknow", "", "", "", ""}
+	staticStr = []string{"打开次数", "新用户", "请求次数", "验证码请求次数", "短信成功", "短信失败", "绑定人数", "取消绑定", "分享", "激励视频观看", "一键重绑", "视频观看任务", "", "", ""}
 }
 
 const (
@@ -24,7 +24,9 @@ const (
 	StatisticBindCancel     int = 7
 	StatisticShareTime      int = 8
 	StatisticAdComplete     int = 9
-	StatisticMax            int = 10
+	StatisticOneKeyReBind   int = 10
+	StatisticDoAdTask       int = 11
+	StatisticMax            int = 12
 )
 
 type StatisticsData struct {
@@ -44,6 +46,8 @@ type StatisticsData struct {
 	ShareTimes      int
 	UserSize        int
 	AdComplete      int
+	OneKeyReBind    int
+	AdTask          int
 }
 
 func (data *StatisticsData) Reset() {
@@ -90,6 +94,11 @@ func (data *StatisticsData) ParseToDb() {
 			data.ShareTimes = v
 		case StatisticAdComplete:
 			data.AdComplete = v
+		case StatisticOneKeyReBind:
+			data.OneKeyReBind = v
+		case StatisticDoAdTask:
+			data.AdTask = v
+
 		}
 	}
 }

@@ -61,10 +61,10 @@ func main() {
 
 	//next to return is for test
 
-	go httpHandle.NewWebServer(config.GetUtilCfg().Port)
-	RegistCmd()
-	sgcmd.StartCmdWaitInputLoop()
-	return
+	// go httpHandle.NewWebServer(config.GetUtilCfg().Port)
+	// RegistCmd()
+	// sgcmd.StartCmdWaitInputLoop()
+	// return
 
 	//hainan special logic
 	go spider.HainanOldDataSpider([]string{})

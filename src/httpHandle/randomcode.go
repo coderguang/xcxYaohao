@@ -135,6 +135,9 @@ func requireRandomCodeFromClient(title string, openid string, cardType string, c
 
 		//todo
 
+		sglog.Debug("old request data show")
+		oldData.ShowMsg()
+
 	} else {
 		//针对绑定后取消的限制
 

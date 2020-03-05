@@ -18,12 +18,14 @@ const YAOHAO_NOTICE_RANDOM_NUM_LENGTH int = 4
 const YAOHAO_NOTICE_REQUIRE_MAX_TIMES int = 3
 const YAOHAO_NOTICE_PHONE_CAN_BIND_TOKEN_MAX int = 1
 
-const YAOHAO_AD_TASK_DISTANCE int64 = 3600 * 24                //ad 任务1天更新一次
-const YAOHAO_NOTICE_MAX_NORMAL_TIME int64 = 3600 * 24 * 366    // ad 普通最长延长12个月
-const YAOHAO_NOTICE_MAX_LUCKK_TIME int64 = 3600 * 24 * 366 * 2 // ad 最幸运者可延长至2年
+const YAOHAO_AD_TASK_DISTANCE int64 = 3600 * 24                      //ad 任务1天更新一次
+const YAOHAO_NOTICE_MAX_NORMAL_TIME int64 = 3600 * 24 * 366          // ad 普通最长延长12个月
+const YAOHAO_NOTICE_MAX_LUCKK_TIME int64 = 3600 * 24 * 366 * 2       // ad 最幸运者可延长至2年
+const YAOHAO_NOTICE_MAX_TIME_BY_SHARE_TO_OTHER = 3600 * 24 * 366 * 3 // share 最幸运者可延长至2年
 const YAOHAO_NOTICE_LUCK_AD_TIMES_LIMIT int = 15
-const YAOHAO_NOTICE_LUCK_RATE int = 500   //概率5%
-const YAOHAO_NOTICE_LUCK_BASE int = 10000 //基数
+const YAOHAO_NOTICE_LUCK_RATE int = 500            //概率5%
+const YAOHAO_NOTICE_LUCK_BASE int = 10000          //基数
+const YAOHAO_NOTICE_EVERY_MONTH_NEED_SHARE int = 2 //每增1个月需要的玩家
 
 const (
 	YAOHAO_NOTICE_STATUS_NORMAL                     int = 0

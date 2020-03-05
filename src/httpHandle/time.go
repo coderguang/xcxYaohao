@@ -7,6 +7,7 @@ import (
 	"xcxYaohao/src/define"
 
 	"github.com/coderguang/GameEngine_go/sglog"
+	"github.com/coderguang/GameEngine_go/sgtime"
 )
 
 func requireLastestTime(r *http.Request, city string, openId string, platform string, returnData map[string]interface{}) {
@@ -27,6 +28,13 @@ func requireLastestTime(r *http.Request, city string, openId string, platform st
 	//sglog.Info("scenEId:", scenId, ",shareBy:", shareBy)
 	if shareByData != nil && shareByData.Token != "" {
 		shareByData.ShareToNum++
+		if shareByData.Status == define.YAOHAO_NOTICE_STATUS_NORMAL && shareByData.ShareToNum%define.YAOHAO_NOTICE_EVERY_MONTH_NEED_SHARE == 0 {
+			now := sgtime.New()
+			if sgtime.GetTotalSecond(&shareByData.EndDt)-sgtime.GetTotalSecond(now) < define.YAOHAO_NOTICE_MAX_TIME_BY_SHARE_TO_OTHER {
+				shareByData.EndDt = shareByData.EndDt.AddDate(0, 1, 0)
+				sglog.Debug("people add times by shared to others:", shareByData.Token, ",total share:", shareByData.ShareToNum, ",share to ", existData.Token)
+			}
+		}
 		db.UpdateNoticeData(shareByData)
 		sglog.Info("new player shared by other:", shareByData.Token, ",num:", shareByData.ShareToNum, ",scene:", scenId)
 	}

@@ -107,7 +107,7 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 			sglog.Error("parse returnData to string error", err)
 		}
 
-		sglog.Info("platform:", "["+platform+"]", "require token:", "["+loginCode+"]", ",op:", "["+op+"]", ",return code:", returnData[HTTP_RETURN_ERR_CODE])
+		sglog.Info("platform:", "["+platform+"]", " token:", "["+loginCode+"]", ",op:", "["+op+"]", ",return code:", returnData[HTTP_RETURN_ERR_CODE])
 
 		flag <- true
 	}()

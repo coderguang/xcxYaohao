@@ -95,7 +95,7 @@ func reBindOneKey(r *http.Request, city string, openId string, returnData map[st
 		return
 	}
 
-	if existData.Status != define.YAOHAO_NOTICE_STATUS_CANCEL || existData.Status != define.YAOHAO_NOTICE_STATUS_TIME_OUT {
+	if existData.Status != define.YAOHAO_NOTICE_STATUS_CANCEL && existData.Status != define.YAOHAO_NOTICE_STATUS_TIME_OUT {
 		returnData[HTTP_RETURN_ERR_CODE] = YAOHAO_ERR_NOT_BIND_DATA
 		return
 	}

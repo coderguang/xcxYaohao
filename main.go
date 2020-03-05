@@ -62,7 +62,7 @@ func main() {
 	//next to return is for test
 
 	// go httpHandle.NewWebServer(config.GetUtilCfg().Port)
-	// RegistCmd()111111111111111111111
+	// RegistCmd()
 	// sgcmd.StartCmdWaitInputLoop()
 	// return
 

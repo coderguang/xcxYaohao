@@ -274,6 +274,11 @@ func confirmRandomCodeFromClient(token string, randomCode string) YaoHaoNoticeEr
 		sglog.Debug("error randomcode ,title:,token:,randomCode:", token, randomCode)
 		return YAOHAO_ERR_CONFIRM_RANDOMCODE
 	}
+
+	if !data.CanBindPhone(oldData.Phone) {
+		return YAOHAO_ERR_PHONE_BIND_TOO_MANY
+	}
+
 	//验证通过
 
 	existData, err := data.GetNoticeData(token)

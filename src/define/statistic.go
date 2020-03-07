@@ -65,7 +65,7 @@ func (data *StatisticsData) String() string {
 	data.Lock.Lock()
 	defer data.Lock.Unlock()
 
-	var keys []int
+	keys := []int{}
 	for k := range data.TimesData {
 		keys = append(keys, k)
 	}

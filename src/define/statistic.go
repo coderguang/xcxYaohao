@@ -1,6 +1,7 @@
 package define
 
 import (
+	"sort"
 	"strconv"
 	"sync"
 
@@ -63,9 +64,16 @@ func (data *StatisticsData) Reset() {
 func (data *StatisticsData) String() string {
 	data.Lock.Lock()
 	defer data.Lock.Unlock()
+
+	var keys []int
+	for k := range data.TimesData {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+
 	str := "\n\n========="
-	for k, v := range data.TimesData {
-		str += "\n" + staticStr[k] + ":" + strconv.Itoa(v)
+	for _, k := range keys {
+		str += "\n" + staticStr[k] + ":" + strconv.Itoa(data.TimesData[k])
 	}
 	str += "\n总用户数:" + strconv.Itoa(data.UserSize)
 	return str

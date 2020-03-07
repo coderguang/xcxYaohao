@@ -36,7 +36,7 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 		}
 		if !data.NeedDownloadFile(title, urlTips) {
 			startDt = startDt.AddDate(0, 1, 0)
-			sglog.Info(title, "had already download ", searchTime, ",isPersonal:", isPersonal)
+			//sglog.Info(title, "had already download ", searchTime, ",isPersonal:", isPersonal)
 			continue
 		}
 

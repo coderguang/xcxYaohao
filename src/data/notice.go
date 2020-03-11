@@ -86,6 +86,9 @@ func AddOpenXcxTimes(platform string, openid string, title string, scenId string
 				sglog.Debug("share token not find,token:", "["+shareFrom+"]", ",err:", err)
 			}
 		}
+
+		sglog.Info("new user ,platform:", data.Platform, ",token:", data.Token)
+
 		globalNoticeData.Lock.Lock()
 		defer globalNoticeData.Lock.Unlock()
 

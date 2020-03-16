@@ -92,12 +92,12 @@ func logicHandle(w http.ResponseWriter, r *http.Request, flag chan bool) {
 		if useTime > 0 {
 			sglog.Debug("handle use ", useTime, "start:", startDt, "--------->", endDt)
 		}
-		strRequire, err := json.Marshal(requireData)
-		if err == nil {
-			sglog.Debug("require data is", string(strRequire))
-		} else {
-			sglog.Error("parse requireData to string error", err)
-		}
+		// strRequire, err := json.Marshal(requireData)
+		// if err == nil {
+		// 	sglog.Debug("require data is", string(strRequire))
+		// } else {
+		// 	sglog.Error("parse requireData to string error", err)
+		// }
 
 		str, err := json.Marshal(returnData)
 		if err == nil {

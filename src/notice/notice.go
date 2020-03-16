@@ -82,7 +82,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		if bindData.Status != define.YAOHAO_NOTICE_STATUS_NORMAL {
 			continue
 		}
-		if bindData.EndDt.Month() == now.Month() {
+		if bindData.EndDt.Month() <= now.Month() {
 			err = sms.SendUnLuckAndTimeout(bindData.Phone, title, curTime)
 			if err != nil {
 				failedSend++
@@ -98,7 +98,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 
 		unluckPhone = append(unluckPhone, bindData.Phone)
 		bindData.FinalNoticeDt = now
-		if bindData.EndDt.Month() == now.Month() {
+		if bindData.EndDt.Month() <= now.Month() {
 			bindData.Status = define.YAOHAO_NOTICE_STATUS_TIME_OUT
 		}
 		bindData.NoticeTimes++

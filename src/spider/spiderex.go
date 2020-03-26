@@ -39,6 +39,11 @@ func StartSpiderEx(title string, startDt time.Time, index string, isPersonal boo
 			//sglog.Info(title, "had already download ", searchTime, ",isPersonal:", isPersonal)
 			continue
 		}
+		if searchTime == "202001" || searchTime == "202002" {
+			startDt = startDt.AddDate(0, 1, 0)
+			sglog.Info(title, " ignore because 2019 新冠病毒 ", searchTime, ",isPersonal:", isPersonal)
+			continue
+		}
 
 		nowTime := time.Now()
 		curTimeStr := sgtime.YearString(&nowTime) + sgtime.MonthString(&nowTime)

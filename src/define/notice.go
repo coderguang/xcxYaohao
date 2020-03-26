@@ -31,7 +31,7 @@ const YAOHAO_AD_TASK_DISTANCE int64 = 15                             //ad 任务
 const YAOHAO_NOTICE_MAX_NORMAL_TIME int64 = 3600 * 24 * 366 * 2      // ad 普通最长延长24个月
 const YAOHAO_NOTICE_MAX_LUCKK_TIME int64 = 3600 * 24 * 366 * 3       // ad 最幸运者可延长至3年
 const YAOHAO_NOTICE_MAX_TIME_BY_SHARE_TO_OTHER = 3600 * 24 * 366 * 4 // share 最幸运者可延长至4年
-const YAOHAO_NOTICE_LUCK_AD_TIMES_LIMIT int = 15
+const YAOHAO_NOTICE_LUCK_AD_TIMES_LIMIT int = 5
 const YAOHAO_NOTICE_LUCK_RATE int = 500   //概率5%
 const YAOHAO_NOTICE_LUCK_BASE int = 10000 //基数
 

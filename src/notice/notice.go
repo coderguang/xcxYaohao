@@ -66,6 +66,8 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		bindData.Status = define.YAOHAO_NOTICE_STATUS_CANCEL_BY_GM_BECASURE_LUCK
 		bindData.NoticeTimes++
 		db.UpdateNoticeData(bindData)
+
+		data.DelPhoneBind(bindData.Phone)
 	}
 
 	sglog.Info("send sms luck to ", title, luckPhone)
@@ -100,6 +102,7 @@ func NoticeCurrentMonthDataUpdate(title string, curTime string) {
 		bindData.FinalNoticeDt = now
 		if bindData.EndDt.Month() <= now.Month() {
 			bindData.Status = define.YAOHAO_NOTICE_STATUS_TIME_OUT
+			data.DelPhoneBind(bindData.Phone)
 		}
 		bindData.NoticeTimes++
 		db.UpdateNoticeData(bindData)
